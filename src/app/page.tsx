@@ -8,6 +8,7 @@ export default function HomePage() {
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="debug-css">CSS Test - This should be red text on yellow background</div>
       <div className="max-w-4xl w-full space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
