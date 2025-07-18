@@ -1,42 +1,26 @@
-"use client"
-
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Target, Users, Building2, BarChart3 } from 'lucide-react'
+import { Target, Users, Building2, BarChart3, ArrowRight } from 'lucide-react'
 
 export default function HomePage() {
-  const router = useRouter()
-
-  useEffect(() => {
-    // Automatic redirect after a short delay
-    const timer = setTimeout(() => {
-      router.push('/dashboard')
-    }, 2000)
-
-    return () => clearTimeout(timer)
-  }, [router])
-
-  const handleGetStarted = () => {
-    router.push('/dashboard')
-  }
-
+  console.log('HomePage rendering at:', new Date().toISOString())
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Target className="h-8 w-8 text-blue-600" />
-            <h1 className="text-4xl font-bold text-gray-900">TalentGuard</h1>
+            <div className="bg-blue-600 rounded-full p-4">
+              <Target className="h-8 w-8 text-white" />
+            </div>
           </div>
-          <h2 className="text-2xl font-semibold text-gray-800">
-            Buyer Intelligence Platform
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Identify and engage buying committee members 10x faster with AI-powered 
-            prospect research and signal intelligence
+          <h1 className="text-4xl font-bold text-gray-900">
+            TalentGuard Buyer Intelligence Platform
+          </h1>
+          <p className="text-xl text-gray-600">
+            Identify and engage buying committee members 10x faster with AI-powered prospect research
           </p>
         </div>
 
@@ -81,17 +65,25 @@ export default function HomePage() {
 
         {/* CTA */}
         <div className="text-center space-y-4">
-          <Button 
-            onClick={handleGetStarted}
-            size="lg" 
-            className="text-lg px-8 py-3"
-          >
-            Get Started
+          <p className="text-gray-600">Ready to find your next prospects?</p>
+          <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
+            <Link href="/dashboard">
+              Get Started
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
           </Button>
-          <p className="text-sm text-gray-500">
-            Redirecting to dashboard in a few seconds...
-          </p>
         </div>
+
+        {/* Auto-redirect script */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              setTimeout(function() {
+                window.location.href = '/dashboard';
+              }, 3000);
+            `
+          }}
+        />
       </div>
     </div>
   )
