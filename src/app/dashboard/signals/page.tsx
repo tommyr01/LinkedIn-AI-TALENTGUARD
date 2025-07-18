@@ -8,25 +8,25 @@ import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { 
-  Search, 
-  Filter, 
-  TrendingUp, 
-  TrendingDown, 
-  Eye, 
-  Calendar, 
-  Building2, 
-  Users, 
-  Target,
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  ExternalLink,
-  Zap,
-  DollarSign,
-  MessageSquare,
-  Award,
-  Activity
-} from 'lucide-react'
+  IconSearch, 
+  IconFilter, 
+  IconTrendingUp, 
+  IconTrendingDown, 
+  IconEye, 
+  IconCalendar, 
+  IconBuilding, 
+  IconUsers, 
+  IconTarget,
+  IconAlertCircle,
+  IconCheck,
+  IconClock,
+  IconExternalLink,
+  IconBolt,
+  IconCurrencyDollar,
+  IconMessage,
+  IconAward,
+  IconActivity
+} from '@tabler/icons-react'
 
 export default function SignalsPage() {
   const [selectedSignal, setSelectedSignal] = useState<any>(null)
@@ -57,7 +57,7 @@ export default function SignalsPage() {
         "Highlight talent analytics capabilities",
         "Offer scaling support solutions"
       ],
-      icon: TrendingUp,
+      icon: IconTrendingUp,
       color: "red"
     },
     {
@@ -84,7 +84,7 @@ export default function SignalsPage() {
         "Share case studies from similar companies",
         "Offer 90-day planning consultation"
       ],
-      icon: Users,
+      icon: IconUsers,
       color: "purple"
     },
     {
@@ -111,7 +111,7 @@ export default function SignalsPage() {
         "Prepare ROI analysis",
         "Connect with procurement team"
       ],
-      icon: DollarSign,
+      icon: IconCurrencyDollar,
       color: "green"
     },
     {
@@ -138,7 +138,7 @@ export default function SignalsPage() {
         "Prepare differentiation materials",
         "Engage with LinkedIn post"
       ],
-      icon: MessageSquare,
+      icon: IconMessage,
       color: "orange"
     },
     {
@@ -165,7 +165,7 @@ export default function SignalsPage() {
         "Share Austin market insights",
         "Offer local hiring support"
       ],
-      icon: Building2,
+      icon: IconBuilding,
       color: "blue"
     },
     {
@@ -192,36 +192,21 @@ export default function SignalsPage() {
         "Share AI implementation case studies",
         "Offer pilot program"
       ],
-      icon: Zap,
+      icon: IconBolt,
       color: "yellow"
     }
   ]
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'urgent': return 'bg-red-100 text-red-800 border-red-200'
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200'
-      case 'medium': return 'bg-blue-100 text-blue-800 border-blue-200'
-      default: return 'bg-gray-100 text-gray-800 border-gray-200'
-    }
-  }
-
-  const getScoreColor = (score: number) => {
-    if (score >= 90) return 'bg-green-100 text-green-800'
-    if (score >= 80) return 'bg-blue-100 text-blue-800'
-    if (score >= 70) return 'bg-yellow-100 text-yellow-800'
-    return 'bg-gray-100 text-gray-800'
-  }
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'Hiring Activity': return TrendingUp
-      case 'Leadership Change': return Users
-      case 'Budget Signal': return DollarSign
-      case 'Competitive Intelligence': return MessageSquare
-      case 'Expansion Signal': return Building2
-      case 'Technology Signal': return Zap
-      default: return Activity
+      case 'Hiring Activity': return IconTrendingUp
+      case 'Leadership Change': return IconUsers
+      case 'Budget Signal': return IconCurrencyDollar
+      case 'Competitive Intelligence': return IconMessage
+      case 'Expansion Signal': return IconBuilding
+      case 'Technology Signal': return IconBolt
+      default: return IconActivity
     }
   }
 
@@ -229,84 +214,84 @@ export default function SignalsPage() {
     <div className="space-y-8">
       {/* Modern header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold">
           Signal Intelligence
         </h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-lg text-muted-foreground">
           AI-powered buying signals and market intelligence for your target accounts
         </p>
       </div>
 
       {/* Stats overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="border-0 shadow-lg bg-gradient-to-r from-red-50 to-red-100">
+        <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-red-700">Urgent Signals</p>
-                <p className="text-2xl font-bold text-red-900">
+                <p className="text-sm font-medium text-destructive">Urgent Signals</p>
+                <p className="text-2xl font-bold">
                   {signals.filter(s => s.priority === 'urgent').length}
                 </p>
               </div>
-              <AlertCircle className="h-8 w-8 text-red-600" />
+              <IconAlertCircle className="h-8 w-8 text-destructive" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-lg bg-gradient-to-r from-orange-50 to-orange-100">
+        <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-orange-700">High Priority</p>
-                <p className="text-2xl font-bold text-orange-900">
+                <p className="text-sm font-medium">High Priority</p>
+                <p className="text-2xl font-bold">
                   {signals.filter(s => s.priority === 'high').length}
                 </p>
               </div>
-              <Target className="h-8 w-8 text-orange-600" />
+              <IconTarget className="h-8 w-8" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-lg bg-gradient-to-r from-blue-50 to-blue-100">
+        <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-blue-700">Total Signals</p>
-                <p className="text-2xl font-bold text-blue-900">{signals.length}</p>
+                <p className="text-sm font-medium">Total Signals</p>
+                <p className="text-2xl font-bold">{signals.length}</p>
               </div>
-              <Activity className="h-8 w-8 text-blue-600" />
+              <IconActivity className="h-8 w-8" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-lg bg-gradient-to-r from-green-50 to-green-100">
+        <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-green-700">Avg Score</p>
-                <p className="text-2xl font-bold text-green-900">
+                <p className="text-sm font-medium">Avg Score</p>
+                <p className="text-2xl font-bold">
                   {Math.round(signals.reduce((acc, s) => acc + s.score, 0) / signals.length)}
                 </p>
               </div>
-              <Award className="h-8 w-8 text-green-600" />
+              <IconAward className="h-8 w-8" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Search and filters */}
-      <Card className="border-0 shadow-lg">
+      <Card>
         <CardContent className="p-6">
           <div className="flex gap-4 items-center">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <IconSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input 
                 placeholder="Search signals by company, contact, or type..."
-                className="pl-10 h-12 rounded-lg border-0 bg-gray-50"
+                className="pl-10 h-12"
               />
             </div>
-            <Button variant="outline" className="h-12 px-4 rounded-lg">
-              <Filter className="h-4 w-4 mr-2" />
+            <Button variant="outline" className="h-12 px-4">
+              <IconFilter className="h-4 w-4 mr-2" />
               Filter
             </Button>
           </div>
@@ -320,37 +305,34 @@ export default function SignalsPage() {
           const CategoryIcon = getCategoryIcon(signal.category)
           
           return (
-            <Card key={signal.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+            <Card key={signal.id}>
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">
-                  <div className={`p-3 rounded-full bg-gradient-to-r ${
-                    signal.color === 'red' ? 'from-red-500 to-red-600' :
-                    signal.color === 'purple' ? 'from-purple-500 to-purple-600' :
-                    signal.color === 'green' ? 'from-green-500 to-green-600' :
-                    signal.color === 'orange' ? 'from-orange-500 to-orange-600' :
-                    signal.color === 'blue' ? 'from-blue-500 to-blue-600' :
-                    'from-yellow-500 to-yellow-600'
-                  }`}>
-                    <IconComponent className="h-6 w-6 text-white" />
+                  <div className="p-3 rounded-full bg-muted">
+                    <IconComponent className="h-6 w-6" />
                   </div>
                   
                   <div className="flex-1 space-y-3">
                     <div className="flex items-start justify-between">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <h3 className="text-xl font-semibold text-gray-900">{signal.title}</h3>
-                          <Badge className={`${getPriorityColor(signal.priority)} border`}>
+                          <h3 className="text-xl font-semibold">{signal.title}</h3>
+                          <Badge variant={
+                            signal.priority === 'urgent' ? 'destructive' :
+                            signal.priority === 'high' ? 'default' :
+                            'secondary'
+                          }>
                             {signal.priority.toUpperCase()}
                           </Badge>
                         </div>
-                        <p className="text-gray-600 leading-relaxed">{signal.description}</p>
+                        <p className="text-muted-foreground leading-relaxed">{signal.description}</p>
                       </div>
                       
                       <div className="flex items-center gap-4">
                         <div className="text-right">
-                          <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getScoreColor(signal.score)}`}>
+                          <Badge variant="outline">
                             {signal.score} Score
-                          </div>
+                          </Badge>
                         </div>
                         
                         <Dialog>
@@ -358,10 +340,10 @@ export default function SignalsPage() {
                             <Button 
                               variant="outline" 
                               size="sm" 
-                              className="h-9 px-3 rounded-lg"
+                              className="h-9 px-3"
                               onClick={() => setSelectedSignal(signal)}
                             >
-                              <Eye className="h-4 w-4 mr-2" />
+                              <IconEye className="h-4 w-4 mr-2" />
                               View Details
                             </Button>
                           </DialogTrigger>
@@ -377,31 +359,31 @@ export default function SignalsPage() {
                               <div className="space-y-6">
                                 <div className="grid grid-cols-2 gap-4">
                                   <div>
-                                    <p className="text-sm font-medium text-gray-700 mb-1">Company</p>
-                                    <p className="text-gray-900">{selectedSignal.company}</p>
+                                    <p className="text-sm font-medium text-muted-foreground mb-1">Company</p>
+                                    <p>{selectedSignal.company}</p>
                                   </div>
                                   <div>
-                                    <p className="text-sm font-medium text-gray-700 mb-1">Contact</p>
-                                    <p className="text-gray-900">{selectedSignal.contact}</p>
+                                    <p className="text-sm font-medium text-muted-foreground mb-1">Contact</p>
+                                    <p>{selectedSignal.contact}</p>
                                   </div>
                                   <div>
-                                    <p className="text-sm font-medium text-gray-700 mb-1">Score</p>
-                                    <Badge className={getScoreColor(selectedSignal.score)}>
+                                    <p className="text-sm font-medium text-muted-foreground mb-1">Score</p>
+                                    <Badge variant="outline">
                                       {selectedSignal.score}/100
                                     </Badge>
                                   </div>
                                   <div>
-                                    <p className="text-sm font-medium text-gray-700 mb-1">Date</p>
-                                    <p className="text-gray-900">{selectedSignal.date}</p>
+                                    <p className="text-sm font-medium text-muted-foreground mb-1">Date</p>
+                                    <p>{selectedSignal.date}</p>
                                   </div>
                                 </div>
                                 
                                 <div>
-                                  <p className="text-sm font-medium text-gray-700 mb-3">Signal Details</p>
-                                  <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                                  <p className="text-sm font-medium text-muted-foreground mb-3">Signal Details</p>
+                                  <div className="bg-muted rounded-lg p-4 space-y-2">
                                     {Object.entries(selectedSignal.details).map(([key, value]) => (
                                       <div key={key} className="flex justify-between">
-                                        <span className="text-gray-600 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}:</span>
+                                        <span className="text-muted-foreground capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}:</span>
                                         <span className="font-medium">{Array.isArray(value) ? value.join(', ') : String(value)}</span>
                                       </div>
                                     ))}
@@ -409,19 +391,19 @@ export default function SignalsPage() {
                                 </div>
                                 
                                 <div>
-                                  <p className="text-sm font-medium text-gray-700 mb-3">Recommended Actions</p>
+                                  <p className="text-sm font-medium text-muted-foreground mb-3">Recommended Actions</p>
                                   <div className="space-y-2">
                                     {selectedSignal.actionItems.map((action: string, index: number) => (
                                       <div key={index} className="flex items-start gap-2">
-                                        <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                        <span className="text-gray-700">{action}</span>
+                                        <IconCheck className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                                        <span>{action}</span>
                                       </div>
                                     ))}
                                   </div>
                                 </div>
                                 
                                 <div className="flex gap-3 pt-4 border-t">
-                                  <Button className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+                                  <Button className="flex-1">
                                     Take Action
                                   </Button>
                                   <Button variant="outline" className="flex-1">
@@ -435,13 +417,13 @@ export default function SignalsPage() {
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
-                        <Building2 className="h-4 w-4" />
+                        <IconBuilding className="h-4 w-4" />
                         <span>{signal.company}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Users className="h-4 w-4" />
+                        <IconUsers className="h-4 w-4" />
                         <span>{signal.contact}</span>
                       </div>
                       <div className="flex items-center gap-1">
@@ -449,7 +431,7 @@ export default function SignalsPage() {
                         <span>{signal.category}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
+                        <IconCalendar className="h-4 w-4" />
                         <span>{signal.date}</span>
                       </div>
                     </div>

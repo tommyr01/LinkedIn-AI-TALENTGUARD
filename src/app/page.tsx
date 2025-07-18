@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Target, Users, Building2, BarChart3, ArrowRight } from 'lucide-react'
+import { IconTarget, IconUsers, IconBuilding, IconChartBar, IconArrowRight } from '@tabler/icons-react'
 
 export default function HomePage() {
   console.log('HomePage rendering at:', new Date().toISOString())
@@ -21,7 +21,7 @@ export default function HomePage() {
               <div className="relative">
                 <div className="absolute inset-0 bg-blue-600 rounded-3xl blur-lg opacity-20 animate-pulse" />
                 <div className="relative bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-6 shadow-xl">
-                  <Target className="h-12 w-12 text-white" />
+                  <IconTarget className="h-12 w-12 text-white" />
                 </div>
               </div>
             </div>
@@ -46,7 +46,7 @@ export default function HomePage() {
             <Card className="group border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
               <CardHeader className="pb-4">
                 <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <Building2 className="h-8 w-8 text-white" />
+                  <IconBuilding className="h-8 w-8 text-white" />
                 </div>
                 <CardTitle className="text-xl font-semibold">Company Search</CardTitle>
               </CardHeader>
@@ -60,7 +60,7 @@ export default function HomePage() {
             <Card className="group border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
               <CardHeader className="pb-4">
                 <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <Users className="h-8 w-8 text-white" />
+                  <IconUsers className="h-8 w-8 text-white" />
                 </div>
                 <CardTitle className="text-xl font-semibold">AI Enrichment</CardTitle>
               </CardHeader>
@@ -74,7 +74,7 @@ export default function HomePage() {
             <Card className="group border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
               <CardHeader className="pb-4">
                 <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-violet-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <BarChart3 className="h-8 w-8 text-white" />
+                  <IconChartBar className="h-8 w-8 text-white" />
                 </div>
                 <CardTitle className="text-xl font-semibold">Signal Intelligence</CardTitle>
               </CardHeader>
@@ -92,7 +92,7 @@ export default function HomePage() {
             <Button asChild size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
               <Link href="/dashboard">
                 Get Started
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <IconArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
           </div>

@@ -4,20 +4,20 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { 
-  Search, 
-  Filter, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Building2, 
-  Briefcase, 
-  Target,
-  Star,
-  MessageCircle,
-  Calendar,
-  ExternalLink,
-  TrendingUp
-} from 'lucide-react'
+  IconSearch, 
+  IconFilter, 
+  IconMail, 
+  IconPhone, 
+  IconMapPin, 
+  IconBuilding, 
+  IconBriefcase, 
+  IconTarget,
+  IconStar,
+  IconMessageCircle,
+  IconCalendar,
+  IconExternalLink,
+  IconTrendingUp
+} from '@tabler/icons-react'
 
 export default function ContactsPage() {
   // Mock data for contacts
@@ -92,32 +92,32 @@ export default function ContactsPage() {
 
   return (
     <div className="space-y-8">
-      {/* Modern header */}
+      {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold">
           Contact Profiles
         </h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-lg text-muted-foreground">
           Manage and track your buying committee contacts with AI-powered insights
         </p>
       </div>
 
       {/* Search and filters */}
-      <Card className="border-0 shadow-lg">
+      <Card>
         <CardContent className="p-6">
           <div className="flex gap-4 items-center">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <IconSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input 
                 placeholder="Search contacts by name, company, or title..."
-                className="pl-10 h-12 rounded-lg border-0 bg-gray-50"
+                className="pl-10"
               />
             </div>
-            <Button variant="outline" className="h-12 px-4 rounded-lg">
-              <Filter className="h-4 w-4 mr-2" />
+            <Button variant="outline">
+              <IconFilter className="h-4 w-4 mr-2" />
               Filter
             </Button>
-            <Button className="h-12 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-lg">
+            <Button>
               Add Contact
             </Button>
           </div>
@@ -127,54 +127,54 @@ export default function ContactsPage() {
       {/* Contact cards */}
       <div className="grid gap-6">
         {contacts.map((contact) => (
-          <Card key={contact.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+          <Card key={contact.id}>
             <CardContent className="p-6">
               <div className="grid lg:grid-cols-12 gap-6">
                 {/* Main contact info */}
                 <div className="lg:col-span-8 space-y-4">
                   <div className="flex items-start gap-4">
-                    <Avatar className="h-16 w-16 ring-2 ring-blue-100">
+                    <Avatar className="h-16 w-16">
                       <AvatarImage src={contact.avatar} alt={contact.name} />
-                      <AvatarFallback className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-lg font-semibold">
+                      <AvatarFallback className="text-lg font-semibold">
                         {contact.name.split(' ').map(n => n[0]).join('')}
                       </AvatarFallback>
                     </Avatar>
                     
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-2">
-                        <h3 className="text-xl font-semibold text-gray-900">{contact.name}</h3>
+                        <h3 className="text-xl font-semibold">{contact.name}</h3>
                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                          <ExternalLink className="h-4 w-4" />
+                          <IconExternalLink className="h-4 w-4" />
                         </Button>
                       </div>
                       
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Briefcase className="h-4 w-4" />
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <IconBriefcase className="h-4 w-4" />
                         <span className="font-medium">{contact.title}</span>
                       </div>
                       
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Building2 className="h-4 w-4" />
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <IconBuilding className="h-4 w-4" />
                         <span>{contact.company}</span>
-                        <span className="text-gray-400">•</span>
+                        <span className="text-muted-foreground/50">•</span>
                         <span className="text-sm">{contact.companySize} employees</span>
                       </div>
                       
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <MapPin className="h-4 w-4" />
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <IconMapPin className="h-4 w-4" />
                         <span>{contact.location}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Contact details */}
-                  <div className="grid md:grid-cols-2 gap-4 pt-4 border-t border-gray-100">
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Mail className="h-4 w-4" />
+                  <div className="grid md:grid-cols-2 gap-4 pt-4 border-t">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <IconMail className="h-4 w-4" />
                       <span className="text-sm">{contact.email}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Phone className="h-4 w-4" />
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <IconPhone className="h-4 w-4" />
                       <span className="text-sm">{contact.phone}</span>
                     </div>
                   </div>
@@ -184,13 +184,12 @@ export default function ContactsPage() {
                     {contact.tags.map((tag, index) => (
                       <Badge 
                         key={index} 
-                        variant="secondary" 
-                        className={`px-3 py-1 ${
-                          tag === 'Hot Lead' ? 'bg-red-100 text-red-700' :
-                          tag === 'Decision Maker' ? 'bg-purple-100 text-purple-700' :
-                          tag === 'Budget Owner' ? 'bg-green-100 text-green-700' :
-                          'bg-blue-100 text-blue-700'
-                        }`}
+                        variant={
+                          tag === 'Hot Lead' ? 'destructive' :
+                          tag === 'Decision Maker' ? 'secondary' :
+                          tag === 'Budget Owner' ? 'default' :
+                          'outline'
+                        }
                       >
                         {tag}
                       </Badge>
@@ -198,8 +197,8 @@ export default function ContactsPage() {
                   </div>
 
                   {/* Notes */}
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <p className="text-sm text-gray-700 leading-relaxed">
+                  <div className="bg-muted rounded-lg p-4">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
                       {contact.notes}
                     </p>
                   </div>
@@ -208,24 +207,24 @@ export default function ContactsPage() {
                 {/* Sidebar with scores and actions */}
                 <div className="lg:col-span-4 space-y-4">
                   {/* TalentGuard Score */}
-                  <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-0">
+                  <Card>
                     <CardContent className="p-4 text-center">
                       <div className="space-y-2">
                         <div className="flex items-center justify-center gap-2">
-                          <Target className="h-5 w-5 text-blue-600" />
-                          <span className="text-sm font-medium text-blue-700">TalentGuard Score</span>
+                          <IconTarget className="h-5 w-5" />
+                          <span className="text-sm font-medium">TalentGuard Score</span>
                         </div>
-                        <div className="text-3xl font-bold text-blue-900">
+                        <div className="text-3xl font-bold">
                           {contact.talentGuardScore}
                         </div>
                         <div className="flex items-center justify-center gap-1">
                           {[...Array(5)].map((_, i) => (
-                            <Star 
+                            <IconStar 
                               key={i} 
                               className={`h-4 w-4 ${
                                 i < Math.floor(contact.talentGuardScore / 20) 
                                   ? 'text-yellow-400 fill-current' 
-                                  : 'text-gray-300'
+                                  : 'text-muted-foreground'
                               }`} 
                             />
                           ))}
@@ -235,19 +234,19 @@ export default function ContactsPage() {
                   </Card>
 
                   {/* Buying Signals */}
-                  <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-0">
+                  <Card>
                     <CardContent className="p-4 text-center">
                       <div className="space-y-2">
                         <div className="flex items-center justify-center gap-2">
-                          <TrendingUp className="h-5 w-5 text-green-600" />
-                          <span className="text-sm font-medium text-green-700">Buying Signals</span>
+                          <IconTrendingUp className="h-5 w-5" />
+                          <span className="text-sm font-medium">Buying Signals</span>
                         </div>
-                        <div className="text-3xl font-bold text-green-900">
+                        <div className="text-3xl font-bold">
                           {contact.buyingSignals}/10
                         </div>
-                        <div className="w-full bg-green-200 rounded-full h-2">
+                        <div className="w-full bg-muted rounded-full h-2">
                           <div 
-                            className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-300"
+                            className="bg-primary h-2 rounded-full transition-all duration-300"
                             style={{ width: `${contact.buyingSignals * 10}%` }}
                           />
                         </div>
@@ -257,20 +256,20 @@ export default function ContactsPage() {
 
                   {/* Actions */}
                   <div className="space-y-3">
-                    <Button className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-lg">
-                      <MessageCircle className="h-4 w-4 mr-2" />
+                    <Button className="w-full h-12">
+                      <IconMessageCircle className="h-4 w-4 mr-2" />
                       Send Message
                     </Button>
-                    <Button variant="outline" className="w-full h-12 rounded-lg">
-                      <Calendar className="h-4 w-4 mr-2" />
+                    <Button variant="outline" className="w-full h-12">
+                      <IconCalendar className="h-4 w-4 mr-2" />
                       Schedule Meeting
                     </Button>
                   </div>
 
                   {/* Meeting History */}
-                  <Card className="bg-gray-50 border-0">
+                  <Card>
                     <CardHeader className="pb-3">
-                      <CardTitle className="text-sm font-medium text-gray-700">
+                      <CardTitle className="text-sm font-medium">
                         Recent Activity
                       </CardTitle>
                     </CardHeader>
@@ -278,13 +277,13 @@ export default function ContactsPage() {
                       {contact.meetingHistory.slice(0, 2).map((meeting, index) => (
                         <div key={index} className="flex justify-between items-center text-sm">
                           <div>
-                            <div className="font-medium text-gray-900">{meeting.type}</div>
-                            <div className="text-gray-500">{meeting.date}</div>
+                            <div className="font-medium">{meeting.type}</div>
+                            <div className="text-muted-foreground">{meeting.date}</div>
                           </div>
-                          <div className="text-gray-600">{meeting.duration}</div>
+                          <div className="text-muted-foreground">{meeting.duration}</div>
                         </div>
                       ))}
-                      <div className="text-xs text-gray-500 pt-2 border-t border-gray-200">
+                      <div className="text-xs text-muted-foreground pt-2 border-t">
                         Last activity: {contact.lastActivity}
                       </div>
                     </CardContent>
