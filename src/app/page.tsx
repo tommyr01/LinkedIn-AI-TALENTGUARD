@@ -1,28 +1,28 @@
+'use client'
+
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { IconTarget, IconUsers, IconBuilding, IconChartBar, IconArrowRight } from '@tabler/icons-react'
+import { useEffect } from 'react'
 
 export default function HomePage() {
-  console.log('HomePage rendering at:', new Date().toISOString())
-  
+  // Prevent any automatic navigation
+  useEffect(() => {
+    // This will ensure we stay on this page
+    console.log('Homepage mounted - no redirect')
+  }, [])
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+    <div className="min-h-screen">
       {/* Modern hero section */}
       <div className="relative overflow-hidden">
-        {/* Background decoration */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-indigo-100/50" />
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_70%)]" />
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           {/* Header */}
           <div className="text-center space-y-8">
             <div className="flex items-center justify-center mb-8">
-              <div className="relative">
-                <div className="absolute inset-0 bg-blue-600 rounded-3xl blur-lg opacity-20 animate-pulse" />
-                <div className="relative bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-6 shadow-xl">
-                  <IconTarget className="h-12 w-12 text-white" />
-                </div>
+              <div className="bg-primary rounded-3xl p-6">
+                <IconTarget className="h-12 w-12 text-primary-foreground" />
               </div>
             </div>
             
@@ -89,12 +89,12 @@ export default function HomePage() {
           {/* Modern CTA */}
           <div className="mt-20 text-center">
             <p className="text-lg text-gray-600 mb-8">Ready to transform your prospecting?</p>
-            <Button asChild size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-              <Link href="/dashboard">
+            <Link href="/dashboard">
+              <Button size="lg" className="px-8 py-6 text-lg">
                 Get Started
                 <IconArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
