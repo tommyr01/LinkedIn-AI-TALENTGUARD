@@ -90,7 +90,7 @@ export const companyOperations = {
     try {
       const records = await base(tables.companies).select({
         maxRecords: 100,
-        sort: [{ field: 'TalentGuard Score', direction: 'desc' }]
+        sort: [{ field: 'Engagement Score', direction: 'desc' }]
       }).all();
       
       return { 

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { companyOperations, tables } from '@/lib/airtable';
+import { airtableBase, tables } from '@/lib/airtable';
 
 export async function GET() {
   try {
@@ -9,13 +9,16 @@ export async function GET() {
       hasCompaniesTable: !!tables.companies,
     };
     
-    // Try to fetch companies from Airtable
-    const result = await companyOperations.findAll();
+    // Try to fetch companies directly from Airtable base
+    const records = await airtableBase(tables.companies)
+      .select({ maxRecords: 3 })
+      .all();
     
     return NextResponse.json({
       success: true,
       config,
-      companies: result.data?.length || 0,
+      companies: records.length,
+      sampleData: records.map(r => ({ id: r.id, fields: Object.keys(r.fields) })),
       message: 'Airtable integration is working!'
     });
   } catch (error) {
@@ -23,8 +26,9 @@ export async function GET() {
     
     return NextResponse.json({
       success: false,
+      config: { tables },
       error: (error as Error).message || 'Unknown error',
-      message: 'Failed to connect to Airtable'
+      message: 'Airtable integration failed!'
     }, { status: 500 });
   }
 } 
