@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     const records = await airtableBase(tables.signals)
       .select({ 
         filterByFormula: filterFormula || undefined, // Use undefined to fetch all records
-        sort: [{ field: 'Created At', direction: 'desc' }]
+        sort: [{ field: 'Date', direction: 'desc' }]
       })
       .all();
     
