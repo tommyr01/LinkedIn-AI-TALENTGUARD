@@ -17,9 +17,10 @@ export async function GET(request: NextRequest) {
       filterFormula = `FIND('${contactId}', {Contact ID})`;
     }
     
+    // Fetch all signals if no filter is applied
     const records = await airtableBase(tables.signals)
       .select({ 
-        filterByFormula: filterFormula || '',
+        filterByFormula: filterFormula || undefined, // Use undefined to fetch all records
         sort: [{ field: 'Created At', direction: 'desc' }]
       })
       .all();
