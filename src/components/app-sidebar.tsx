@@ -26,31 +26,37 @@ const data = {
       title: "Dashboard",
       url: "/dashboard",
       icon: IconDashboard,
+      visible: true,
     },
     {
       title: "Company Search",
       url: "/dashboard/search",
       icon: IconSearch,
+      visible: true,
     },
     {
       title: "Contacts",
       url: "/dashboard/contacts",
       icon: IconUsers,
+      visible: false, // Hidden for now, but kept for future use
     },
     {
       title: "Companies",
       url: "/dashboard/companies",
       icon: IconBuilding,
+      visible: true,
     },
     {
       title: "Signals",
       url: "/dashboard/signals",
       icon: IconTarget,
+      visible: true,
     },
     {
       title: "Settings",
       url: "/dashboard/settings",
       icon: IconSettings,
+      visible: true,
     },
   ],
 }
@@ -68,25 +74,27 @@ export function AppSidebar() {
       </div>
       <nav className="flex-1 px-3 py-2">
         <ul className="space-y-1">
-          {data.navMain.map((item) => {
-            const Icon = item.icon
-            const isActive = pathname === item.url
-            return (
-              <li key={item.url}>
-                <Link
-                  href={item.url}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'hover:bg-muted'
-                  }`}
-                >
-                  <Icon className="h-4 w-4" />
-                  {item.title}
-                </Link>
-              </li>
-            )
-          })}
+          {data.navMain
+            .filter(item => item.visible)
+            .map((item) => {
+              const Icon = item.icon
+              const isActive = pathname === item.url
+              return (
+                <li key={item.url}>
+                  <Link
+                    href={item.url}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      isActive 
+                        ? 'bg-primary text-primary-foreground' 
+                        : 'hover:bg-muted'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.title}
+                  </Link>
+                </li>
+              )
+            })}
         </ul>
       </nav>
       <div className="border-t px-3 py-3">
