@@ -12,7 +12,6 @@ import {
   IconUsers, 
   IconMapPin, 
   IconBriefcase,
-  IconFilter,
   IconDownload,
   IconPlus
 } from '@tabler/icons-react'
@@ -124,10 +123,6 @@ export default function CompanySearchPage() {
             <Button onClick={handleSearch} disabled={loading}>
               <IconSearch className="h-4 w-4 mr-2" />
               {loading ? 'Searching...' : 'Search Companies'}
-            </Button>
-            <Button variant="outline">
-              <IconFilter className="h-4 w-4 mr-2" />
-              Advanced Filters
             </Button>
           </div>
         </CardContent>
