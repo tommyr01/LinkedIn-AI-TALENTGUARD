@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { airtable, tables } from '@/lib/airtable';
+import { airtableBase, tables } from '@/lib/airtable';
 
 // GET /api/accounts?domain=ethosenergy.com
 export async function GET(request: NextRequest) {
@@ -7,8 +7,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const domain = searchParams.get('domain');
     
-    const records = await airtable
-      .base(tables.companies) // Using 'companies' instead of 'accounts' to match our existing structure
+    const records = await airtableBase(tables.companies)
       .select({ 
         filterByFormula: domain ? `{Domain} = '${domain}'` : '' 
       })
@@ -29,8 +28,7 @@ export async function GET(request: NextRequest) {
 // POST /api/accounts (for quick-add)
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { name, domain } = body;
+    const { name, domain } = await request.json();
     
     if (!name || !domain) {
       return NextResponse.json(
@@ -39,10 +37,9 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const record = await airtable
-      .base(tables.companies)
+    const record = await airtableBase(tables.companies)
       .create({ 
-        'Company Name': name, // Using field name that matches our schema
+        'Company Name': name, 
         'Domain': domain 
       });
     

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { airtable, tables } from '@/lib/airtable';
+import { airtableBase, tables } from '@/lib/airtable';
 
 // GET /api/reports?companyId=recXXXXXXXX
 // GET /api/reports?contactId=recXXXXXXXX
@@ -17,38 +17,15 @@ export async function GET(request: NextRequest) {
       filterFormula = `FIND('${contactId}', {Contact ID})`;
     }
     
-    const records = await airtable
-      .base(tables.research) // Using 'research' instead of 'reports' to match our existing structure
-      .select({ 
+    const records = await airtableBase(tables.research) // Using 'research' instead of 'reports' to match our existing structure
+      .select({
         filterByFormula: filterFormula || '',
-        sort: [{ field: 'Created At', direction: 'desc' }],
-        maxRecords: 100
+        sort: [{ field: 'Created At', direction: 'desc' }]
       })
       .all();
     
     return NextResponse.json(
-      records.map(r => {
-        const fields = { ...r.fields };
-        
-        // Parse JSON fields
-        if (fields.Insights && typeof fields.Insights === 'string') {
-          try {
-            fields.Insights = JSON.parse(fields.Insights);
-          } catch (e) {
-            fields.Insights = [];
-          }
-        }
-        
-        if (fields.Recommendations && typeof fields.Recommendations === 'string') {
-          try {
-            fields.Recommendations = JSON.parse(fields.Recommendations);
-          } catch (e) {
-            fields.Recommendations = [];
-          }
-        }
-        
-        return { id: r.id, ...fields };
-      })
+      records.map(r => ({ id: r.id, ...r.fields }))
     );
   } catch (error) {
     console.error('Error fetching reports:', error);
@@ -59,43 +36,26 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/reports
+// POST /api/reports (for quick-add)
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { 
-      query,
-      context,
-      summary,
-      insights,
-      recommendations,
-      talentGuardScore,
-      buyingProbability,
-      companyId,
-      contactId
-    } = body;
+    const { title, content, type, companyId, contactId } = await request.json();
     
-    if (!query || !summary) {
+    if (!title || !content) {
       return NextResponse.json(
-        { error: 'Query and summary are required' },
+        { error: 'Title and content are required' },
         { status: 400 }
       );
     }
     
-    const record = await airtable
-      .base(tables.research)
+    const record = await airtableBase(tables.research)
       .create({ 
-        'Query': query,
-        'Context': context || '',
-        'Summary': summary,
-        'Insights': JSON.stringify(insights || []),
-        'Recommendations': JSON.stringify(recommendations || []),
-        'TalentGuard Score': talentGuardScore || 0,
-        'Buying Probability': buyingProbability || 0,
+        'Title': title,
+        'Content': content,
+        'Type': type || 'General',
         'Company ID': companyId ? [companyId] : [],
         'Contact ID': contactId ? [contactId] : [],
-        'Created At': new Date().toISOString(),
-        'Updated At': new Date().toISOString()
+        'Created At': new Date().toISOString()
       });
     
     return NextResponse.json(

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { airtable, tables } from '@/lib/airtable';
+import { airtableBase, tables } from '@/lib/airtable';
 
 // GET /api/contacts?email=example@domain.com
 // GET /api/contacts?companyId=recXXXXXXXX
@@ -17,8 +17,7 @@ export async function GET(request: NextRequest) {
       filterFormula = `FIND('${companyId}', {Company ID})`;
     }
     
-    const records = await airtable
-      .base(tables.contacts)
+    const records = await airtableBase(tables.contacts)
       .select({ 
         filterByFormula: filterFormula || '' 
       })
@@ -36,22 +35,10 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/contacts
+// POST /api/contacts (for quick-add)
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { 
-      name, 
-      email, 
-      title, 
-      company, 
-      companyId,
-      phone,
-      linkedin,
-      location,
-      talentGuardScore,
-      buyingSignals
-    } = body;
+    const { name, email, company, title } = await request.json();
     
     if (!name || !email) {
       return NextResponse.json(
@@ -60,21 +47,12 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const record = await airtable
-      .base(tables.contacts)
+    const record = await airtableBase(tables.contacts)
       .create({ 
         'Full Name': name,
         'Email': email,
-        'Job Title': title || '',
         'Company Name': company || '',
-        'Company ID': companyId ? [companyId] : [],
-        'Phone': phone || '',
-        'LinkedIn URL': linkedin || '',
-        'Location': location || '',
-        'TalentGuard Score': talentGuardScore || 0,
-        'Buying Signals': buyingSignals || 0,
-        'Created At': new Date().toISOString(),
-        'Updated At': new Date().toISOString()
+        'Job Title': title || ''
       });
     
     return NextResponse.json(

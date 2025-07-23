@@ -8,8 +8,12 @@ const baseId = process.env.AIRTABLE_BASE_ID || 'appzgiUWBCdh58x00';
 const apiKey = process.env.AIRTABLE_API_KEY || 'patIyuzOzrS9vFURu.ef38274eb40ebcee3b9ee9934be42e52a28f3bd006f4033df49fdca5fb3577a3';
 
 // Create a configured Airtable instance
-const airtable = new Airtable({ apiKey });
-const base = airtable.base(baseId);
+const airtableInstance = new Airtable({ apiKey });
+const base = airtableInstance.base(baseId);
+
+// Export the airtable instance and base for use in API routes
+export const airtable = airtableInstance;
+export const airtableBase = base;
 
 // Table IDs
 export const tables = {
