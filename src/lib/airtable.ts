@@ -1,29 +1,42 @@
 // Airtable integration for TalentGuard Buyer Intelligence
 // This module handles all Airtable operations for storing and retrieving data
 
-import Airtable from 'airtable'
+import Airtable from 'airtable';
 
-// Table names
+// Configure Airtable connection
+const baseId = process.env.AIRTABLE_BASE_ID || 'appzgiUWBCdh58x00';
+const apiKey = process.env.AIRTABLE_API_KEY || 'patIyuzOzrS9vFURu.ef38274eb40ebcee3b9ee9934be42e52a28f3bd006f4033df49fdca5fb3577a3';
+
+// Create a configured Airtable instance
+const airtable = new Airtable({ apiKey });
+const base = airtable.base(baseId);
+
+// Table IDs
+export const tables = {
+  companies: process.env.AIRTABLE_COMPANIES_TABLE || 'tblJOd8XlW2sT0BQ6',
+  contacts: process.env.AIRTABLE_CONTACTS_TABLE || '',
+  signals: process.env.AIRTABLE_SIGNALS_TABLE || '',
+  research: process.env.AIRTABLE_RESEARCH_TABLE || '',
+  activities: process.env.AIRTABLE_ACTIVITIES_TABLE || '',
+};
+
+// Table names for backward compatibility
 export const TABLES = {
   COMPANIES: 'Companies',
   CONTACTS: 'Contacts',
   SIGNALS: 'Signals',
   RESEARCH: 'Research',
   ACTIVITIES: 'Activities'
-} as const
+} as const;
 
-// Get base instance (lazy initialization)
+// Get base instance (for backward compatibility)
 export const getBase = () => {
   if (!process.env.AIRTABLE_API_KEY || !process.env.AIRTABLE_BASE_ID) {
-    throw new Error('Airtable API key and base ID are required')
+    console.warn('Using fallback Airtable credentials');
   }
   
-  const airtable = new Airtable({
-    apiKey: process.env.AIRTABLE_API_KEY,
-  })
-  
-  return airtable.base(process.env.AIRTABLE_BASE_ID)
-}
+  return base;
+};
 
 // Companies operations
 export const companyOperations = {
@@ -42,10 +55,8 @@ export const companyOperations = {
     revenue?: string
     talentGuardScore?: number
   }) {
-    const base = getBase()
-    
     try {
-      const record = await base(TABLES.COMPANIES).create({
+      const record = await base(tables.companies).create({
         'Company Name': data.name,
         'Domain': data.domain,
         'Industry': data.industry,
@@ -60,72 +71,69 @@ export const companyOperations = {
         'TalentGuard Score': data.talentGuardScore || 0,
         'Created At': new Date().toISOString(),
         'Updated At': new Date().toISOString()
-      })
+      });
       
-      return { success: true, data: record }
+      return { success: true, data: record };
     } catch (error) {
-      console.error('Error creating company:', error)
-      return { success: false, error: error }
+      console.error('Error creating company:', error);
+      return { success: false, error: error };
     }
   },
 
   // Get all companies
   async findAll() {
-    const base = getBase()
-    
     try {
-      const records = await base(TABLES.COMPANIES).select({
+      const records = await base(tables.companies).select({
         maxRecords: 100,
         sort: [{ field: 'TalentGuard Score', direction: 'desc' }]
-      }).all()
+      }).all();
       
-      return { success: true, data: records.map(record => ({
-        id: record.id,
-        ...record.fields
-      })) }
+      return { 
+        success: true, 
+        data: records.map(record => ({
+          id: record.id,
+          ...record.fields
+        }))
+      };
     } catch (error) {
-      console.error('Error fetching companies:', error)
-      return { success: false, error: error }
+      console.error('Error fetching companies:', error);
+      return { success: false, error: error };
     }
   },
 
   // Find company by domain
   async findByDomain(domain: string) {
-    const base = getBase()
-    
     try {
-      const records = await base(TABLES.COMPANIES).select({
+      const records = await base(tables.companies).select({
         filterByFormula: `{Domain} = "${domain}"`,
         maxRecords: 1
-      }).all()
+      }).all();
       
       return { 
         success: true, 
         data: records.length > 0 ? { id: records[0].id, ...records[0].fields } : null 
-      }
+      };
     } catch (error) {
-      console.error('Error finding company by domain:', error)
-      return { success: false, error: error }
+      console.error('Error finding company by domain:', error);
+      return { success: false, error: error };
     }
   },
 
   // Update company record
   async update(recordId: string, data: Partial<any>) {
-    const base = getBase()
-    
     try {
-      const record = await base(TABLES.COMPANIES).update(recordId, {
+      const record = await base(tables.companies).update(recordId, {
         ...data,
         'Updated At': new Date().toISOString()
-      })
+      });
       
-      return { success: true, data: record }
+      return { success: true, data: record };
     } catch (error) {
-      console.error('Error updating company:', error)
-      return { success: false, error: error }
+      console.error('Error updating company:', error);
+      return { success: false, error: error };
     }
   }
-}
+};
 
 // Contacts operations
 export const contactOperations = {
@@ -142,10 +150,8 @@ export const contactOperations = {
     talentGuardScore?: number
     buyingSignals?: number
   }) {
-    const base = getBase()
-    
     try {
-      const record = await base(TABLES.CONTACTS).create({
+      const record = await base(tables.contacts).create({
         'Full Name': data.name,
         'Email': data.email,
         'Job Title': data.title,
@@ -158,55 +164,54 @@ export const contactOperations = {
         'Buying Signals': data.buyingSignals || 0,
         'Created At': new Date().toISOString(),
         'Updated At': new Date().toISOString()
-      })
+      });
       
-      return { success: true, data: record }
+      return { success: true, data: record };
     } catch (error) {
-      console.error('Error creating contact:', error)
-      return { success: false, error: error }
+      console.error('Error creating contact:', error);
+      return { success: false, error: error };
     }
   },
 
   // Get all contacts
   async findAll() {
-    const base = getBase()
-    
     try {
-      const records = await base(TABLES.CONTACTS).select({
+      const records = await base(tables.contacts).select({
         maxRecords: 100,
         sort: [{ field: 'TalentGuard Score', direction: 'desc' }]
-      }).all()
+      }).all();
       
-      return { success: true, data: records.map(record => ({
-        id: record.id,
-        ...record.fields
-      })) }
+      return { 
+        success: true, 
+        data: records.map(record => ({
+          id: record.id,
+          ...record.fields
+        }))
+      };
     } catch (error) {
-      console.error('Error fetching contacts:', error)
-      return { success: false, error: error }
+      console.error('Error fetching contacts:', error);
+      return { success: false, error: error };
     }
   },
 
   // Find contact by email
   async findByEmail(email: string) {
-    const base = getBase()
-    
     try {
-      const records = await base(TABLES.CONTACTS).select({
+      const records = await base(tables.contacts).select({
         filterByFormula: `{Email} = "${email}"`,
         maxRecords: 1
-      }).all()
+      }).all();
       
       return { 
         success: true, 
         data: records.length > 0 ? { id: records[0].id, ...records[0].fields } : null 
-      }
+      };
     } catch (error) {
-      console.error('Error finding contact by email:', error)
-      return { success: false, error: error }
+      console.error('Error finding contact by email:', error);
+      return { success: false, error: error };
     }
   }
-}
+};
 
 // Signals operations
 export const signalOperations = {
@@ -224,10 +229,8 @@ export const signalOperations = {
     confidence: number
     metadata?: any
   }) {
-    const base = getBase()
-    
     try {
-      const record = await base(TABLES.SIGNALS).create({
+      const record = await base(tables.signals).create({
         'Signal Type': data.type,
         'Title': data.title,
         'Description': data.description,
@@ -241,36 +244,37 @@ export const signalOperations = {
         'Metadata': JSON.stringify(data.metadata || {}),
         'Created At': new Date().toISOString(),
         'Updated At': new Date().toISOString()
-      })
+      });
       
-      return { success: true, data: record }
+      return { success: true, data: record };
     } catch (error) {
-      console.error('Error creating signal:', error)
-      return { success: false, error: error }
+      console.error('Error creating signal:', error);
+      return { success: false, error: error };
     }
   },
 
   // Get recent signals
   async findRecent(limit: number = 50) {
-    const base = getBase()
-    
     try {
-      const records = await base(TABLES.SIGNALS).select({
+      const records = await base(tables.signals).select({
         maxRecords: limit,
         sort: [{ field: 'Created At', direction: 'desc' }]
-      }).all()
+      }).all();
       
-      return { success: true, data: records.map(record => ({
-        id: record.id,
-        ...record.fields,
-        metadata: record.fields.Metadata ? JSON.parse(record.fields.Metadata as string) : {}
-      })) }
+      return { 
+        success: true, 
+        data: records.map(record => ({
+          id: record.id,
+          ...record.fields,
+          metadata: record.fields.Metadata ? JSON.parse(record.fields.Metadata as string) : {}
+        }))
+      };
     } catch (error) {
-      console.error('Error fetching recent signals:', error)
-      return { success: false, error: error }
+      console.error('Error fetching recent signals:', error);
+      return { success: false, error: error };
     }
   }
-}
+};
 
 // Research operations
 export const researchOperations = {
@@ -286,10 +290,8 @@ export const researchOperations = {
     companyId?: string
     contactId?: string
   }) {
-    const base = getBase()
-    
     try {
-      const record = await base(TABLES.RESEARCH).create({
+      const record = await base(tables.research).create({
         'Query': data.query,
         'Context': data.context,
         'Summary': data.summary,
@@ -301,15 +303,15 @@ export const researchOperations = {
         'Contact ID': data.contactId ? [data.contactId] : [],
         'Created At': new Date().toISOString(),
         'Updated At': new Date().toISOString()
-      })
+      });
       
-      return { success: true, data: record }
+      return { success: true, data: record };
     } catch (error) {
-      console.error('Error creating research record:', error)
-      return { success: false, error: error }
+      console.error('Error creating research record:', error);
+      return { success: false, error: error };
     }
   }
-}
+};
 
 // Activity tracking
 export const activityOperations = {
@@ -321,22 +323,20 @@ export const activityOperations = {
     contactId?: string
     metadata?: any
   }) {
-    const base = getBase()
-    
     try {
-      const record = await base(TABLES.ACTIVITIES).create({
+      const record = await base(tables.activities).create({
         'Activity Type': data.type,
         'Description': data.description,
         'Company ID': data.companyId ? [data.companyId] : [],
         'Contact ID': data.contactId ? [data.contactId] : [],
         'Metadata': JSON.stringify(data.metadata || {}),
         'Created At': new Date().toISOString()
-      })
+      });
       
-      return { success: true, data: record }
+      return { success: true, data: record };
     } catch (error) {
-      console.error('Error logging activity:', error)
-      return { success: false, error: error }
+      console.error('Error logging activity:', error);
+      return { success: false, error: error };
     }
   }
-}
+};
