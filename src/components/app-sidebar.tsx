@@ -38,7 +38,7 @@ const data = {
       title: "Contacts",
       url: "/dashboard/contacts",
       icon: IconUsers,
-      visible: false, // Hidden for now, but kept for future use
+      visible: true, // Changed to true to make it visible again
     },
     {
       title: "Companies",
