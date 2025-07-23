@@ -20,26 +20,36 @@ import {
 } from '@tabler/icons-react'
 import useSWR from 'swr'
 
-const fetcher = (url: string) => fetch(url).then(r => r.json())
+const fetcher = (url: string) => 
+  fetch(url).then(async (res) => {
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  })
 
 // Type definition for Airtable company data
 interface AirtableCompany {
   id: string
   Name?: string
   Domain?: string
-  Status?: string
   Industry?: string
-  'Company Size'?: string | number
-  Location?: string
-  Website?: string
-  'TalentGuard Score'?: number
-  'Buying Committee'?: Array<{
-    name: string
-    role: string
-    status: string
-  }>
-  'Last Activity'?: string
-  Revenue?: string
+  'TG Customer'?: boolean
+  'Engagement Score'?: number
+  'Last Signal Date'?: string
+  Contacts?: string[]
+  'Total Contacts'?: number
+  'Recent Signal Type'?: string[]
+  Signals?: string[]
+  'Engagement Summary'?: {
+    state: string
+    value: string
+    isStale: boolean
+  }
+  'Industry Insights'?: {
+    state: string
+    value: string
+    isStale: boolean
+  }
+  Tasks?: string[]
   [key: string]: any // Allow additional fields
 }
 
@@ -49,9 +59,9 @@ export default function CompaniesPage() {
 
   // Stats calculations
   const totalCompanies = companies?.length || 0
-  const hotLeads = companies?.filter((c: AirtableCompany) => c.Status === 'Hot Lead').length || 0
-  const avgScore = (companies?.reduce((acc: number, curr: AirtableCompany) => acc + (curr['TalentGuard Score'] || 0), 0) || 0) / (totalCompanies || 1)
-  const activeContacts = companies?.reduce((acc: number, curr: AirtableCompany) => acc + (curr['Buying Committee']?.length || 0), 0) || 0
+  const customerCompanies = companies?.filter((c: AirtableCompany) => c['TG Customer'] === true).length || 0
+  const avgScore = (companies?.reduce((acc: number, curr: AirtableCompany) => acc + (curr['Engagement Score'] || 0), 0) || 0) / (totalCompanies || 1)
+  const activeContacts = companies?.reduce((acc: number, curr: AirtableCompany) => acc + (curr['Total Contacts'] || 0), 0) || 0
 
   // Handle loading state
   if (isLoading) {
@@ -114,20 +124,20 @@ export default function CompaniesPage() {
             </p>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Hot Leads</CardTitle>
+            <CardTitle className="text-sm font-medium">TG Customers</CardTitle>
             <IconTrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{hotLeads}</div>
+            <div className="text-2xl font-bold">{customerCompanies}</div>
             <p className="text-xs text-muted-foreground">
-              Ready to engage
+              Current customers
             </p>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Avg Score</CardTitle>
@@ -140,7 +150,7 @@ export default function CompaniesPage() {
             </p>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Contacts</CardTitle>
@@ -187,77 +197,69 @@ export default function CompaniesPage() {
             <Card key={company.id} className="hover:shadow-lg transition-shadow">
               <CardContent className="pt-6">
                 <div className="grid gap-4 md:grid-cols-4">
-                  {/* Company Info */}
+                                  {/* Company Info */}
                   <div className="md:col-span-2">
                     <div className="flex items-start justify-between">
                       <div>
                         <h3 className="text-lg font-semibold flex items-center gap-2">
                           {company.Name || 'Unnamed Company'}
-                          <Badge 
-                            variant={
-                              company['Status'] === 'Hot Lead' ? 'destructive' :
-                              company['Status'] === 'Active' ? 'default' :
-                              'secondary'
-                            }
-                          >
-                            {company['Status'] || 'New'}
-                          </Badge>
+                          {company['TG Customer'] && (
+                            <Badge variant="default">
+                              Customer
+                            </Badge>
+                          )}
                         </h3>
                         <div className="flex flex-wrap gap-4 mt-2 text-sm text-muted-foreground">
-                          <span>{company['Industry'] || 'Unknown Industry'}</span>
+                          <span>{company.Industry || 'Unknown Industry'}</span>
                           <span>•</span>
-                          <span>{company['Company Size'] || 'Unknown Size'} employees</span>
+                          <span>{company['Total Contacts'] || 0} contacts</span>
                           <span>•</span>
-                          <span>{company['Location'] || 'Unknown Location'}</span>
+                          <span>{company.Signals?.length || 0} signals</span>
                         </div>
                         <div className="mt-2">
-                          <a href={company['Website']} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                            {company['Website'] || 'No website'}
+                          <a href={company.Domain} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                            {company.Domain || 'No website'}
                           </a>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Buying Committee */}
+                  {/* Engagement Summary */}
                   <div className="md:col-span-1">
                     <p className="text-sm font-medium text-muted-foreground">
-                      Buying Committee ({company['Buying Committee']?.length || 0})
+                      Engagement Summary
                     </p>
-                    <div className="mt-1 space-y-1">
-                      {company['Buying Committee'] ? (
-                        company['Buying Committee'].map((member, idx) => (
-                          <div key={idx} className="text-sm">
-                            <span className="font-medium">{member.name}</span>
-                            <span className="text-muted-foreground"> - {member.role}</span>
-                            <Badge 
-                              variant="outline" 
-                              className="ml-2 text-xs"
-                            >
-                              {member.status}
+                    <div className="mt-1">
+                      <p className="text-sm">
+                        {company['Engagement Summary']?.value || 'No engagement data'}
+                      </p>
+                      {company['Recent Signal Type'] && (
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {company['Recent Signal Type'].map((signal: string, idx: number) => (
+                            <Badge key={idx} variant="outline" className="text-xs">
+                              {signal}
                             </Badge>
-                          </div>
-                        ))
-                      ) : (
-                        <p className="text-sm text-muted-foreground">No contacts added</p>
+                          ))}
+                        </div>
                       )}
                     </div>
                   </div>
 
                   {/* Score */}
                   <div className="md:col-span-1 text-right">
-                    <div className="text-2xl font-bold">{company['TalentGuard Score'] || 'N/A'}</div>
-                    <div className="text-xs text-muted-foreground">TalentGuard Score</div>
-                    {company['Last Activity'] && (
+                    <div className="text-2xl font-bold">{company['Engagement Score'] || 'N/A'}</div>
+                    <div className="text-xs text-muted-foreground">Engagement Score</div>
+                    {company['Last Signal Date'] && (
                       <div className="mt-2 flex items-center justify-end gap-1 text-xs text-muted-foreground">
                         <IconClock className="h-3 w-3" />
-                        {company['Last Activity']}
+                        {company['Last Signal Date']}
                       </div>
                     )}
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+              </div>
+            </CardContent>
+          </Card>
           ))
         )}
       </div>

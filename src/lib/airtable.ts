@@ -18,10 +18,11 @@ export const airtableBase = base;
 // Table IDs
 export const tables = {
   companies: process.env.AIRTABLE_COMPANIES_TABLE || 'tblJOd8XlW2sT0BQ6',
-  contacts: process.env.AIRTABLE_CONTACTS_TABLE || '',
-  signals: process.env.AIRTABLE_SIGNALS_TABLE || '',
+  contacts: process.env.AIRTABLE_CONTACTS_TABLE || 'tbl78hVAHK199cm3o',
+  signals: process.env.AIRTABLE_SIGNALS_TABLE || 'tblwrCTx3MULl71uS',
   research: process.env.AIRTABLE_RESEARCH_TABLE || '',
   activities: process.env.AIRTABLE_ACTIVITIES_TABLE || '',
+  tasks: process.env.AIRTABLE_TASKS_TABLE || 'tbl7QneKQyiqAcN8B',
 };
 
 // Table names for backward compatibility

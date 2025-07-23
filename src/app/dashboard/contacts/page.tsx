@@ -14,32 +14,42 @@ import {
   IconBuildingSkyscraper,
   IconSearch,
   IconFilter,
-  IconMapPin,
+  IconMapPin, 
   IconBrandLinkedin,
   IconTrendingUp,
   IconLoader2
 } from '@tabler/icons-react'
 import useSWR from 'swr'
 
-const fetcher = (url: string) => fetch(url).then(r => r.json())
+const fetcher = (url: string) => 
+  fetch(url).then(async (res) => {
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  })
 
 // Type definition for Airtable contact data
 interface AirtableContact {
   id: string
   Name?: string
-  'First Name'?: string
-  'Last Name'?: string
-  Email?: string
-  Phone?: string
   Title?: string
-  Department?: string
-  Company?: string
-  'Company ID'?: string
-  Location?: string
+  Email?: string
   'LinkedIn URL'?: string
-  'TalentGuard Score'?: number
-  Status?: string
-  'Last Contact'?: string
+  'Role Category'?: string
+  Account?: string[]
+  Signals?: string[]
+  'Total Signals'?: number
+  'Latest Signal Date'?: string
+  'Signal Summary'?: {
+    state: string
+    value: string
+    isStale: boolean
+  }
+  'Role Impact Score'?: {
+    state: string
+    value: string
+    isStale: boolean
+  }
+  Tasks?: string[]
   [key: string]: any // Allow additional fields
 }
 
@@ -49,9 +59,9 @@ export default function ContactsPage() {
 
   // Stats calculations
   const totalContacts = contacts?.length || 0
-  const highValueContacts = contacts?.filter((c: AirtableContact) => (c['TalentGuard Score'] || 0) > 80).length || 0
-  const recentContacts = contacts?.filter((c: AirtableContact) => c['Last Contact'])?.length || 0
-  const avgScore = (contacts?.reduce((acc: number, curr: AirtableContact) => acc + (curr['TalentGuard Score'] || 0), 0) || 0) / (totalContacts || 1)
+  const executiveContacts = contacts?.filter((c: AirtableContact) => c['Role Category'] === 'Exec Sponsor').length || 0
+  const activeContacts = contacts?.filter((c: AirtableContact) => (c['Total Signals'] || 0) > 0).length || 0
+  const avgSignals = (contacts?.reduce((acc: number, curr: AirtableContact) => acc + (curr['Total Signals'] || 0), 0) || 0) / (totalContacts || 1)
 
   // Handle loading state
   if (isLoading) {
@@ -84,7 +94,7 @@ export default function ContactsPage() {
     c.Name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.Email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.Title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.Company?.toLowerCase().includes(searchQuery.toLowerCase())
+    c['Role Category']?.toLowerCase().includes(searchQuery.toLowerCase())
   ) || []
 
   return (
@@ -120,39 +130,39 @@ export default function ContactsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">High Value</CardTitle>
+            <CardTitle className="text-sm font-medium">Executives</CardTitle>
             <IconTrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{highValueContacts}</div>
+            <div className="text-2xl font-bold">{executiveContacts}</div>
             <p className="text-xs text-muted-foreground">
-              Score above 80
+              Exec sponsors
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Buying Committee</CardTitle>
+            <CardTitle className="text-sm font-medium">Active Contacts</CardTitle>
             <IconBriefcase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{recentContacts}</div>
+            <div className="text-2xl font-bold">{activeContacts}</div>
             <p className="text-xs text-muted-foreground">
-              Active contacts
+              With signals
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Score</CardTitle>
+            <CardTitle className="text-sm font-medium">Avg Signals</CardTitle>
             <IconTrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{avgScore.toFixed(1)}</div>
+            <div className="text-2xl font-bold">{avgSignals.toFixed(1)}</div>
             <p className="text-xs text-muted-foreground">
-              TalentGuard score
+              Per contact
             </p>
           </CardContent>
         </Card>
@@ -182,7 +192,7 @@ export default function ContactsPage() {
             <CardContent className="pt-6">
               <div className="text-center text-muted-foreground">
                 No contacts found matching your search.
-              </div>
+                      </div>
             </CardContent>
           </Card>
         ) : (
@@ -198,46 +208,26 @@ export default function ContactsPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold">
-                          {contact.Name || `${contact['First Name'] || ''} ${contact['Last Name'] || ''}`.trim() || 'Unnamed Contact'}
+                          {contact.Name || 'Unnamed Contact'}
                         </h3>
                         <p className="text-sm text-muted-foreground">{contact.Title || 'No title'}</p>
                       </div>
                     </div>
-                    {contact.Status && (
-                      <Badge variant={contact.Status === 'Active' ? 'default' : 'secondary'}>
-                        {contact.Status}
+                    {contact['Role Category'] && (
+                      <Badge variant={contact['Role Category'] === 'Exec Sponsor' ? 'destructive' : 'default'}>
+                        {contact['Role Category']}
                       </Badge>
                     )}
                   </div>
 
-                  {/* Contact Details */}
+                                    {/* Contact Details */}
                   <div className="space-y-2">
-                    {contact.Company && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <IconBuildingSkyscraper className="h-4 w-4 text-muted-foreground" />
-                        <span>{contact.Company}</span>
-                      </div>
-                    )}
                     {contact.Email && (
                       <div className="flex items-center gap-2 text-sm">
                         <IconMail className="h-4 w-4 text-muted-foreground" />
                         <a href={`mailto:${contact.Email}`} className="text-primary hover:underline">
                           {contact.Email}
                         </a>
-                      </div>
-                    )}
-                    {contact.Phone && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <IconPhone className="h-4 w-4 text-muted-foreground" />
-                        <a href={`tel:${contact.Phone}`} className="text-primary hover:underline">
-                          {contact.Phone}
-                        </a>
-                      </div>
-                    )}
-                    {contact['Location'] && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <IconMapPin className="h-4 w-4 text-muted-foreground" />
-                        <span>{contact['Location']}</span>
                       </div>
                     )}
                     {contact['LinkedIn URL'] && (
@@ -248,23 +238,28 @@ export default function ContactsPage() {
                         </a>
                       </div>
                     )}
+                    {contact['Signal Summary']?.value && (
+                      <div className="mt-2 p-2 bg-muted rounded text-sm">
+                        <strong>Latest Signal:</strong> {contact['Signal Summary'].value}
+                      </div>
+                    )}
                   </div>
 
-                  {/* Score */}
+                  {/* Signals */}
                   <div className="pt-4 border-t">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="text-2xl font-bold">{contact['TalentGuard Score'] || 'N/A'}</div>
-                        <div className="text-xs text-muted-foreground">TalentGuard Score</div>
+                        <div className="text-2xl font-bold">{contact['Total Signals'] || 0}</div>
+                        <div className="text-xs text-muted-foreground">Total Signals</div>
                       </div>
                       <Button size="sm" variant="outline">
                         View Details
                       </Button>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+              </div>
+            </CardContent>
+          </Card>
           ))
         )}
       </div>
