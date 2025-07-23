@@ -15,14 +15,14 @@ const base = airtableInstance.base(baseId);
 export const airtable = airtableInstance;
 export const airtableBase = base;
 
-// Table IDs
+// Table IDs - Hardcoded to ensure production works correctly
 export const tables = {
-  companies: process.env.AIRTABLE_COMPANIES_TABLE || 'tblJOd8XlW2sT0BQ6',
-  contacts: process.env.AIRTABLE_CONTACTS_TABLE || 'tbl78hVAHK199cm3o',
-  signals: process.env.AIRTABLE_SIGNALS_TABLE || 'tblwrCTx3MULl71uS',
+  companies: 'tblJOd8XlW2sT0BQ6',
+  contacts: 'tbl78hVAHK199cm3o',
+  signals: 'tblwrCTx3MULl71uS',
   research: process.env.AIRTABLE_RESEARCH_TABLE || '',
   activities: process.env.AIRTABLE_ACTIVITIES_TABLE || '',
-  tasks: process.env.AIRTABLE_TASKS_TABLE || 'tbl7QneKQyiqAcN8B',
+  tasks: 'tbl7QneKQyiqAcN8B',
 };
 
 // Table names for backward compatibility
