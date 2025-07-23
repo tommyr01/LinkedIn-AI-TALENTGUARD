@@ -17,12 +17,15 @@ export async function GET(request: NextRequest) {
       filterFormula = `FIND('${contactId}', {Contact ID})`;
     }
     
-    // Fetch all signals if no filter is applied
+    const selectOptions: any = {
+      sort: [{ field: 'Date', direction: 'desc' }]
+    };
+    if (filterFormula) {
+      selectOptions.filterByFormula = filterFormula;
+    }
+
     const records = await airtableBase(tables.signals)
-      .select({ 
-        filterByFormula: filterFormula || undefined, // Use undefined to fetch all records
-        sort: [{ field: 'Date', direction: 'desc' }]
-      })
+      .select(selectOptions)
       .all();
     
     return NextResponse.json(
