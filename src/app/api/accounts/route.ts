@@ -1,57 +1,70 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { airtableBase, tables } from '@/lib/airtable';
 
-// GET /api/accounts?domain=ethosenergy.com
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const domain = searchParams.get('domain');
+    console.log('Fetching accounts from table:', tables.companies);
     
     const records = await airtableBase(tables.companies)
-      .select({ 
-        filterByFormula: domain ? `{Domain} = '${domain}'` : '' 
+      .select({
+        maxRecords: 100,
+        sort: [{ field: 'Engagement Score', direction: 'desc' }]
       })
       .all();
-    
-    return NextResponse.json(
-      records.map(r => ({ id: r.id, ...r.fields }))
-    );
+
+    console.log('Fetched records count:', records.length);
+
+    const accounts = records.map(record => ({
+      id: record.id,
+      name: record.fields['Name'] as string,
+      domain: record.fields['Domain'] as string,
+      industry: record.fields['Industry'] as string,
+      isTgCustomer: record.fields['TG Customer?'] as boolean,
+      engagementScore: record.fields['Engagement Score'] as number,
+      lastSignalDate: record.fields['Last Signal Date'] as string,
+      totalContacts: record.fields['Total Contacts'] as number,
+      recentSignalType: record.fields['Recent Signal Type'] as string,
+      engagementSummary: record.fields['Engagement Summary'] as any,
+      industryInsights: record.fields['Industry Insights'] as any,
+    }));
+
+    console.log('Processed accounts:', accounts.length);
+
+    return NextResponse.json(accounts);
   } catch (error) {
-    console.error('Error fetching accounts:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch accounts' },
-      { status: 500 }
-    );
+    console.error('Detailed error in accounts endpoint:', {
+      message: (error as Error).message,
+      stack: (error as Error).stack,
+      name: (error as Error).name,
+      tableId: tables.companies
+    });
+    
+    return NextResponse.json({ 
+      error: 'Failed to fetch accounts',
+      details: (error as Error).message,
+      tableId: tables.companies
+    }, { status: 500 });
   }
 }
 
-// POST /api/accounts (for quick-add)
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const { name, domain } = await request.json();
+    const data = await request.json();
     
-    if (!name || !domain) {
-      return NextResponse.json(
-        { error: 'Name and domain are required' },
-        { status: 400 }
-      );
-    }
-    
-    const record = await airtableBase(tables.companies)
-      .create({ 
-        'Company Name': name, 
-        'Domain': domain 
-      });
-    
-    return NextResponse.json(
-      { id: record.id, ...record.fields },
-      { status: 201 }
-    );
+    const record = await airtableBase(tables.companies).create({
+      'Name': data.name,
+      'Domain': data.domain,
+      'Industry': data.industry,
+      'TG Customer?': data.isTgCustomer || false,
+      'Engagement Score': data.engagementScore || 0,
+    });
+
+    return NextResponse.json({ 
+      id: record.id, 
+      ...record.fields 
+    });
   } catch (error) {
     console.error('Error creating account:', error);
-    return NextResponse.json(
-      { error: 'Failed to create account' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create account' }, { status: 500 });
   }
 } 
