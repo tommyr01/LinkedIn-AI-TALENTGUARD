@@ -14,17 +14,17 @@ interface Contact {
   Name: string
   Title: string
   Email: string
-  LinkedInUrl: string
-  RoleCategory: string
+  'LinkedIn URL': string
+  'Role Category': string
   Account: string[]
-  TotalSignals: number
-  LatestSignalDate: string
-  SignalSummary: {
+  'Total Signals': number
+  'Latest Signal Date': string
+  'Signal Summary': {
     state: string
     value: string
     isStale: boolean
   }
-  RoleImpactScore: {
+  'Role Impact Score': {
     state: string
     value: string
     isStale: boolean
@@ -54,14 +54,14 @@ export default function ContactsPage() {
 
   // Stats calculations
   const totalContacts = contacts?.length || 0
-  const execSponsors = contacts?.filter((c: Contact) => c.RoleCategory === 'Exec Sponsor').length || 0
-  const avgSignals = Math.round((contacts?.reduce((acc: number, curr: Contact) => acc + (curr.TotalSignals || 0), 0) || 0) / (totalContacts || 1))
+  const execSponsors = contacts?.filter((c: Contact) => c['Role Category'] === 'Exec Sponsor').length || 0
+  const avgSignals = Math.round((contacts?.reduce((acc: number, curr: Contact) => acc + (curr['Total Signals'] || 0), 0) || 0) / (totalContacts || 1))
 
   // Filter contacts based on search
   const filteredContacts = contacts?.filter((c: Contact) => 
     c.Name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.Title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.RoleCategory?.toLowerCase().includes(searchQuery.toLowerCase())
+    c['Role Category']?.toLowerCase().includes(searchQuery.toLowerCase())
   ) || []
 
   if (isLoading) {
@@ -165,19 +165,19 @@ export default function ContactsPage() {
                       {contact.Name || 'Unnamed Contact'}
                       <Badge 
                         variant="outline" 
-                        className={roleCategoryColors[contact.RoleCategory as keyof typeof roleCategoryColors] || roleCategoryColors.Other}
+                        className={roleCategoryColors[contact['Role Category'] as keyof typeof roleCategoryColors] || roleCategoryColors.Other}
                       >
-                        {contact.RoleCategory || 'Unknown'}
+                        {contact['Role Category'] || 'Unknown'}
                       </Badge>
                     </CardTitle>
                     <div className="flex items-center gap-2 mt-2">
                       <span className="text-sm text-muted-foreground">{contact.Title || 'No title'}</span>
-                      {contact.LinkedInUrl && (
+                      {contact['LinkedIn URL'] && (
                         <Button 
                           variant="ghost" 
                           size="sm" 
                           className="h-6 px-2 text-xs"
-                          onClick={() => window.open(contact.LinkedInUrl, '_blank')}
+                          onClick={() => window.open(contact['LinkedIn URL'], '_blank')}
                         >
                           <IconExternalLink className="h-3 w-3" />
                         </Button>
@@ -186,7 +186,7 @@ export default function ContactsPage() {
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold">
-                      {contact.TotalSignals || 'N/A'}
+                      {contact['Total Signals'] || 'N/A'}
                     </div>
                     <div className="text-xs text-muted-foreground">Total Signals</div>
                   </div>
@@ -202,7 +202,7 @@ export default function ContactsPage() {
                   </div>
                   <div className="flex items-center gap-1">
                     <IconCalendar className="h-4 w-4 text-muted-foreground" />
-                    <span>{contact.LatestSignalDate || 'No date'}</span>
+                    <span>{contact['Latest Signal Date'] || 'No date'}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <IconClipboardList className="h-4 w-4 text-muted-foreground" />
@@ -211,27 +211,27 @@ export default function ContactsPage() {
                 </div>
 
                 {/* AI-Generated Signal Summary */}
-                {contact.SignalSummary?.value && (
+                {contact['Signal Summary']?.value && (
                   <div>
                     <div className="flex items-center gap-1 mb-2">
                       <IconBrain className="h-3 w-3 text-muted-foreground" />
                       <p className="text-xs font-medium text-muted-foreground">Signal Summary</p>
                     </div>
                     <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded-md">
-                      {contact.SignalSummary.value}
+                      {contact['Signal Summary'].value}
                     </p>
                   </div>
                 )}
 
                 {/* AI-Generated Role Impact Score */}
-                {contact.RoleImpactScore?.value && (
+                {contact['Role Impact Score']?.value && (
                   <div>
                     <div className="flex items-center gap-1 mb-2">
                       <IconTarget className="h-3 w-3 text-muted-foreground" />
                       <p className="text-xs font-medium text-muted-foreground">Role Impact Score</p>
                     </div>
                     <p className="text-sm text-blue-700 bg-blue-50 p-2 rounded-md">
-                      {contact.RoleImpactScore.value}
+                      {contact['Role Impact Score'].value}
                     </p>
                   </div>
                 )}
