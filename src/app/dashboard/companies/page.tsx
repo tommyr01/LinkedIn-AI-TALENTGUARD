@@ -26,42 +26,38 @@ const fetcher = (url: string) =>
     return res.json();
   })
 
-// Type definition for Airtable company data
-interface AirtableCompany {
+// Type definition for API company data
+interface Company {
   id: string
-  Name?: string
-  Domain?: string
-  Industry?: string
-  'TG Customer'?: boolean
-  'Engagement Score'?: number
-  'Last Signal Date'?: string
-  Contacts?: string[]
-  'Total Contacts'?: number
-  'Recent Signal Type'?: string[]
-  Signals?: string[]
-  'Engagement Summary'?: {
+  name: string
+  domain: string
+  industry: string
+  isTgCustomer: boolean
+  engagementScore: number
+  lastSignalDate: string
+  totalContacts: number
+  recentSignalType: string[]
+  engagementSummary: {
     state: string
     value: string
     isStale: boolean
   }
-  'Industry Insights'?: {
+  industryInsights: {
     state: string
     value: string
     isStale: boolean
   }
-  Tasks?: string[]
-  [key: string]: any // Allow additional fields
 }
 
 export default function CompaniesPage() {
   const [searchQuery, setSearchQuery] = useState('')
-  const { data: companies, isLoading, error } = useSWR<AirtableCompany[]>('/api/accounts', fetcher)
+  const { data: companies, isLoading, error } = useSWR<Company[]>('/api/accounts', fetcher)
 
   // Stats calculations
   const totalCompanies = companies?.length || 0
-  const customerCompanies = companies?.filter((c: AirtableCompany) => c['TG Customer'] === true).length || 0
-  const avgScore = (companies?.reduce((acc: number, curr: AirtableCompany) => acc + (curr['Engagement Score'] || 0), 0) || 0) / (totalCompanies || 1)
-  const activeContacts = companies?.reduce((acc: number, curr: AirtableCompany) => acc + (curr['Total Contacts'] || 0), 0) || 0
+  const customerCompanies = companies?.filter((c: Company) => c.isTgCustomer === true).length || 0
+  const avgScore = (companies?.reduce((acc: number, curr: Company) => acc + (curr.engagementScore || 0), 0) || 0) / (totalCompanies || 1)
+  const activeContacts = companies?.reduce((acc: number, curr: Company) => acc + (curr.totalContacts || 0), 0) || 0
 
   // Handle loading state
   if (isLoading) {
@@ -90,10 +86,10 @@ export default function CompaniesPage() {
   }
 
   // Filter companies based on search
-  const filteredCompanies = companies?.filter((c: AirtableCompany) => 
-    c.Name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c['Industry']?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c['Location']?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredCompanies = companies?.filter((c: Company) => 
+    c.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.industry?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.domain?.toLowerCase().includes(searchQuery.toLowerCase())
   ) || []
 
   return (
@@ -193,7 +189,7 @@ export default function CompaniesPage() {
             </CardContent>
           </Card>
         ) : (
-          filteredCompanies.map((company: AirtableCompany) => (
+          filteredCompanies.map((company: Company) => (
             <Card key={company.id} className="hover:shadow-lg transition-shadow">
               <CardContent className="pt-6">
                 <div className="grid gap-4 md:grid-cols-4">
@@ -202,23 +198,21 @@ export default function CompaniesPage() {
                     <div className="flex items-start justify-between">
                       <div>
                         <h3 className="text-lg font-semibold flex items-center gap-2">
-                          {company.Name || 'Unnamed Company'}
-                          {company['TG Customer'] && (
+                          {company.name || 'Unnamed Company'}
+                          {company.isTgCustomer && (
                             <Badge variant="default">
                               Customer
                             </Badge>
                           )}
                         </h3>
                         <div className="flex flex-wrap gap-4 mt-2 text-sm text-muted-foreground">
-                          <span>{company.Industry || 'Unknown Industry'}</span>
+                          <span>{company.industry || 'Unknown Industry'}</span>
                           <span>•</span>
-                          <span>{company['Total Contacts'] || 0} contacts</span>
-                          <span>•</span>
-                          <span>{company.Signals?.length || 0} signals</span>
+                          <span>{company.totalContacts || 0} contacts</span>
                         </div>
                         <div className="mt-2">
-                          <a href={company.Domain} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                            {company.Domain || 'No website'}
+                          <a href={company.domain} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                            {company.domain || 'No website'}
                           </a>
                         </div>
                       </div>
@@ -232,11 +226,11 @@ export default function CompaniesPage() {
                     </p>
                     <div className="mt-1">
                       <p className="text-sm">
-                        {company['Engagement Summary']?.value || 'No engagement data'}
+                        {company.engagementSummary?.value || 'No engagement data'}
                       </p>
-                      {company['Recent Signal Type'] && (
+                      {company.recentSignalType && (
                         <div className="mt-2 flex flex-wrap gap-1">
-                          {company['Recent Signal Type'].map((signal: string, idx: number) => (
+                          {company.recentSignalType.map((signal: string, idx: number) => (
                             <Badge key={idx} variant="outline" className="text-xs">
                               {signal}
                             </Badge>
@@ -248,12 +242,12 @@ export default function CompaniesPage() {
 
                   {/* Score */}
                   <div className="md:col-span-1 text-right">
-                    <div className="text-2xl font-bold">{company['Engagement Score'] || 'N/A'}</div>
+                    <div className="text-2xl font-bold">{company.engagementScore || 'N/A'}</div>
                     <div className="text-xs text-muted-foreground">Engagement Score</div>
-                    {company['Last Signal Date'] && (
+                    {company.lastSignalDate && (
                       <div className="mt-2 flex items-center justify-end gap-1 text-xs text-muted-foreground">
                         <IconClock className="h-3 w-3" />
-                        {company['Last Signal Date']}
+                        {company.lastSignalDate}
                       </div>
                     )}
                   </div>
