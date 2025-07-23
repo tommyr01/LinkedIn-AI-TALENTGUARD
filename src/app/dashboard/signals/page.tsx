@@ -11,19 +11,19 @@ import { IconSearch, IconCalendar, IconExternalLink, IconAlertCircle, IconTarget
 // Type definition for API signal data based on actual Airtable structure
 interface Signal {
   id: string
-  SourceURL: string
+  'Source URL': string
   Date: string
   Type: string
   Summary: string
-  LinkedContact: string[]
-  LinkedAccount: string[]
-  DaysSinceSignal: number
-  SignalImpact: {
+  'Linked Contact': string[]
+  'Linked Account': string[]
+  'Days Since Signal': number
+  'Signal Impact': {
     state: string
     value: string
     isStale: boolean
   }
-  SignalSentiment: {
+  'Signal Sentiment': {
     state: string
     value: string
     isStale: boolean
@@ -52,7 +52,7 @@ export default function SignalsPage() {
 
   // Filter signals based on search
   const filteredSignals = signals?.filter((s: Signal) => 
-    s.SourceURL?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    s['Source URL']?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     s.Type?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     s.Summary?.toLowerCase().includes(searchQuery.toLowerCase())
   ) || []
@@ -116,7 +116,7 @@ export default function SignalsPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <CardTitle className="text-lg flex items-center gap-2">
-                      {signal.SourceURL || 'Unnamed Signal'}
+                      {signal['Source URL'] || 'Unnamed Signal'}
                       <Badge 
                         variant="outline" 
                         className={signalTypeColors[signal.Type as keyof typeof signalTypeColors] || signalTypeColors.Other}
@@ -126,12 +126,12 @@ export default function SignalsPage() {
                     </CardTitle>
                     <div className="flex items-center gap-2 mt-2">
                       <span className="text-sm text-muted-foreground">{signal.Date || 'No date'}</span>
-                      {signal.SourceURL && (
+                      {signal['Source URL'] && (
                         <Button 
                           variant="ghost" 
                           size="sm" 
                           className="h-6 px-2 text-xs"
-                          onClick={() => window.open(signal.SourceURL, '_blank')}
+                          onClick={() => window.open(signal['Source URL'], '_blank')}
                         >
                           <IconExternalLink className="h-3 w-3" />
                         </Button>
@@ -140,7 +140,7 @@ export default function SignalsPage() {
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold">
-                      {signal.DaysSinceSignal || 'N/A'}
+                      {signal['Days Since Signal'] || 'N/A'}
                     </div>
                     <div className="text-xs text-muted-foreground">Days Since Signal</div>
                   </div>
@@ -161,27 +161,27 @@ export default function SignalsPage() {
                 </div>
 
                 {/* AI-Generated Signal Impact */}
-                {signal.SignalImpact?.value && (
+                {signal['Signal Impact']?.value && (
                   <div>
                     <div className="flex items-center gap-1 mb-2">
                       <IconTarget className="h-3 w-3 text-muted-foreground" />
                       <p className="text-xs font-medium text-muted-foreground">Signal Impact</p>
                     </div>
                     <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded-md">
-                      {signal.SignalImpact.value}
+                      {signal['Signal Impact'].value}
                     </p>
                   </div>
                 )}
 
                 {/* AI-Generated Signal Sentiment */}
-                {signal.SignalSentiment?.value && (
+                {signal['Signal Sentiment']?.value && (
                   <div>
                     <div className="flex items-center gap-1 mb-2">
                       <IconMessageCircle className="h-3 w-3 text-muted-foreground" />
                       <p className="text-xs font-medium text-muted-foreground">Signal Sentiment</p>
                     </div>
                     <p className="text-sm text-blue-700 bg-blue-50 p-2 rounded-md">
-                      {signal.SignalSentiment.value}
+                      {signal['Signal Sentiment'].value}
                     </p>
                   </div>
                 )}
