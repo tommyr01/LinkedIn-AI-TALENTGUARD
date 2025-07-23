@@ -1,32 +1,14 @@
 "use client"
 
 import { useState } from 'react'
+import useSWR from 'swr'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { 
-  IconBuilding, 
-  IconUsers, 
-  IconMapPin, 
-  IconTrendingUp,
-  IconSearch,
-  IconFilter,
-  IconExternalLink,
-  IconStar,
-  IconClock,
-  IconTarget,
-  IconLoader2
-} from '@tabler/icons-react'
-import useSWR from 'swr'
+import { IconSearch, IconClock, IconUsers, IconTrendingUp, IconExternalLink, IconTarget, IconBrain, IconBuilding } from '@tabler/icons-react'
 
-const fetcher = (url: string) => 
-  fetch(url).then(async (res) => {
-    if (!res.ok) throw new Error(await res.text());
-    return res.json();
-  })
-
-// Type definition for API company data
+// Type definition for API company data based on actual Airtable structure
 interface Company {
   id: string
   name: string
@@ -37,6 +19,7 @@ interface Company {
   lastSignalDate: string
   totalContacts: number
   recentSignalType: string[]
+  signals: string[]
   engagementSummary: {
     state: string
     value: string
@@ -47,6 +30,40 @@ interface Company {
     value: string
     isStale: boolean
   }
+  tasks: string[]
+}
+
+const fetcher = (url: string) => fetch(url).then((res) => {
+  if (!res.ok) {
+    throw new Error('Failed to fetch data')
+  }
+  return res.json()
+})
+
+// Industry color mapping
+const industryColors = {
+  'Technology': 'bg-blue-100 text-blue-800 border-blue-200',
+  'Finance': 'bg-cyan-100 text-cyan-800 border-cyan-200',
+  'Healthcare': 'bg-teal-100 text-teal-800 border-teal-200',
+  'Education': 'bg-green-100 text-green-800 border-green-200',
+  'Retail': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  'Other': 'bg-orange-100 text-orange-800 border-orange-200'
+}
+
+// Engagement score color mapping
+const getEngagementScoreColor = (score: number) => {
+  if (score >= 80) return 'text-green-600'
+  if (score >= 60) return 'text-yellow-600'
+  return 'text-red-600'
+}
+
+// Signal type color mapping
+const signalTypeColors = {
+  'Funding': 'bg-green-100 text-green-700 border-green-200',
+  'LinkedIn Post': 'bg-blue-100 text-blue-700 border-blue-200',
+  'Website Visit': 'bg-purple-100 text-purple-700 border-purple-200',
+  'Email Open': 'bg-yellow-100 text-yellow-700 border-yellow-200',
+  'Other': 'bg-gray-100 text-gray-700 border-gray-200'
 }
 
 export default function CompaniesPage() {
@@ -56,34 +73,8 @@ export default function CompaniesPage() {
   // Stats calculations
   const totalCompanies = companies?.length || 0
   const customerCompanies = companies?.filter((c: Company) => c.isTgCustomer === true).length || 0
-  const avgScore = (companies?.reduce((acc: number, curr: Company) => acc + (curr.engagementScore || 0), 0) || 0) / (totalCompanies || 1)
+  const avgScore = Math.round((companies?.reduce((acc: number, curr: Company) => acc + (curr.engagementScore || 0), 0) || 0) / (totalCompanies || 1))
   const activeContacts = companies?.reduce((acc: number, curr: Company) => acc + (curr.totalContacts || 0), 0) || 0
-
-  // Handle loading state
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-[50vh]">
-        <div className="flex flex-col items-center gap-2">
-          <IconLoader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-muted-foreground">Loading companies...</p>
-        </div>
-      </div>
-    )
-  }
-
-  // Handle error state
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-[50vh]">
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-destructive">Failed to load companies</p>
-          <Button onClick={() => window.location.reload()} className="mt-2">
-            Retry
-          </Button>
-        </div>
-      </div>
-    )
-  }
 
   // Filter companies based on search
   const filteredCompanies = companies?.filter((c: Company) => 
@@ -92,168 +83,229 @@ export default function CompaniesPage() {
     c.domain?.toLowerCase().includes(searchQuery.toLowerCase())
   ) || []
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Companies</h1>
-          <p className="text-muted-foreground">Track and manage your target accounts</p>
+  if (isLoading) {
+    return (
+      <div className="p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-lg">Loading companies...</div>
         </div>
-        <Button>
-          <IconBuilding className="mr-2 h-4 w-4" />
-          Add Company
-        </Button>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-lg text-red-600">Failed to load companies</div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="p-6">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Companies</h1>
+        <p className="text-muted-foreground">
+          Monitor and manage your company prospects and customers
+        </p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Companies</CardTitle>
-            <IconBuilding className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalCompanies}</div>
-            <p className="text-xs text-muted-foreground">
-              In your database
-            </p>
+          <CardContent className="pt-6">
+            <div className="flex items-center">
+              <IconTarget className="h-4 w-4 text-muted-foreground" />
+              <div className="ml-2">
+                <p className="text-sm font-medium leading-none">Total Companies</p>
+                <p className="text-2xl font-bold">{totalCompanies}</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
         
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">TG Customers</CardTitle>
-            <IconTrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{customerCompanies}</div>
-            <p className="text-xs text-muted-foreground">
-              Current customers
-            </p>
+          <CardContent className="pt-6">
+            <div className="flex items-center">
+              <IconUsers className="h-4 w-4 text-muted-foreground" />
+              <div className="ml-2">
+                <p className="text-sm font-medium leading-none">TG Customers</p>
+                <p className="text-2xl font-bold">{customerCompanies}</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
         
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Score</CardTitle>
-            <IconStar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{avgScore.toFixed(1)}</div>
-            <p className="text-xs text-muted-foreground">
-              TalentGuard score
-            </p>
+          <CardContent className="pt-6">
+            <div className="flex items-center">
+              <IconTrendingUp className="h-4 w-4 text-muted-foreground" />
+              <div className="ml-2">
+                <p className="text-sm font-medium leading-none">Avg Engagement Score</p>
+                <p className={`text-2xl font-bold ${getEngagementScoreColor(avgScore)}`}>{avgScore}</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
         
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Contacts</CardTitle>
-            <IconUsers className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{activeContacts}</div>
-            <p className="text-xs text-muted-foreground">
-              Across all companies
-            </p>
+          <CardContent className="pt-6">
+            <div className="flex items-center">
+              <IconUsers className="h-4 w-4 text-muted-foreground" />
+              <div className="ml-2">
+                <p className="text-sm font-medium leading-none">Active Contacts</p>
+                <p className="text-2xl font-bold">{activeContacts}</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Search Bar */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex gap-4">
-            <div className="relative flex-1">
-              <IconSearch className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Search companies by name, industry, or location..." 
-                className="pl-10"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+      {/* Search */}
+      <div className="mb-6">
+        <div className="relative">
+          <IconSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input
+            placeholder="Search companies by name, industry, or domain..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+      </div>
+
+      {/* Company Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        {filteredCompanies.length === 0 ? (
+          <div className="col-span-full flex items-center justify-center h-64">
+            <div className="text-center">
+              <p className="text-lg text-muted-foreground">No companies found</p>
+              <p className="text-sm text-muted-foreground">Try adjusting your search criteria</p>
             </div>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Companies List */}
-      <div className="space-y-4">
-        {filteredCompanies.length === 0 ? (
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center text-muted-foreground">
-                No companies found matching your search.
-              </div>
-            </CardContent>
-          </Card>
         ) : (
           filteredCompanies.map((company: Company) => (
-            <Card key={company.id} className="hover:shadow-lg transition-shadow">
-              <CardContent className="pt-6">
-                <div className="grid gap-4 md:grid-cols-4">
-                                  {/* Company Info */}
-                  <div className="md:col-span-2">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="text-lg font-semibold flex items-center gap-2">
-                          {company.name || 'Unnamed Company'}
-                          {company.isTgCustomer && (
-                            <Badge variant="default">
-                              Customer
-                            </Badge>
-                          )}
-                        </h3>
-                        <div className="flex flex-wrap gap-4 mt-2 text-sm text-muted-foreground">
-                          <span>{company.industry || 'Unknown Industry'}</span>
-                          <span>•</span>
-                          <span>{company.totalContacts || 0} contacts</span>
-                        </div>
-                        <div className="mt-2">
-                          <a href={company.domain} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                            {company.domain || 'No website'}
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Engagement Summary */}
-                  <div className="md:col-span-1">
-                    <p className="text-sm font-medium text-muted-foreground">
-                      Engagement Summary
-                    </p>
-                    <div className="mt-1">
-                      <p className="text-sm">
-                        {company.engagementSummary?.value || 'No engagement data'}
-                      </p>
-                      {company.recentSignalType && (
-                        <div className="mt-2 flex flex-wrap gap-1">
-                          {company.recentSignalType.map((signal: string, idx: number) => (
-                            <Badge key={idx} variant="outline" className="text-xs">
-                              {signal}
-                            </Badge>
-                          ))}
-                        </div>
+            <Card key={company.id} className="hover:shadow-lg transition-shadow duration-200">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      {company.name || 'Unnamed Company'}
+                      {company.isTgCustomer && (
+                        <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
+                          Customer
+                        </Badge>
+                      )}
+                    </CardTitle>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Badge 
+                        variant="outline" 
+                        className={industryColors[company.industry as keyof typeof industryColors] || industryColors.Other}
+                      >
+                        <IconBuilding className="h-3 w-3 mr-1" />
+                        {company.industry || 'Unknown'}
+                      </Badge>
+                      {company.domain && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-6 px-2 text-xs"
+                          onClick={() => window.open(company.domain, '_blank')}
+                        >
+                          <IconExternalLink className="h-3 w-3" />
+                        </Button>
                       )}
                     </div>
                   </div>
-
-                  {/* Score */}
-                  <div className="md:col-span-1 text-right">
-                    <div className="text-2xl font-bold">{company.engagementScore || 'N/A'}</div>
+                  <div className="text-right">
+                    <div className={`text-2xl font-bold ${getEngagementScoreColor(company.engagementScore)}`}>
+                      {company.engagementScore || 'N/A'}
+                    </div>
                     <div className="text-xs text-muted-foreground">Engagement Score</div>
-                    {company.lastSignalDate && (
-                      <div className="mt-2 flex items-center justify-end gap-1 text-xs text-muted-foreground">
-                        <IconClock className="h-3 w-3" />
-                        {company.lastSignalDate}
-                      </div>
-                    )}
                   </div>
-              </div>
-            </CardContent>
-          </Card>
+                </div>
+              </CardHeader>
+              
+              <CardContent className="space-y-4">
+                {/* Company Stats */}
+                <div className="flex justify-between text-sm">
+                  <div className="flex items-center gap-1">
+                    <IconUsers className="h-4 w-4 text-muted-foreground" />
+                    <span>{company.totalContacts || 0} contacts</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <IconTarget className="h-4 w-4 text-muted-foreground" />
+                    <span>{company.signals?.length || 0} signals</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <IconClock className="h-4 w-4 text-muted-foreground" />
+                    <span>{company.tasks?.length || 0} tasks</span>
+                  </div>
+                </div>
+
+                {/* Recent Signals */}
+                {company.recentSignalType && company.recentSignalType.length > 0 && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-2">Recent Signals</p>
+                    <div className="flex flex-wrap gap-1">
+                      {company.recentSignalType.slice(0, 3).map((signal: string, idx: number) => (
+                        <Badge 
+                          key={idx} 
+                          variant="outline" 
+                          className={`text-xs ${signalTypeColors[signal as keyof typeof signalTypeColors] || signalTypeColors.Other}`}
+                        >
+                          {signal}
+                        </Badge>
+                      ))}
+                      {company.recentSignalType.length > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{company.recentSignalType.length - 3} more
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* AI-Generated Engagement Summary */}
+                {company.engagementSummary?.value && (
+                  <div>
+                    <div className="flex items-center gap-1 mb-2">
+                      <IconBrain className="h-3 w-3 text-muted-foreground" />
+                      <p className="text-xs font-medium text-muted-foreground">Engagement Summary</p>
+                    </div>
+                    <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded-md">
+                      {company.engagementSummary.value}
+                    </p>
+                  </div>
+                )}
+
+                {/* AI-Generated Industry Insights */}
+                {company.industryInsights?.value && (
+                  <div>
+                    <div className="flex items-center gap-1 mb-2">
+                      <IconTrendingUp className="h-3 w-3 text-muted-foreground" />
+                      <p className="text-xs font-medium text-muted-foreground">Industry Insights</p>
+                    </div>
+                    <p className="text-sm text-blue-700 bg-blue-50 p-2 rounded-md">
+                      {company.industryInsights.value}
+                    </p>
+                  </div>
+                )}
+
+                {/* Last Signal Date */}
+                {company.lastSignalDate && (
+                  <div className="flex items-center justify-between pt-2 border-t">
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <IconClock className="h-3 w-3" />
+                      Last signal: {company.lastSignalDate}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           ))
         )}
       </div>
