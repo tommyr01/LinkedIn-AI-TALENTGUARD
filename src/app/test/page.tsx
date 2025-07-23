@@ -4,8 +4,19 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 
+interface ApiResult {
+  success: boolean
+  data: any
+  count: number
+  error: string | null
+}
+
+interface ApiResults {
+  [key: string]: ApiResult
+}
+
 export default function TestPage() {
-  const [apiResults, setApiResults] = useState<any>({})
+  const [apiResults, setApiResults] = useState<ApiResults>({})
   const [loading, setLoading] = useState(false)
 
   const testEndpoint = async (endpoint: string) => {
