@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { IconSearch, IconClock, IconUsers, IconTrendingUp, IconExternalLink, IconTarget, IconBrain, IconBuilding, IconServer, IconDownload } from '@tabler/icons-react'
+import { IconSearch, IconClock, IconUsers, IconTrendingUp, IconExternalLink, IconTarget, IconBrain, IconBuilding, IconServer, IconDownload, IconChevronDown, IconChevronUp } from '@tabler/icons-react'
 import { toast } from '@/components/ui/use-toast'
 
 // Type definition for API company data based on actual Airtable structure
@@ -72,6 +72,8 @@ export default function CompaniesPage() {
   const [salesforceCompany, setSalesforceCompany] = useState('')
   const [isImporting, setIsImporting] = useState(false)
   const { data: companies, isLoading, error, mutate } = useSWR<Company[]>('/api/accounts', fetcher)
+
+  const [openCard, setOpenCard] = useState<string | null>(null)
 
   // Stats calculations
   const totalCompanies = companies?.length || 0
@@ -310,6 +312,13 @@ export default function CompaniesPage() {
                     </div>
                     <div className="text-xs text-muted-foreground">Engagement Score</div>
                   </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setOpenCard(prev => (prev === company.id ? null : company.id))}
+                  >
+                    {openCard === company.id ? <IconChevronUp className="h-4 w-4"/> : <IconChevronDown className="h-4 w-4"/>}
+                  </Button>
                 </div>
               </CardHeader>
               
@@ -388,11 +397,36 @@ export default function CompaniesPage() {
                 </div>
               </div>
                 )}
+
+                {/* Research Section */}
+                {openCard === company.id && (
+                  <ResearchSection companyId={company.id} />
+                )}
             </CardContent>
           </Card>
           ))
         )}
       </div>
+    </div>
+  )
+}
+
+// ResearchSection component
+function ResearchSection({ companyId }: { companyId: string }) {
+  const { data, isLoading, error } = useSWR(`/api/research?account=${companyId}`, fetcher)
+
+  if (isLoading) return <p className="text-sm text-muted-foreground">Loading research…</p>
+  if (error) return <p className="text-sm text-red-600">Failed to load research</p>
+  if (!data || data.length === 0) return <p className="text-sm text-muted-foreground">No research yet.</p>
+
+  return (
+    <div className="space-y-2 pt-4 border-t">
+      {data.map((r: any) => (
+        <div key={r.id} className="space-y-1">
+          <p className="font-semibold text-sm">{r.title}</p>
+          <p className="text-xs text-muted-foreground whitespace-pre-line">{r.summary?.slice(0,200)}{r.summary?.length>200?'…':''}</p>
+        </div>
+      ))}
     </div>
   )
 }
