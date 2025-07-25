@@ -6,7 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { IconSearch, IconClock, IconUsers, IconTrendingUp, IconExternalLink, IconTarget, IconBrain, IconBuilding } from '@tabler/icons-react'
+import { IconSearch, IconClock, IconUsers, IconTrendingUp, IconExternalLink, IconTarget, IconBrain, IconBuilding, IconServer, IconDownload } from '@tabler/icons-react'
+import { toast } from '@/components/ui/use-toast'
 
 // Type definition for API company data based on actual Airtable structure
 interface Company {
@@ -68,7 +69,9 @@ const signalTypeColors = {
 
 export default function CompaniesPage() {
   const [searchQuery, setSearchQuery] = useState('')
-  const { data: companies, isLoading, error } = useSWR<Company[]>('/api/accounts', fetcher)
+  const [salesforceCompany, setSalesforceCompany] = useState('')
+  const [isImporting, setIsImporting] = useState(false)
+  const { data: companies, isLoading, error, mutate } = useSWR<Company[]>('/api/accounts', fetcher)
 
   // Stats calculations
   const totalCompanies = companies?.length || 0
@@ -82,6 +85,45 @@ export default function CompaniesPage() {
     c.industry?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.domain?.toLowerCase().includes(searchQuery.toLowerCase())
   ) || []
+
+  const handleSalesforceImport = async () => {
+    if (!salesforceCompany.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a company name",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsImporting(true);
+    
+    try {
+      // Simulate Salesforce API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Simulate successful import
+      toast({
+        title: "Success",
+        description: `Data for "${salesforceCompany}" imported from Salesforce`,
+      });
+      
+      // Refresh the company list
+      mutate();
+      
+      // Clear the input
+      setSalesforceCompany('');
+    } catch (error) {
+      console.error('Error importing from Salesforce:', error);
+      toast({
+        title: "Import Failed",
+        description: "Could not import data from Salesforce",
+        variant: "destructive",
+      });
+    } finally {
+      setIsImporting(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -110,7 +152,7 @@ export default function CompaniesPage() {
         <h1 className="text-3xl font-bold mb-2">Companies</h1>
         <p className="text-muted-foreground">
           Monitor and manage your company prospects and customers
-        </p>
+          </p>
       </div>
 
       {/* Stats Cards */}
@@ -164,16 +206,44 @@ export default function CompaniesPage() {
         </Card>
       </div>
 
+      {/* Salesforce Import */}
+      <Card className="mb-6">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-md">Pull Salesforce Company Data</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <IconServer className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Enter Salesforce company name..."
+                value={salesforceCompany}
+                onChange={(e) => setSalesforceCompany(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Button 
+              onClick={handleSalesforceImport} 
+              disabled={isImporting}
+              className="whitespace-nowrap"
+            >
+              <IconDownload className="h-4 w-4 mr-2" />
+              {isImporting ? 'Importing...' : 'Import Data'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Search */}
       <div className="mb-6">
         <div className="relative">
           <IconSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
+              <Input 
             placeholder="Search companies by name, industry, or domain..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
+                className="pl-10"
+              />
         </div>
       </div>
 
@@ -219,7 +289,7 @@ export default function CompaniesPage() {
                         </Button>
                       )}
                     </div>
-                  </div>
+                    </div>
                   <div className="text-right">
                     <div className={`text-2xl font-bold ${getEngagementScoreColor(company.engagementScore)}`}>
                       {company.engagementScore || 'N/A'}
@@ -248,7 +318,7 @@ export default function CompaniesPage() {
 
                 {/* Recent Signals */}
                 {company.recentSignalType && company.recentSignalType.length > 0 && (
-                  <div>
+                        <div>
                     <p className="text-xs font-medium text-muted-foreground mb-2">Recent Signals</p>
                     <div className="flex flex-wrap gap-1">
                       {company.recentSignalType.slice(0, 3).map((signal: string, idx: number) => (
@@ -265,13 +335,13 @@ export default function CompaniesPage() {
                           +{company.recentSignalType.length - 3} more
                         </Badge>
                       )}
-                    </div>
+                      </div>
                   </div>
                 )}
 
                 {/* AI-Generated Engagement Summary */}
                 {company.engagementSummary?.value && (
-                  <div>
+                    <div>
                     <div className="flex items-center gap-1 mb-2">
                       <IconBrain className="h-3 w-3 text-muted-foreground" />
                       <p className="text-xs font-medium text-muted-foreground">Engagement Summary</p>
@@ -279,7 +349,7 @@ export default function CompaniesPage() {
                     <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded-md">
                       {company.engagementSummary.value}
                     </p>
-                  </div>
+                      </div>
                 )}
 
                 {/* AI-Generated Industry Insights */}
@@ -301,11 +371,11 @@ export default function CompaniesPage() {
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <IconClock className="h-3 w-3" />
                       Last signal: {company.lastSignalDate}
-                    </div>
-                  </div>
+                </div>
+              </div>
                 )}
-              </CardContent>
-            </Card>
+            </CardContent>
+          </Card>
           ))
         )}
       </div>
