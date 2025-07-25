@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { Toaster } from '@/components/ui/toaster'
 
 export const metadata: Metadata = {
   title: 'TalentGuard Buyer Intelligence',
@@ -16,6 +17,7 @@ export default function RootLayout({
       <body>
         <div className="min-h-screen bg-background">
           {children}
+          <Toaster />
         </div>
       </body>
     </html>

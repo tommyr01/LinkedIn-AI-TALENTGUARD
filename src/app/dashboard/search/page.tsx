@@ -12,53 +12,98 @@ import {
   IconUsers, 
   IconMapPin, 
   IconBriefcase,
+  IconFilter,
   IconDownload,
   IconPlus
 } from '@tabler/icons-react'
+import { toast } from '@/components/ui/use-toast'
 
 export default function CompanySearchPage() {
   const [searchQuery, setSearchQuery] = useState('')
+  const [industryQuery, setIndustryQuery] = useState('')
+  const [sizeQuery, setSizeQuery] = useState('')
+  const [locationQuery, setLocationQuery] = useState('')
   const [results, setResults] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
 
   const handleSearch = async () => {
     setLoading(true)
-    // Simulate API call
-    setTimeout(() => {
-      setResults([
-        {
-          id: 1,
-          name: "TechCorp Inc.",
-          industry: "Technology",
-          size: "500-1000",
-          location: "San Francisco, CA",
-          description: "Leading technology company specializing in cloud solutions",
-          buyingCommittee: 8,
-          talentScore: 92
-        },
-        {
-          id: 2,
-          name: "FinanceFlow",
-          industry: "Financial Services",
-          size: "1000+",
-          location: "New York, NY",
-          description: "Innovative financial services and banking solutions",
-          buyingCommittee: 12,
-          talentScore: 88
-        },
-        {
-          id: 3,
-          name: "HealthTech Solutions",
-          industry: "Healthcare",
-          size: "200-500",
-          location: "Boston, MA",
-          description: "Healthcare technology and patient management systems",
-          buyingCommittee: 6,
-          talentScore: 85
+    
+    try {
+      // Create a new company record in Airtable
+      if (searchQuery.trim()) {
+        const response = await fetch('/api/accounts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: searchQuery,
+            domain: `${searchQuery.toLowerCase().replace(/\s+/g, '')}.com`,
+            industry: industryQuery || 'Unknown',
+            isTgCustomer: false,
+            engagementScore: 0
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create company record');
         }
-      ])
-      setLoading(false)
-    }, 1000)
+
+        const data = await response.json();
+        console.log('Created company record:', data);
+        
+        toast({
+          title: "Company Added",
+          description: `Added "${searchQuery}" to your Airtable database`,
+        });
+      }
+
+      // Simulate API call for UI display
+      setTimeout(() => {
+        setResults([
+          {
+            id: 1,
+            name: searchQuery || "TechCorp Inc.",
+            industry: industryQuery || "Technology",
+            size: sizeQuery || "500-1000",
+            location: locationQuery || "San Francisco, CA",
+            description: "Leading technology company specializing in cloud solutions",
+            buyingCommittee: 8,
+            talentScore: 92
+          },
+          {
+            id: 2,
+            name: "FinanceFlow",
+            industry: "Financial Services",
+            size: "1000+",
+            location: "New York, NY",
+            description: "Innovative financial services and banking solutions",
+            buyingCommittee: 12,
+            talentScore: 88
+          },
+          {
+            id: 3,
+            name: "HealthTech Solutions",
+            industry: "Healthcare",
+            size: "200-500",
+            location: "Boston, MA",
+            description: "Healthcare technology and patient management systems",
+            buyingCommittee: 6,
+            talentScore: 85
+          }
+        ])
+        setLoading(false)
+      }, 1000)
+    } catch (error) {
+      console.error('Error creating company:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add company to Airtable",
+        variant: "destructive",
+      });
+      setLoading(false);
+    }
   }
 
   return (
@@ -88,9 +133,9 @@ export default function CompanySearchPage() {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="company">Company Name</Label>
+              <Label htmlFor="companyNameInput">Company Name</Label>
               <Input
-                id="company"
+                id="companyNameInput"
                 placeholder="Enter company name..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -101,6 +146,8 @@ export default function CompanySearchPage() {
               <Input
                 id="industry"
                 placeholder="e.g., Technology, Healthcare..."
+                value={industryQuery}
+                onChange={(e) => setIndustryQuery(e.target.value)}
               />
             </div>
             <div className="space-y-2">
@@ -108,6 +155,8 @@ export default function CompanySearchPage() {
               <Input
                 id="size"
                 placeholder="e.g., 100-500, 1000+"
+                value={sizeQuery}
+                onChange={(e) => setSizeQuery(e.target.value)}
               />
             </div>
             <div className="space-y-2">
@@ -115,14 +164,20 @@ export default function CompanySearchPage() {
               <Input
                 id="location"
                 placeholder="City, State or Country"
+                value={locationQuery}
+                onChange={(e) => setLocationQuery(e.target.value)}
               />
             </div>
           </div>
           
           <div className="flex gap-2">
-            <Button onClick={handleSearch} disabled={loading}>
+            <Button id="searchCompaniesButton" onClick={handleSearch} disabled={loading}>
               <IconSearch className="h-4 w-4 mr-2" />
               {loading ? 'Searching...' : 'Search Companies'}
+            </Button>
+            <Button variant="outline">
+              <IconFilter className="h-4 w-4 mr-2" />
+              Advanced Filters
             </Button>
           </div>
         </CardContent>
