@@ -96,7 +96,7 @@ export default function ContactsPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card>
+      <Card>
           <CardContent className="pt-6">
             <div className="flex items-center">
               <IconUsers className="h-4 w-4 text-muted-foreground" />
@@ -116,10 +116,10 @@ export default function ContactsPage() {
                 <p className="text-sm font-medium leading-none">Exec Sponsors</p>
                 <p className="text-2xl font-bold">{execSponsors}</p>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-        
+          </div>
+        </CardContent>
+      </Card>
+
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center">
@@ -127,12 +127,12 @@ export default function ContactsPage() {
               <div className="ml-2">
                 <p className="text-sm font-medium leading-none">Avg Signals</p>
                 <p className="text-2xl font-bold">{avgSignals}</p>
-              </div>
-            </div>
+                      </div>
+                      </div>
           </CardContent>
         </Card>
-      </div>
-
+                      </div>
+                      
       {/* Search */}
       <div className="mb-6">
         <div className="relative">
@@ -143,8 +143,8 @@ export default function ContactsPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
           />
-        </div>
-      </div>
+                    </div>
+                  </div>
 
       {/* Contact Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -153,8 +153,8 @@ export default function ContactsPage() {
             <div className="text-center">
               <p className="text-lg text-muted-foreground">No contacts found</p>
               <p className="text-sm text-muted-foreground">Try adjusting your search criteria</p>
-            </div>
-          </div>
+                    </div>
+                  </div>
         ) : (
           filteredContacts.map((contact: Contact) => (
             <Card key={contact.id} className="hover:shadow-lg transition-shadow duration-200">
@@ -199,16 +199,16 @@ export default function ContactsPage() {
                   <div className="flex items-center gap-1">
                     <IconMail className="h-4 w-4 text-muted-foreground" />
                     <span>{contact.Email || 'No email'}</span>
-                  </div>
+                        </div>
                   <div className="flex items-center gap-1">
                     <IconCalendar className="h-4 w-4 text-muted-foreground" />
                     <span>{contact['Latest Signal Date'] || 'No date'}</span>
-                  </div>
+                        </div>
                   <div className="flex items-center gap-1">
                     <IconClipboardList className="h-4 w-4 text-muted-foreground" />
                     <span>{contact.Tasks?.length || 0} tasks</span>
-                  </div>
-                </div>
+                        </div>
+                      </div>
 
                 {/* AI-Generated Signal Summary */}
                 {contact['Signal Summary']?.value && (
@@ -216,7 +216,7 @@ export default function ContactsPage() {
                     <div className="flex items-center gap-1 mb-2">
                       <IconBrain className="h-3 w-3 text-muted-foreground" />
                       <p className="text-xs font-medium text-muted-foreground">Signal Summary</p>
-                    </div>
+                        </div>
                     <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded-md">
                       {contact['Signal Summary'].value}
                     </p>
@@ -225,18 +225,18 @@ export default function ContactsPage() {
 
                 {/* AI-Generated Role Impact Score */}
                 {contact['Role Impact Score']?.value && (
-                  <div>
+                          <div>
                     <div className="flex items-center gap-1 mb-2">
                       <IconTarget className="h-3 w-3 text-muted-foreground" />
                       <p className="text-xs font-medium text-muted-foreground">Role Impact Score</p>
-                    </div>
+                          </div>
                     <p className="text-sm text-blue-700 bg-blue-50 p-2 rounded-md">
                       {contact['Role Impact Score'].value}
                     </p>
-                  </div>
+                        </div>
                 )}
-              </CardContent>
-            </Card>
+                    </CardContent>
+                  </Card>
           ))
         )}
       </div>

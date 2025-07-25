@@ -96,8 +96,8 @@ export const companyOperations = {
       return { 
         success: true, 
         data: records.map(record => ({
-          id: record.id,
-          ...record.fields
+        id: record.id,
+        ...record.fields
         }))
       };
     } catch (error) {
@@ -189,8 +189,8 @@ export const contactOperations = {
       return { 
         success: true, 
         data: records.map(record => ({
-          id: record.id,
-          ...record.fields
+        id: record.id,
+        ...record.fields
         }))
       };
     } catch (error) {
@@ -269,9 +269,9 @@ export const signalOperations = {
       return { 
         success: true, 
         data: records.map(record => ({
-          id: record.id,
-          ...record.fields,
-          metadata: record.fields.Metadata ? JSON.parse(record.fields.Metadata as string) : {}
+        id: record.id,
+        ...record.fields,
+        metadata: record.fields.Metadata ? JSON.parse(record.fields.Metadata as string) : {}
         }))
       };
     } catch (error) {

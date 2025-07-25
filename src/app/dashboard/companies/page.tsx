@@ -99,13 +99,27 @@ export default function CompaniesPage() {
     setIsImporting(true);
     
     try {
-      // Simulate Salesforce API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Call our API endpoint that will trigger the MCP server
+      const response = await fetch('/api/salesforce', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          companyName: salesforceCompany
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to import data');
+      }
+
+      const result = await response.json();
       
-      // Simulate successful import
       toast({
         title: "Success",
-        description: `Data for "${salesforceCompany}" imported from Salesforce`,
+        description: `Imported data for "${salesforceCompany}" from Salesforce. Found ${result.contactsCount} contacts and ${result.activitiesCount} activities.`,
       });
       
       // Refresh the company list
@@ -117,7 +131,7 @@ export default function CompaniesPage() {
       console.error('Error importing from Salesforce:', error);
       toast({
         title: "Import Failed",
-        description: "Could not import data from Salesforce",
+        description: (error as Error).message || "Could not import data from Salesforce",
         variant: "destructive",
       });
     } finally {

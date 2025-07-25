@@ -97,7 +97,7 @@ export default function SignalsPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
           />
-        </div>
+            </div>
       </div>
 
       {/* Signal Cards */}
@@ -113,7 +113,7 @@ export default function SignalsPage() {
           filteredSignals.map((signal: Signal) => (
             <Card key={signal.id} className="hover:shadow-lg transition-shadow duration-200">
               <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
+                    <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <CardTitle className="text-lg flex items-center gap-2">
                       {signal['Source URL'] || 'Unnamed Signal'}
@@ -122,29 +122,29 @@ export default function SignalsPage() {
                         className={signalTypeColors[signal.Type as keyof typeof signalTypeColors] || signalTypeColors.Other}
                       >
                         {signal.Type || 'Unknown'}
-                      </Badge>
+                          </Badge>
                     </CardTitle>
                     <div className="flex items-center gap-2 mt-2">
                       <span className="text-sm text-muted-foreground">{signal.Date || 'No date'}</span>
                       {signal['Source URL'] && (
-                        <Button 
+                            <Button 
                           variant="ghost" 
-                          size="sm" 
+                              size="sm" 
                           className="h-6 px-2 text-xs"
                           onClick={() => window.open(signal['Source URL'], '_blank')}
-                        >
+                            >
                           <IconExternalLink className="h-3 w-3" />
-                        </Button>
+                            </Button>
                       )}
-                    </div>
-                  </div>
+                                  </div>
+                                </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold">
                       {signal['Days Since Signal'] || 'N/A'}
-                    </div>
+                                      </div>
                     <div className="text-xs text-muted-foreground">Days Since Signal</div>
-                  </div>
-                </div>
+                                  </div>
+                                </div>
               </CardHeader>
               
               <CardContent className="space-y-4">
@@ -153,13 +153,13 @@ export default function SignalsPage() {
                   <div className="flex items-center gap-1">
                     <IconCalendar className="h-4 w-4 text-muted-foreground" />
                     <span>{signal.Date || 'No date'}</span>
-                  </div>
+                                      </div>
                   <div className="flex items-center gap-1">
                     <IconAlertCircle className="h-4 w-4 text-muted-foreground" />
                     <span>{signal.Summary || 'No summary'}</span>
-                  </div>
-                </div>
-
+                                  </div>
+                                </div>
+                                
                 {/* AI-Generated Signal Impact */}
                 {signal['Signal Impact']?.value && (
                   <div>
@@ -170,7 +170,7 @@ export default function SignalsPage() {
                     <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded-md">
                       {signal['Signal Impact'].value}
                     </p>
-                  </div>
+                      </div>
                 )}
 
                 {/* AI-Generated Signal Sentiment */}

@@ -77,24 +77,24 @@ export function AppSidebar() {
           {data.navMain
             .filter(item => item.visible)
             .map((item) => {
-              const Icon = item.icon
-              const isActive = pathname === item.url
-              return (
-                <li key={item.url}>
-                  <Link
-                    href={item.url}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      isActive 
-                        ? 'bg-primary text-primary-foreground' 
-                        : 'hover:bg-muted'
-                    }`}
-                  >
-                    <Icon className="h-4 w-4" />
-                    {item.title}
-                  </Link>
-                </li>
-              )
-            })}
+            const Icon = item.icon
+            const isActive = pathname === item.url
+            return (
+              <li key={item.url}>
+                <Link
+                  href={item.url}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'hover:bg-muted'
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  {item.title}
+                </Link>
+              </li>
+            )
+          })}
         </ul>
       </nav>
       <div className="border-t px-3 py-3">
