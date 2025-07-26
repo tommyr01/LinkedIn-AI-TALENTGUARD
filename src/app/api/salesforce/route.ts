@@ -40,13 +40,13 @@ export async function POST(request: Request) {
     
     // If contacts data is available, create/update contact records
     if (salesforceData.contacts && salesforceData.contacts.length > 0) {
-      await Promise.all(salesforceData.contacts.map(contact => 
+      await Promise.all(salesforceData.contacts.map((contact: any) => 
         createOrUpdateContact(contact, companyRecord.id)));
     }
     
     // If activity data is available, create signal records
     if (salesforceData.activities && salesforceData.activities.length > 0) {
-      await Promise.all(salesforceData.activities.map(activity => 
+      await Promise.all(salesforceData.activities.map((activity: any) => 
         createSignal(activity, companyRecord.id)));
     }
     
