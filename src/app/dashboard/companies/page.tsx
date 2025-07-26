@@ -6,7 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { IconSearch, IconClock, IconUsers, IconTrendingUp, IconExternalLink, IconTarget, IconBrain, IconBuilding, IconServer, IconDownload, IconChevronDown, IconChevronUp } from '@tabler/icons-react'
+import { IconSearch, IconClock, IconUsers, IconTrendingUp, IconExternalLink, IconTarget, IconBrain, IconBuilding, IconServer, IconDownload } from '@tabler/icons-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { toast } from '@/components/ui/use-toast'
 
 // Type definition for API company data based on actual Airtable structure
@@ -73,7 +74,8 @@ export default function CompaniesPage() {
   const [isImporting, setIsImporting] = useState(false)
   const { data: companies, isLoading, error, mutate } = useSWR<Company[]>('/api/accounts', fetcher)
 
-  const [openCard, setOpenCard] = useState<string | null>(null)
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null)
 
   // Stats calculations
   const totalCompanies = companies?.length || 0
@@ -274,8 +276,8 @@ export default function CompaniesPage() {
           </div>
         ) : (
           filteredCompanies.map((company: Company) => (
-            <Card key={company.id} className="hover:shadow-lg transition-shadow duration-200">
-              <CardHeader className="pb-3 cursor-pointer" onClick={() => setOpenCard(prev => (prev === company.id ? null : company.id))}>
+            <Card key={company.id} className="hover:shadow-lg transition-shadow duration-200 cursor-pointer" onClick={() => { setSelectedCompany(company); setDialogOpen(true) }}>
+              <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <CardTitle className="text-lg flex items-center gap-2">
@@ -312,12 +314,7 @@ export default function CompaniesPage() {
                     </div>
                     <div className="text-xs text-muted-foreground">Engagement Score</div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={(e) => {e.stopPropagation(); setOpenCard(prev => (prev === company.id ? null : company.id))}}>
-                    {openCard === company.id ? <IconChevronUp className="h-4 w-4"/> : <IconChevronDown className="h-4 w-4"/>}
-                  </Button>
+                  {/* no chevron, whole card triggers dialog */}
                 </div>
               </CardHeader>
               
@@ -397,21 +394,29 @@ export default function CompaniesPage() {
               </div>
                 )}
 
-                {/* Research Section */}
-                {openCard === company.id && (
-                  <ResearchSection companyId={company.id} />
-                )}
+                {/* No inline research now */}
             </CardContent>
           </Card>
           ))
         )}
       </div>
+
+      {/* Company Research Modal */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        {selectedCompany && (
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle>{selectedCompany.name}</DialogTitle>
+            </DialogHeader>
+            <CompanyResearch companyId={selectedCompany.id} />
+          </DialogContent>
+        )}
+      </Dialog>
     </div>
   )
 }
 
-// ResearchSection component
-function ResearchSection({ companyId }: { companyId: string }) {
+function CompanyResearch({ companyId }: { companyId: string }) {
   const { data, isLoading, error } = useSWR(`/api/research?account=${companyId}`, fetcher)
 
   if (isLoading) return <p className="text-sm text-muted-foreground">Loading research…</p>
@@ -419,11 +424,12 @@ function ResearchSection({ companyId }: { companyId: string }) {
   if (!data || data.length === 0) return <p className="text-sm text-muted-foreground">No research yet.</p>
 
   return (
-    <div className="space-y-2 pt-4 border-t">
+    <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
       {data.map((r: any) => (
-        <div key={r.id} className="space-y-1">
-          <p className="font-semibold text-sm">{r.title}</p>
-          <p className="text-xs text-muted-foreground whitespace-pre-line">{r.summary?.slice(0,200)}{r.summary?.length>200?'…':''}</p>
+        <div key={r.id} className="space-y-1 border rounded-md p-3">
+          <p className="font-semibold text-base">{r.title}</p>
+          <p className="text-sm whitespace-pre-line text-muted-foreground">{r.summary}</p>
+          {r.createdDate && <p className="text-xs text-muted-foreground">Created: {r.createdDate}</p>}
         </div>
       ))}
     </div>
