@@ -275,7 +275,7 @@ export default function CompaniesPage() {
         ) : (
           filteredCompanies.map((company: Company) => (
             <Card key={company.id} className="hover:shadow-lg transition-shadow duration-200">
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-3 cursor-pointer" onClick={() => setOpenCard(prev => (prev === company.id ? null : company.id))}>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <CardTitle className="text-lg flex items-center gap-2">
@@ -315,8 +315,7 @@ export default function CompaniesPage() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => setOpenCard(prev => (prev === company.id ? null : company.id))}
-                  >
+                    onClick={(e) => {e.stopPropagation(); setOpenCard(prev => (prev === company.id ? null : company.id))}}>
                     {openCard === company.id ? <IconChevronUp className="h-4 w-4"/> : <IconChevronDown className="h-4 w-4"/>}
                   </Button>
                 </div>
