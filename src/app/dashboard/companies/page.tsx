@@ -123,7 +123,7 @@ export default function CompaniesPage() {
       
       toast({
         title: "Success",
-        description: `Imported data for "${salesforceCompany}" from Salesforce. Found ${result.contactsCount} contacts and ${result.activitiesCount} activities.`,
+        description: `Added "${salesforceCompany}" to your companies list.`,
       });
       
       // Refresh the company list
@@ -233,7 +233,7 @@ export default function CompaniesPage() {
           <div className="flex gap-2">
             <div className="relative flex-1">
               <IconServer className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
+              <Input 
                 placeholder="Enter Salesforce company name..."
                 value={salesforceCompany}
                 onChange={(e) => setSalesforceCompany(e.target.value)}
@@ -273,7 +273,7 @@ export default function CompaniesPage() {
               <p className="text-lg text-muted-foreground">No companies found</p>
               <p className="text-sm text-muted-foreground">Try adjusting your search criteria</p>
             </div>
-          </div>
+                  </div>
         ) : (
           filteredCompanies.map((company: Company) => (
             <Card key={company.id} className="hover:shadow-lg transition-shadow duration-200 cursor-pointer" onClick={() => { setSelectedCompany(company); setDialogOpen(true) }}>
