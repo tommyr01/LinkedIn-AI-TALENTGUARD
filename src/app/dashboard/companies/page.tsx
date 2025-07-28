@@ -379,7 +379,7 @@ export default function CompaniesPage() {
       {/* Company Research Modal */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         {selectedCompany && (
-          <DialogContent className="max-w-7xl max-h-[90vh] overflow-hidden">
+          <DialogContent className="max-w-7xl max-h-[95vh] overflow-hidden">
             <DialogHeader>
               <DialogTitle className="text-2xl">{selectedCompany.name}</DialogTitle>
             </DialogHeader>
@@ -396,7 +396,7 @@ function CompanyProfile({ company }: { company: Company }) {
   const { data: contacts, isLoading: contactsLoading, error: contactsError } = useSWR(`/api/contacts?company=${company.id}`, fetcher)
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-h-[70vh] overflow-y-auto pr-2">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-h-[85vh] overflow-y-auto pr-2">
       {/* Left Column */}
       <div className="space-y-6">
         {/* Company Info */}
