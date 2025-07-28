@@ -8,7 +8,7 @@ export async function GET() {
     const records = await airtableBase(tables.companies)
       .select({
         maxRecords: 100,
-        sort: [{ field: 'Engagement Score', direction: 'desc' }]
+        sort: [{ field: 'Current News', direction: 'desc' }]
       })
       .all();
 
@@ -20,7 +20,7 @@ export async function GET() {
       domain: record.fields['Domain'] as string,
       industry: record.fields['Industry'] as string,
       isTgCustomer: record.fields['TG Customer?'] as boolean,
-      engagementScore: record.fields['Engagement Score'] as number,
+      currentNews: record.fields['Current News'] as string,
       lastSignalDate: record.fields['Last Signal Date'] as string,
       totalContacts: record.fields['Total Contacts'] as number,
       recentSignalType: record.fields['Recent Signal Type'] as string,
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
       'Domain': data.domain,
       'Industry': data.industry,
       'TG Customer?': data.isTgCustomer || false,
-      'Engagement Score': data.engagementScore || 0,
+      'Current News': data.currentNews || '',
     });
 
     return NextResponse.json({ 

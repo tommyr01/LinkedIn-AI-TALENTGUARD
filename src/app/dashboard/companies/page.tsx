@@ -17,7 +17,7 @@ interface Company {
   domain: string
   industry: string
   isTgCustomer: boolean
-  engagementScore: number
+  currentNews: string
   lastSignalDate: string
   totalContacts: number
   recentSignalType: string[]
@@ -80,7 +80,7 @@ export default function CompaniesPage() {
   // Stats calculations
   const totalCompanies = companies?.length || 0
   const customerCompanies = companies?.filter((c: Company) => c.isTgCustomer === true).length || 0
-  const avgScore = Math.round((companies?.reduce((acc: number, curr: Company) => acc + (curr.engagementScore || 0), 0) || 0) / (totalCompanies || 1))
+  // No longer calculating average score since currentNews is a string
   const activeContacts = companies?.reduce((acc: number, curr: Company) => acc + (curr.totalContacts || 0), 0) || 0
 
   // Filter companies based on search
@@ -208,8 +208,8 @@ export default function CompaniesPage() {
             <div className="flex items-center">
               <IconTrendingUp className="h-4 w-4 text-muted-foreground" />
               <div className="ml-2">
-                <p className="text-sm font-medium leading-none">Avg Engagement Score</p>
-                <p className={`text-2xl font-bold ${getEngagementScoreColor(avgScore)}`}>{avgScore}</p>
+                <p className="text-sm font-medium leading-none">Avg. Engagement</p>
+                <p className="text-2xl font-bold">N/A</p>
               </div>
             </div>
           </CardContent>
@@ -313,10 +313,10 @@ export default function CompaniesPage() {
                     </div>
                     </div>
                   <div className="text-right">
-                    <div className={`text-2xl font-bold ${getEngagementScoreColor(company.engagementScore)}`}>
-                      {company.engagementScore || 'N/A'}
+                    <div className="text-2xl font-bold">
+                      {company.currentNews || 'No news'}
                     </div>
-                    <div className="text-xs text-muted-foreground">Engagement Score</div>
+                    <div className="text-xs text-muted-foreground">Current News</div>
                   </div>
                   {/* no chevron, whole card triggers dialog */}
                 </div>

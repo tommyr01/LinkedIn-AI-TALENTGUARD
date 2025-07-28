@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     const companyFields = {
       'Name': companyName,
       'TG Customer?': false,
-      'Engagement Score': 0, // Start with zero score
+      'Current News': '', // Empty string for Current News field
     };
     
     // Create the company record
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
         id: companyRecord.id,
         name: companyName,
         isTgCustomer: false,
-        engagementScore: 0
+        currentNews: ''
       },
       contactsCount: 0,
       activitiesCount: 0
