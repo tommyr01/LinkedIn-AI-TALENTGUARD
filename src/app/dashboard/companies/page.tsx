@@ -339,7 +339,7 @@ export default function CompaniesPage() {
                       <IconBrain className="h-3 w-3 text-muted-foreground" />
                       <p className="text-xs font-medium text-muted-foreground">Current News</p>
                     </div>
-                    <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded-md">
+                    <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded-md whitespace-pre-line">
                       {company.currentNews}
                     </p>
                       </div>
