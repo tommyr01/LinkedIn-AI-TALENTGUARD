@@ -379,7 +379,7 @@ export default function CompaniesPage() {
       {/* Company Research Modal */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         {selectedCompany && (
-          <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden">
+          <DialogContent className="max-w-7xl max-h-[90vh] overflow-hidden">
             <DialogHeader>
               <DialogTitle className="text-2xl">{selectedCompany.name}</DialogTitle>
             </DialogHeader>
