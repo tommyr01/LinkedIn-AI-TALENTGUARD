@@ -7,10 +7,10 @@ export async function GET(request: NextRequest) {
     const accountId = searchParams.get('account');
 
     const selectOpts: any = { maxRecords: 50, sort: [{ field: 'Created Date', direction: 'desc' }] };
-    if (accountId) {
-      // Filter by linked Account field
-      selectOpts.filterByFormula = `FIND("${accountId}", ARRAYJOIN({Account}))`;
-    }
+    // Temporarily disabled filtering - will show all research for now
+    // if (accountId) {
+    //   selectOpts.filterByFormula = `FIND("${accountId}", ARRAYJOIN({Account}))`;
+    // }
 
     const records = await airtableBase(tables.research).select(selectOpts).all();
 

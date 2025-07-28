@@ -9,18 +9,17 @@ export async function GET(request: NextRequest) {
     const email = searchParams.get('email');
     const companyId = searchParams.get('company');
     
-    let filterFormula = '';
-    
-    if (email) {
-      filterFormula = `{Email} = '${email}'`;
-    } else if (companyId) {
-      filterFormula = `FIND("${companyId}", ARRAYJOIN({Account}))`;
-    }
-    
+    // Temporarily disabled filtering - will show all contacts for now
     const selectOpts: any = { maxRecords: 100 };
-    if (filterFormula) {
-      selectOpts.filterByFormula = filterFormula;
-    }
+    // let filterFormula = '';
+    // if (email) {
+    //   filterFormula = `{Email} = '${email}'`;
+    // } else if (companyId) {
+    //   filterFormula = `FIND("${companyId}", ARRAYJOIN({Account}))`;
+    // }
+    // if (filterFormula) {
+    //   selectOpts.filterByFormula = filterFormula;
+    // }
     
     const records = await airtableBase(tables.contacts).select(selectOpts).all();
     
