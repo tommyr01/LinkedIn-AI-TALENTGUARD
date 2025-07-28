@@ -91,6 +91,7 @@ export default function CompaniesPage() {
   ) || []
 
   const handleSalesforceImport = async () => {
+    console.log('Import button clicked');
     if (!salesforceCompany.trim()) {
       toast({
         title: "Error",
@@ -103,6 +104,7 @@ export default function CompaniesPage() {
     setIsImporting(true);
     
     try {
+      console.log('Making API request to /api/salesforce with data:', { companyName: salesforceCompany });
       // Call our API endpoint that will trigger the MCP server
       const response = await fetch('/api/salesforce', {
         method: 'POST',
@@ -115,11 +117,13 @@ export default function CompaniesPage() {
       });
 
       if (!response.ok) {
+        console.log('API response not OK, status:', response.status);
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to import data');
       }
 
       const result = await response.json();
+      console.log('API response successful:', result);
       
       toast({
         title: "Success",
