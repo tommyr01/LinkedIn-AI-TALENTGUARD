@@ -16,7 +16,6 @@ export async function POST(request: Request) {
     // Create company record directly in Airtable
     const companyFields = {
       'Name': companyName,
-      'Industry': 'Technology', // Default value
       'TG Customer?': false,
       'Engagement Score': 0, // Start with zero score
     };
@@ -41,7 +40,6 @@ export async function POST(request: Request) {
       company: {
         id: companyRecord.id,
         name: companyName,
-        industry: 'Technology',
         isTgCustomer: false,
         engagementScore: 0
       },
