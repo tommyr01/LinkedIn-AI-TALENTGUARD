@@ -9,22 +9,26 @@ export async function GET(request: NextRequest) {
     const email = searchParams.get('email');
     const companyId = searchParams.get('company');
     
-    // Temporarily disabled filtering - will show all contacts for now
     const selectOpts: any = { maxRecords: 100 };
-    // let filterFormula = '';
-    // if (email) {
-    //   filterFormula = `{Email} = '${email}'`;
-    // } else if (companyId) {
-    //   filterFormula = `FIND("${companyId}", ARRAYJOIN({Account}))`;
-    // }
-    // if (filterFormula) {
-    //   selectOpts.filterByFormula = filterFormula;
-    // }
+    
+    // Handle email filtering with Airtable formula (simple field)
+    if (email) {
+      selectOpts.filterByFormula = `{Email} = '${email}'`;
+    }
     
     const records = await airtableBase(tables.contacts).select(selectOpts).all();
     
+    // Filter by company in JavaScript since linked record formulas are complex
+    let filteredRecords = records;
+    if (companyId) {
+      filteredRecords = records.filter(record => {
+        const accountField = record.fields['Account'] as string[];
+        return accountField && accountField.includes(companyId);
+      });
+    }
+
     return NextResponse.json(
-      records.map(r => ({ id: r.id, ...r.fields }))
+      filteredRecords.map(r => ({ id: r.id, ...r.fields }))
     );
   } catch (error) {
     console.error('Error fetching contacts:', error);

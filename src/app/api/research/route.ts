@@ -7,12 +7,17 @@ export async function GET(request: NextRequest) {
     const accountId = searchParams.get('account');
 
     const selectOpts: any = { maxRecords: 50, sort: [{ field: 'Created Date', direction: 'desc' }] };
-    // Temporarily disabled filtering - will show all research for now
-    // if (accountId) {
-    //   selectOpts.filterByFormula = `FIND("${accountId}", ARRAYJOIN({Account}))`;
-    // }
-
+    
     const records = await airtableBase(tables.research).select(selectOpts).all();
+    
+    // Filter records in JavaScript since Airtable formulas for linked records are complex
+    let filteredRecords = records;
+    if (accountId) {
+      filteredRecords = records.filter(record => {
+        const accountField = record.fields['Account'] as string[];
+        return accountField && accountField.includes(accountId);
+      });
+    }
 
     // Helper function to format date
     const formatDate = (dateString: string) => {
@@ -24,7 +29,7 @@ export async function GET(request: NextRequest) {
       });
     };
 
-    const response = records.map(r => ({
+    const response = filteredRecords.map(r => ({
       id: r.id,
       title: r.fields['Created Date'] ? formatDate(r.fields['Created Date'] as string) : 'No Date',
       summary: r.fields['Summary'] || '',
