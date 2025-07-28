@@ -20,7 +20,7 @@ export const tables = {
   companies: 'tblJOd8XlW2sT0BQ6',
   contacts: 'tbl78hVAHK199cm3o',
   signals: 'tblwrCTx3MULl71uS',
-  research: process.env.AIRTABLE_RESEARCH_TABLE || '',
+  research: 'tblM7imDwQjjh7F54',
   activities: process.env.AIRTABLE_ACTIVITIES_TABLE || '',
   tasks: 'tbl7QneKQyiqAcN8B',
 };

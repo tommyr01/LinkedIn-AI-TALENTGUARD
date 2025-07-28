@@ -60,41 +60,41 @@ export default function CompanySearchPage() {
       }
 
       // Simulate API call for UI display
-      setTimeout(() => {
-        setResults([
-          {
-            id: 1,
+    setTimeout(() => {
+      setResults([
+        {
+          id: 1,
             name: searchQuery || "TechCorp Inc.",
             industry: industryQuery || "Technology",
             size: sizeQuery || "500-1000",
             location: locationQuery || "San Francisco, CA",
-            description: "Leading technology company specializing in cloud solutions",
-            buyingCommittee: 8,
-            talentScore: 92
-          },
-          {
-            id: 2,
-            name: "FinanceFlow",
-            industry: "Financial Services",
-            size: "1000+",
-            location: "New York, NY",
-            description: "Innovative financial services and banking solutions",
-            buyingCommittee: 12,
-            talentScore: 88
-          },
-          {
-            id: 3,
-            name: "HealthTech Solutions",
-            industry: "Healthcare",
-            size: "200-500",
-            location: "Boston, MA",
-            description: "Healthcare technology and patient management systems",
-            buyingCommittee: 6,
-            talentScore: 85
-          }
-        ])
-        setLoading(false)
-      }, 1000)
+          description: "Leading technology company specializing in cloud solutions",
+          buyingCommittee: 8,
+          talentScore: 92
+        },
+        {
+          id: 2,
+          name: "FinanceFlow",
+          industry: "Financial Services",
+          size: "1000+",
+          location: "New York, NY",
+          description: "Innovative financial services and banking solutions",
+          buyingCommittee: 12,
+          talentScore: 88
+        },
+        {
+          id: 3,
+          name: "HealthTech Solutions",
+          industry: "Healthcare",
+          size: "200-500",
+          location: "Boston, MA",
+          description: "Healthcare technology and patient management systems",
+          buyingCommittee: 6,
+          talentScore: 85
+        }
+      ])
+      setLoading(false)
+    }, 1000)
     } catch (error) {
       console.error('Error creating company:', error);
       toast({
