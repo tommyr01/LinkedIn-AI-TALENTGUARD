@@ -257,7 +257,7 @@ export default function CompaniesPage() {
                   </div>
         ) : (
           filteredCompanies.map((company: Company) => (
-            <Card key={company.id} className="hover:shadow-lg transition-shadow duration-200 cursor-pointer" onClick={() => { setSelectedCompany(company); setDialogOpen(true) }}>
+            <Card key={company.id} className="hover:shadow-lg transition-shadow duration-200 cursor-pointer h-96 flex flex-col" onClick={() => { setSelectedCompany(company); setDialogOpen(true) }}>
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -293,7 +293,7 @@ export default function CompaniesPage() {
                 </div>
               </CardHeader>
               
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 flex-1 overflow-hidden">
                 {/* Company Stats */}
                 <div className="flex justify-between text-sm">
                   <div className="flex items-center gap-1">
@@ -340,9 +340,11 @@ export default function CompaniesPage() {
                       <IconBrain className="h-3 w-3 text-muted-foreground" />
                       <p className="text-xs font-medium text-muted-foreground">Current News</p>
                     </div>
-                    <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded-md whitespace-pre-line">
+                    <div className="h-20 overflow-y-auto bg-gray-50 p-2 rounded-md">
+                      <p className="text-sm text-gray-700 whitespace-pre-line">
                       {company.currentNews}
-                    </p>
+                      </p>
+                    </div>
                       </div>
                 )}
 
