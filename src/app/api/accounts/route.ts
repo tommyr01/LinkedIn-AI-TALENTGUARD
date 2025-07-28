@@ -24,7 +24,6 @@ export async function GET() {
       lastSignalDate: record.fields['Last Signal Date'] as string,
       totalContacts: record.fields['Total Contacts'] as number,
       recentSignalType: record.fields['Recent Signal Type'] as string,
-      engagementSummary: record.fields['Engagement Summary'] as any,
       industryInsights: record.fields['Industry Insights'] as any,
     }));
 

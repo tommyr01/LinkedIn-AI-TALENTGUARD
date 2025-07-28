@@ -22,11 +22,6 @@ interface Company {
   totalContacts: number
   recentSignalType: string[]
   signals: string[]
-  engagementSummary: {
-    state: string
-    value: string
-    isStale: boolean
-  }
   industryInsights: {
     state: string
     value: string
@@ -50,13 +45,6 @@ const industryColors = {
   'Education': 'bg-green-100 text-green-800 border-green-200',
   'Retail': 'bg-yellow-100 text-yellow-800 border-yellow-200',
   'Other': 'bg-orange-100 text-orange-800 border-orange-200'
-}
-
-// Engagement score color mapping
-const getEngagementScoreColor = (score: number) => {
-  if (score >= 80) return 'text-green-600'
-  if (score >= 60) return 'text-yellow-600'
-  return 'text-red-600'
 }
 
 // Signal type color mapping
@@ -178,7 +166,7 @@ export default function CompaniesPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center">
@@ -198,18 +186,6 @@ export default function CompaniesPage() {
               <div className="ml-2">
                 <p className="text-sm font-medium leading-none">TG Customers</p>
                 <p className="text-2xl font-bold">{customerCompanies}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center">
-              <IconTrendingUp className="h-4 w-4 text-muted-foreground" />
-              <div className="ml-2">
-                <p className="text-sm font-medium leading-none">Avg. Engagement</p>
-                <p className="text-2xl font-bold">N/A</p>
               </div>
             </div>
           </CardContent>
@@ -363,14 +339,14 @@ export default function CompaniesPage() {
                 )}
 
                 {/* AI-Generated Engagement Summary */}
-                {company.engagementSummary?.value && (
+                {company.currentNews && (
                     <div>
                     <div className="flex items-center gap-1 mb-2">
                       <IconBrain className="h-3 w-3 text-muted-foreground" />
-                      <p className="text-xs font-medium text-muted-foreground">Engagement Summary</p>
+                      <p className="text-xs font-medium text-muted-foreground">Current News</p>
                     </div>
                     <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded-md">
-                      {company.engagementSummary.value}
+                      {company.currentNews}
                     </p>
                       </div>
                 )}
