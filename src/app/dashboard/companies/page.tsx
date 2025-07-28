@@ -288,12 +288,6 @@ export default function CompaniesPage() {
                       )}
                     </div>
                     </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold">
-                      {company.currentNews || 'No news'}
-                    </div>
-                    <div className="text-xs text-muted-foreground">Current News</div>
-                  </div>
                   {/* no chevron, whole card triggers dialog */}
                 </div>
               </CardHeader>
