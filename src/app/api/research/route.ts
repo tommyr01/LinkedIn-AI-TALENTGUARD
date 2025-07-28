@@ -7,16 +7,26 @@ export async function GET(request: NextRequest) {
     const accountId = searchParams.get('account');
 
     const selectOpts: any = { maxRecords: 50, sort: [{ field: 'Created Date', direction: 'desc' }] };
-    // Temporarily disabled filtering for debugging
-    // if (accountId) {
-    //   selectOpts.filterByFormula = `FIND("${accountId}", ARRAYJOIN({Account}))`;
-    // }
+    if (accountId) {
+      // Filter by linked Account field
+      selectOpts.filterByFormula = `FIND("${accountId}", ARRAYJOIN({Account}))`;
+    }
 
     const records = await airtableBase(tables.research).select(selectOpts).all();
 
+    // Helper function to format date
+    const formatDate = (dateString: string) => {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        month: '2-digit',
+        day: '2-digit', 
+        year: 'numeric'
+      });
+    };
+
     const response = records.map(r => ({
       id: r.id,
-      title: r.fields['Topic'] || r.fields['Research ID'] || 'Untitled Research',
+      title: r.fields['Created Date'] ? formatDate(r.fields['Created Date'] as string) : 'No Date',
       summary: r.fields['Summary'] || '',
       createdDate: r.fields['Created Date'] || null,
     }));

@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { IconSearch, IconClock, IconUsers, IconTrendingUp, IconExternalLink, IconTarget, IconBrain, IconBuilding, IconServer, IconDownload } from '@tabler/icons-react'
+import { IconMail, IconWorld, IconUser } from '@tabler/icons-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { toast } from '@/components/ui/use-toast'
 
@@ -378,11 +379,11 @@ export default function CompaniesPage() {
       {/* Company Research Modal */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         {selectedCompany && (
-          <DialogContent className="max-w-3xl">
+          <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden">
             <DialogHeader>
-              <DialogTitle>{selectedCompany.name}</DialogTitle>
+              <DialogTitle className="text-2xl">{selectedCompany.name}</DialogTitle>
             </DialogHeader>
-            <CompanyResearch companyId={selectedCompany.id} />
+            <CompanyProfile company={selectedCompany} />
           </DialogContent>
         )}
       </Dialog>
@@ -390,22 +391,139 @@ export default function CompaniesPage() {
   )
 }
 
-function CompanyResearch({ companyId }: { companyId: string }) {
-  const { data, isLoading, error } = useSWR(`/api/research?account=${companyId}`, fetcher)
-
-  if (isLoading) return <p className="text-sm text-muted-foreground">Loading research…</p>
-  if (error) return <p className="text-sm text-red-600">Failed to load research</p>
-  if (!data || data.length === 0) return <p className="text-sm text-muted-foreground">No research yet.</p>
+function CompanyProfile({ company }: { company: Company }) {
+  const { data, isLoading, error } = useSWR(`/api/research?account=${company.id}`, fetcher)
+  const { data: contacts, isLoading: contactsLoading, error: contactsError } = useSWR(`/api/contacts?company=${company.id}`, fetcher)
 
   return (
-    <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
-      {data.map((r: any) => (
-        <div key={r.id} className="space-y-1 border rounded-md p-3">
-          <p className="font-semibold text-base">{r.title}</p>
-          <p className="text-sm whitespace-pre-line text-muted-foreground">{r.summary}</p>
-          {r.createdDate && <p className="text-xs text-muted-foreground">Created: {r.createdDate}</p>}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-h-[70vh] overflow-y-auto pr-2">
+      {/* Left Column */}
+      <div className="space-y-6">
+        {/* Company Info */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <IconBuilding className="h-5 w-5" />
+            Company Information
+          </h3>
+          <div className="space-y-3 bg-gray-50 p-4 rounded-lg">
+            {company.industry && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-600">Industry:</span>
+                <span className="text-sm">{company.industry}</span>
+              </div>
+            )}
+            {company.domain && (
+              <div className="flex items-center gap-2">
+                <IconWorld className="h-4 w-4 text-gray-600" />
+                <a 
+                  href={`https://${company.domain}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-600 hover:text-blue-800 underline"
+                >
+                  Visit Website
+                </a>
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <IconUsers className="h-4 w-4 text-gray-600" />
+              <span className="text-sm font-medium text-gray-600">Contacts:</span>
+              <span className="text-sm">{company.totalContacts || 0}</span>
+            </div>
+          </div>
         </div>
-      ))}
+
+        {/* Current News */}
+        {company.currentNews && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <IconBrain className="h-5 w-5" />
+              Current News
+            </h3>
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <p className="text-sm whitespace-pre-line text-gray-700">{company.currentNews}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Research */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <IconTarget className="h-5 w-5" />
+            Research
+          </h3>
+          <div className="space-y-3 max-h-80 overflow-y-auto">
+            {isLoading ? (
+              <p className="text-sm text-muted-foreground">Loading research…</p>
+            ) : error ? (
+              <p className="text-sm text-red-600">Failed to load research</p>
+            ) : !data || data.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No research yet.</p>
+            ) : (
+              data.map((r: any) => (
+                <div key={r.id} className="border rounded-lg p-4 bg-white">
+                  <p className="font-semibold text-base mb-2">{r.title}</p>
+                  <p className="text-sm whitespace-pre-line text-gray-700">{r.summary}</p>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Right Column */}
+      <div className="space-y-6">
+        {/* Contacts */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <IconUser className="h-5 w-5" />
+            Contacts
+          </h3>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {contactsLoading ? (
+              <p className="text-sm text-muted-foreground">Loading contacts…</p>
+            ) : contactsError ? (
+              <p className="text-sm text-red-600">Failed to load contacts</p>
+            ) : !contacts || contacts.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No contacts yet.</p>
+            ) : (
+              contacts.map((contact: any) => (
+                <div key={contact.id} className="border rounded-lg p-4 bg-white">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-semibold text-base">{contact.Name || 'Unnamed Contact'}</h4>
+                    </div>
+                    {contact.Title && (
+                      <p className="text-sm text-gray-600">{contact.Title}</p>
+                    )}
+                    {contact.Email && (
+                      <div className="flex items-center gap-2">
+                        <IconMail className="h-4 w-4 text-gray-500" />
+                        <a href={`mailto:${contact.Email}`} className="text-sm text-blue-600 hover:text-blue-800">
+                          {contact.Email}
+                        </a>
+                      </div>
+                    )}
+                    {contact['LinkedIn URL'] && (
+                      <div className="flex items-center gap-2">
+                        <IconExternalLink className="h-4 w-4 text-gray-500" />
+                        <a 
+                          href={contact['LinkedIn URL']} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-sm text-blue-600 hover:text-blue-800"
+                        >
+                          LinkedIn Profile
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

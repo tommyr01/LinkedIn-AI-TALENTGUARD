@@ -7,21 +7,22 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const email = searchParams.get('email');
-    const companyId = searchParams.get('companyId');
+    const companyId = searchParams.get('company');
     
     let filterFormula = '';
     
     if (email) {
       filterFormula = `{Email} = '${email}'`;
     } else if (companyId) {
-      filterFormula = `FIND('${companyId}', {Company ID})`;
+      filterFormula = `FIND("${companyId}", ARRAYJOIN({Account}))`;
     }
     
-    const records = await airtableBase(tables.contacts)
-      .select({ 
-        filterByFormula: filterFormula || '' 
-      })
-      .all();
+    const selectOpts: any = { maxRecords: 100 };
+    if (filterFormula) {
+      selectOpts.filterByFormula = filterFormula;
+    }
+    
+    const records = await airtableBase(tables.contacts).select(selectOpts).all();
     
     return NextResponse.json(
       records.map(r => ({ id: r.id, ...r.fields }))
