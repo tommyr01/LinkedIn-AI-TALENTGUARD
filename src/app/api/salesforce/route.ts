@@ -10,6 +10,8 @@ export async function POST(request: Request) {
     }
     
     console.log(`Creating record for company: ${companyName}`);
+    console.log('Using Airtable table ID:', tables.companies);
+    console.log('Using Airtable base ID:', process.env.AIRTABLE_BASE_ID || 'appzgiUWBCdh58x00');
     
     // Generate a simple domain from the company name
     const domain = `${companyName.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`;
@@ -19,7 +21,7 @@ export async function POST(request: Request) {
       'Name': companyName,
       'Domain': domain,
       'Industry': 'Technology', // Default value
-      'Is TG Customer': false,
+      'TG Customer?': false,
       'Engagement Score': Math.floor(Math.random() * 100), // Random score for demo
     };
     
@@ -33,6 +35,8 @@ export async function POST(request: Request) {
     }
     
     console.log(`Created company record with ID: ${companyRecord.id}`);
+    console.log('Created company record fields:', companyFields);
+    console.log('Full response:', companyRecord);
     
     // Return success with the new company data
     return NextResponse.json({
