@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # Redis for BullMQ job queues
+  redis:
+    image: redis:7-alpine
+    container_name: talentguard-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Redis Commander - Web UI for Redis management
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: talentguard-redis-commander
+    hostname: redis-commander
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  # PostgreSQL (optional - for local Supabase development)
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: talentguard-postgres
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     POSTGRES_DB: talentguard
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   restart: unless-stopped
+
+volumes:
+  redis_data:
+    driver: local
+  # postgres_data:
+  #   driver: local
+
+networks:
+  default:
+    name: talentguard-network

@@ -1,0 +1,1431 @@
+[
+  {
+    "id": "recAvC0sTmm7XCzYO",
+    "fields": {
+      "Source URL": "www.source.com",
+      "Date": "2025-07-01",
+      "Type": "News",
+      "Summary": "Major funding round announced by ABC Corp, boosting their market position.",
+      "Linked Contact": [
+        "recXZ80ZKj7YhDGBy"
+      ],
+      "Linked Account": [
+        "recgFInDYWd6f5Vp1"
+      ],
+      "Days Since Signal": 36,
+      "Signal Impact": {
+        "state": "generated",
+        "value": "https://news.example.com/abc-corp-funding",
+        "isStale": true
+      },
+      "Signal Sentiment": {
+        "state": "generated",
+        "value": "John Doe",
+        "isStale": true
+      }
+    },
+    "createdTime": "2025-07-23T14:52:16.000Z"
+  },
+  {
+    "id": "rec6H7JGl7x5v4PK5",
+    "fields": {
+      "Source URL": "www.research.com",
+      "Date": "2025-07-09",
+      "Type": "LinkedIn Post",
+      "Summary": "Jane Smith shared a thought-provoking post on LinkedIn about industry trends.",
+      "Linked Contact": [
+        "recGgLMIukRLyllYS"
+      ],
+      "Linked Account": [
+        "reczb4WnWdfBQXbxL"
+      ],
+      "Days Since Signal": 28,
+      "Signal Impact": {
+        "state": "generated",
+        "value": "https://linkedin.com/jane-smith-post",
+        "isStale": true
+      },
+      "Signal Sentiment": {
+        "state": "generated",
+        "value": "Jane Smith",
+        "isStale": true
+      }
+    },
+    "createdTime": "2025-07-23T14:52:16.000Z"
+  },
+  {
+    "id": "rec2QNWOkebJfbyKS",
+    "fields": {
+      "Source URL": "www.research.com",
+      "Date": "2025-07-07",
+      "Type": "Funding",
+      "Summary": "CEO of DEF Ltd changed, indicating potential strategic shifts.",
+      "Linked Contact": [
+        "recZROzFsR24ag8QU"
+      ],
+      "Linked Account": [
+        "rec8807zYZOvLc7Jf"
+      ],
+      "Days Since Signal": 30,
+      "Signal Impact": {
+        "state": "generated",
+        "value": "https://businessnews.com/def-ltd-ceo-change",
+        "isStale": true
+      },
+      "Signal Sentiment": {
+        "state": "generated",
+        "value": "Michael Brown",
+        "isStale": true
+      }
+    },
+    "createdTime": "2025-07-23T14:52:16.000Z"
+  },
+  {
+    "id": "recTgXhhnsM8ZnbfK",
+    "fields": {
+      "Source URL": "www.source.com",
+      "Date": "2025-05-07",
+      "Type": "Other",
+      "Summary": "New product launch by GHI Solutions covered in the news.",
+      "Linked Contact": [
+        "recn78Wyev5mpqQZi"
+      ],
+      "Linked Account": [
+        "rec0ZwtZKDoWEEHrh"
+      ],
+      "Days Since Signal": 91,
+      "Signal Impact": {
+        "state": "generated",
+        "value": "https://technews.com/ghi-solutions-launch",
+        "isStale": true
+      },
+      "Signal Sentiment": {
+        "state": "generated",
+        "value": "Neutral",
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-23T14:52:16.000Z"
+  },
+  {
+    "id": "rec1s0nDG1hdZN6NK",
+    "fields": {
+      "Source URL": "www.companyacquisition.com",
+      "Date": "2025-06-20",
+      "Type": "LinkedIn Post",
+      "Summary": "PQR Inc's recent acquisition could impact market dynamics.",
+      "Linked Contact": [
+        "rec1YacV4dTjkuJ60"
+      ],
+      "Linked Account": [
+        "recgFInDYWd6f5Vp1"
+      ],
+      "Days Since Signal": 47,
+      "Signal Impact": {
+        "state": "generated",
+        "value": "https://financeupdates.com/pqr-inc-acquisition",
+        "isStale": true
+      },
+      "Signal Sentiment": {
+        "state": "generated",
+        "value": "Sarah Johnson",
+        "isStale": true
+      }
+    },
+    "createdTime": "2025-07-23T14:52:16.000Z"
+  },
+  {
+    "id": "recMQ6huBl3QSS9sd",
+    "fields": {
+      "Source URL": "Key Decision Maker for strategic initiatives and major technology investments",
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T11:24:52.000Z"
+  },
+  {
+    "id": "recAvbWMWBTtcnv8u",
+    "fields": {
+      "Source URL": "30+ years in energy/power generation, Previously Managing Director at Aggreko (Latin America), 22 years at GE in various leadership roles, Named Houston Business Journal's Most Admired CEO 2024, Ohio State University alumna",
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T11:24:52.000Z"
+  },
+  {
+    "id": "recm7EvDVw5TVlBOR",
+    "fields": {
+      "Source URL": "Key financial decision maker",
+      "Linked Contact": [
+        "recJgBUTzqUWW9WKS"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:22:36.000Z"
+  },
+  {
+    "id": "recDhFg1qQaor1DGB",
+    "fields": {
+      "Source URL": "CPA credentials",
+      "Linked Contact": [
+        "recJgBUTzqUWW9WKS"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:22:36.000Z"
+  },
+  {
+    "id": "recdtxNUQD4Y3kVBF",
+    "fields": {
+      "Source URL": "Handles acquisitions and strategic planning",
+      "Linked Contact": [
+        "recJgBUTzqUWW9WKS"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:22:36.000Z"
+  },
+  {
+    "id": "recvDVTDVEImTDECp",
+    "fields": {
+      "Source URL": "Budget approval authority",
+      "Linked Contact": [
+        "recJgBUTzqUWW9WKS"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:22:36.000Z"
+  },
+  {
+    "id": "recX6HcP3Pv25EBnw",
+    "fields": {
+      "Source URL": "Financial operations oversight",
+      "Linked Contact": [
+        "recJgBUTzqUWW9WKS"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:22:36.000Z"
+  },
+  {
+    "id": "recK2HB89uJLEWhY4",
+    "fields": {
+      "Source URL": "Recent acquisition leadership - Led Hasgoe Commercial Cleaning Division acquisition in August 2024",
+      "Linked Contact": [
+        "recg8OL2DJ4tE05YU"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:22:40.000Z"
+  },
+  {
+    "id": "recNOrXcdfTosDwWS",
+    "fields": {
+      "Source URL": "4th generation family business owner - Strong legacy focus and long-term relationship building",
+      "Linked Contact": [
+        "recg8OL2DJ4tE05YU"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:22:40.000Z"
+  },
+  {
+    "id": "recmqwENSxsh9vFMX",
+    "fields": {
+      "Source URL": "Multi-state expansion strategy - Operating across 14 states with growth capital",
+      "Linked Contact": [
+        "recg8OL2DJ4tE05YU"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:22:40.000Z"
+  },
+  {
+    "id": "recs40zjGRsdqXYWC",
+    "fields": {
+      "Source URL": "Industry leadership - Previously served on ISSA board positions",
+      "Linked Contact": [
+        "recg8OL2DJ4tE05YU"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:22:40.000Z"
+  },
+  {
+    "id": "reci8uYUkcLMIZ4oF",
+    "fields": {
+      "Source URL": "Strategic technology partnerships - Open to new solutions as evidenced by Truvelop and TalentGuard partnerships",
+      "Linked Contact": [
+        "recg8OL2DJ4tE05YU"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:22:40.000Z"
+  },
+  {
+    "id": "recUU4xm0T6LPJVBd",
+    "fields": {
+      "Source URL": "Leadership gap created by sudden passing 2 weeks ago",
+      "Linked Contact": [
+        "reclbA40HfdJuhAdg"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:40.000Z"
+  },
+  {
+    "id": "rec4hUczLfSlVJoKv",
+    "fields": {
+      "Source URL": "Succession planning needs identified",
+      "Linked Contact": [
+        "reclbA40HfdJuhAdg"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:40.000Z"
+  },
+  {
+    "id": "recBFeTjw5shzLskj",
+    "fields": {
+      "Source URL": "Interim management support opportunity",
+      "Linked Contact": [
+        "reclbA40HfdJuhAdg"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:40.000Z"
+  },
+  {
+    "id": "recpSncOWnip8uTsB",
+    "fields": {
+      "Source URL": "Organizational transition challenges",
+      "Linked Contact": [
+        "reclbA40HfdJuhAdg"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:40.000Z"
+  },
+  {
+    "id": "recTenPIqYmQRqv5Z",
+    "fields": {
+      "Source URL": "Leadership continuity concerns",
+      "Linked Contact": [
+        "reclbA40HfdJuhAdg"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:40.000Z"
+  },
+  {
+    "id": "rec7TvKPYTEFYljKM",
+    "fields": {
+      "Source URL": "Posted about Accounting Manager hiring on LinkedIn",
+      "Linked Contact": [
+        "rec1bA3mjPnDWSJoC"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:56.000Z"
+  },
+  {
+    "id": "recXH7fZLQmeEWzvo",
+    "fields": {
+      "Source URL": "Active in workforce expansion initiatives",
+      "Linked Contact": [
+        "rec1bA3mjPnDWSJoC"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:56.000Z"
+  },
+  {
+    "id": "recI915sD5kHHUCbB",
+    "fields": {
+      "Source URL": "Family member with HR influence",
+      "Linked Contact": [
+        "rec1bA3mjPnDWSJoC"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:56.000Z"
+  },
+  {
+    "id": "rec9oGNOl7sXGr2jK",
+    "fields": {
+      "Source URL": "Growth mode hiring activities",
+      "Linked Contact": [
+        "rec1bA3mjPnDWSJoC"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:56.000Z"
+  },
+  {
+    "id": "recxrLdkic6FDM20p",
+    "fields": {
+      "Source URL": "Workforce management focus",
+      "Linked Contact": [
+        "rec1bA3mjPnDWSJoC"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:56.000Z"
+  },
+  {
+    "id": "rectlpKPHBdcXnA0V",
+    "fields": {
+      "Source URL": "Key technology decision maker at $3.74B mutual bank holding company",
+      "Linked Contact": [
+        "recpQrH5giTk48kqf"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:44:42.000Z"
+  },
+  {
+    "id": "recMoD1tbPlfYB783",
+    "fields": {
+      "Source URL": "Serves on Gartner Financial Services Research Panel - indicates industry thought leadership",
+      "Linked Contact": [
+        "recpQrH5giTk48kqf"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:44:42.000Z"
+  },
+  {
+    "id": "recL1W4bVHfGl31Dk",
+    "fields": {
+      "Source URL": "Active in NH Bankers Association Technology Peer Committee",
+      "Linked Contact": [
+        "recpQrH5giTk48kqf"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:44:42.000Z"
+  },
+  {
+    "id": "rec3tKpQKNL6wGRFi",
+    "fields": {
+      "Source URL": "Oversees technology strategy for 4 subsidiary banks",
+      "Linked Contact": [
+        "recpQrH5giTk48kqf"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:44:42.000Z"
+  },
+  {
+    "id": "recl0pr1wJ5VjQTfK",
+    "fields": {
+      "Source URL": "Likely involved in digital transformation initiatives given company's Chief Digital Officer role",
+      "Linked Contact": [
+        "recpQrH5giTk48kqf"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:44:42.000Z"
+  },
+  {
+    "id": "recE3WrA3XoSqvijc",
+    "fields": {
+      "Source URL": "Digital transformation focus",
+      "Linked Contact": [
+        "recLdm9oUTFwurvok"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:46:40.000Z"
+  },
+  {
+    "id": "recPtGOckPp37NaiZ",
+    "fields": {
+      "Source URL": "MBA holder",
+      "Linked Contact": [
+        "recLdm9oUTFwurvok"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:46:40.000Z"
+  },
+  {
+    "id": "reciqnwU2qyoEMDRu",
+    "fields": {
+      "Source URL": "Senior VP level executive",
+      "Linked Contact": [
+        "recLdm9oUTFwurvok"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:46:40.000Z"
+  },
+  {
+    "id": "recUxrydVFD2sPjI0",
+    "fields": {
+      "Source URL": "Key technology decision maker",
+      "Linked Contact": [
+        "recLdm9oUTFwurvok"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:46:40.000Z"
+  },
+  {
+    "id": "recGSuNk9lsgZ1bJs",
+    "fields": {
+      "Source URL": "Key contact for analytics and BI solutions",
+      "Linked Contact": [
+        "recR233j2kRIxDpGa"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:46:58.000Z"
+  },
+  {
+    "id": "recf1qHR4k2dhpI1W",
+    "fields": {
+      "Source URL": "Decision maker for data intelligence platforms",
+      "Linked Contact": [
+        "recR233j2kRIxDpGa"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:46:58.000Z"
+  },
+  {
+    "id": "recOdUCqzvVNDHK5M",
+    "fields": {
+      "Source URL": "VP level authority for data strategy",
+      "Linked Contact": [
+        "recR233j2kRIxDpGa"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:46:58.000Z"
+  },
+  {
+    "id": "recRiemCDe6wfJHb6",
+    "fields": {
+      "Source URL": "Focus on business intelligence at NHMB",
+      "Linked Contact": [
+        "recR233j2kRIxDpGa"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:46:58.000Z"
+  },
+  {
+    "id": "rec7mqg2RzXEIRaB1",
+    "fields": {
+      "Source URL": "Promoted March 2025. Senior leader for operations and payments. Likely key stakeholder for payment technology, process improvement, and operational efficiency initiatives.",
+      "Linked Contact": [
+        "recXtg9hNspTOg64h"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:47:00.000Z"
+  },
+  {
+    "id": "recvZxgmh0ZTpgKuR",
+    "fields": {
+      "Source URL": "Promoted March 2025. Previously VP, Information Technology Officer. Key decision maker for cybersecurity, IT, and risk management.",
+      "Linked Contact": [
+        "reckwnduAqISvn0DF"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:47:02.000Z"
+  },
+  {
+    "id": "recYJkERA9pVjdW0R",
+    "fields": {
+      "Source URL": "Joined February 2025. Executive leader for corporate strategy, likely involved in digital transformation, M&A, and long-term planning.",
+      "Linked Contact": [
+        "recGmSuWda8418psA"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:47:08.000Z"
+  },
+  {
+    "id": "recgb8NtZCWMAKbhz",
+    "fields": {
+      "Source URL": "Technology modernization initiatives - As COO, likely involved in operational technology decisions",
+      "Linked Contact": [
+        "recXRCCexoJ6yM9o8"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:25:13.000Z"
+  },
+  {
+    "id": "rec0yuLiUnAkpWdrN",
+    "fields": {
+      "Source URL": "Process optimization - Shared services model suggests focus on operational efficiency",
+      "Linked Contact": [
+        "recXRCCexoJ6yM9o8"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:25:13.000Z"
+  },
+  {
+    "id": "rec0g6BISOlhCOAOF",
+    "fields": {
+      "Source URL": "Digital transformation - Banking industry moving toward digital operations",
+      "Linked Contact": [
+        "recXRCCexoJ6yM9o8"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:25:13.000Z"
+  },
+  {
+    "id": "receblh0IrW1jO3l3",
+    "fields": {
+      "Source URL": "Regulatory compliance - Banking operations require strong compliance oversight",
+      "Linked Contact": [
+        "recXRCCexoJ6yM9o8"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:25:13.000Z"
+  },
+  {
+    "id": "rec5wYOjJ2b9zsBbo",
+    "fields": {
+      "Source URL": "Risk management - Operational risk is a key focus area for COOs in banking",
+      "Linked Contact": [
+        "recXRCCexoJ6yM9o8"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:25:13.000Z"
+  },
+  {
+    "id": "recxVDv3h4s6lAXIT",
+    "fields": {
+      "Source URL": "High-priority decision maker for operational systems",
+      "Linked Contact": [
+        "recxbDpKfNC0Vybi8"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:26:09.000Z"
+  },
+  {
+    "id": "reckvIHhqFvFZBZdv",
+    "fields": {
+      "Source URL": "COO role indicates budget authority for operational efficiency solutions",
+      "Linked Contact": [
+        "recxbDpKfNC0Vybi8"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:26:09.000Z"
+  },
+  {
+    "id": "recRW9mPxsvpIuoAI",
+    "fields": {
+      "Source URL": "Key stakeholder in technology implementations affecting day-to-day operations",
+      "Linked Contact": [
+        "recxbDpKfNC0Vybi8"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:26:09.000Z"
+  },
+  {
+    "id": "rec0OJJGEjD2F0mXR",
+    "fields": {
+      "Source URL": "Likely involved in post-acquisition integration processes given recent M&A activity",
+      "Linked Contact": [
+        "recxbDpKfNC0Vybi8"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:26:09.000Z"
+  },
+  {
+    "id": "rec3vqeevMlGMAU2Q",
+    "fields": {
+      "Source URL": "Technology purchasing decisions",
+      "Linked Contact": [
+        "receGjaRkcWCKEbsU"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:26:17.000Z"
+  },
+  {
+    "id": "recCIb7BJUdLKl7XP",
+    "fields": {
+      "Source URL": "Systems implementation",
+      "Linked Contact": [
+        "receGjaRkcWCKEbsU"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:26:17.000Z"
+  },
+  {
+    "id": "rec09SyJMT0Dx5Uii",
+    "fields": {
+      "Source URL": "Digital transformation initiatives",
+      "Linked Contact": [
+        "receGjaRkcWCKEbsU"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:26:17.000Z"
+  },
+  {
+    "id": "recorL13PgF0Kgdof",
+    "fields": {
+      "Source URL": "WorkWave partnership discussions",
+      "Linked Contact": [
+        "receGjaRkcWCKEbsU"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:26:17.000Z"
+  },
+  {
+    "id": "recOhLJfjs9Kj6ohc",
+    "fields": {
+      "Source URL": "AI opportunities evaluation",
+      "Linked Contact": [
+        "receGjaRkcWCKEbsU"
+      ],
+      "Days Since Signal": {
+        "specialValue": "NaN"
+      },
+      "Signal Impact": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Signal Sentiment": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:26:17.000Z"
+  }
+]

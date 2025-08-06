@@ -1,0 +1,34 @@
+{
+  "exportDate": "2025-08-06T12:37:05.032Z",
+  "baseId": "appzgiUWBCdh58x00",
+  "tables": [
+    {
+      "name": "companies",
+      "recordCount": 9
+    },
+    {
+      "name": "contacts",
+      "recordCount": 45
+    },
+    {
+      "name": "signals",
+      "recordCount": 57
+    },
+    {
+      "name": "tasks",
+      "recordCount": 33
+    },
+    {
+      "name": "research",
+      "recordCount": 21
+    },
+    {
+      "name": "opportunities",
+      "recordCount": 4
+    },
+    {
+      "name": "insights",
+      "recordCount": 5
+    }
+  ]
+}

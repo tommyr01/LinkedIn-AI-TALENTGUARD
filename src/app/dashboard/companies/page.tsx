@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import useSWR from 'swr'
+import { supabase, subscriptions } from '@/lib/supabase'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -11,25 +12,41 @@ import { IconMail, IconWorld, IconUser } from '@tabler/icons-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { toast } from '@/components/ui/use-toast'
 
-// Type definition for API company data based on actual Airtable structure
+// Type definition for API company data (works with both Airtable and Supabase)
 interface Company {
   id: string
   name: string
   domain: string
   industry: string
-  isTgCustomer: boolean
-  currentNews: string
-  lastSignalDate: string
-  totalContacts: number
-  recentSignalType: string[]
-  signals: string[]
-  industryInsights: {
+  isTgCustomer?: boolean
+  tg_customer?: boolean // Supabase field name
+  currentNews?: string
+  current_news?: string // Supabase field name
+  lastSignalDate?: string
+  last_signal_date?: string // Supabase field name
+  totalContacts?: number
+  recentSignalType?: string[]
+  signals?: string[]
+  industryInsights?: {
     state: string
     value: string
     isStale: boolean
   }
-  tasks: string[]
+  tasks?: string[]
 }
+
+// Helper function to get normalized field values
+const getFieldValue = (company: Company) => ({
+  name: company.name || '',
+  domain: company.domain || '',
+  industry: company.industry || '',
+  isTgCustomer: company.isTgCustomer ?? company.tg_customer ?? false,
+  currentNews: company.currentNews || company.current_news || '',
+  lastSignalDate: company.lastSignalDate || company.last_signal_date || '',
+  totalContacts: company.totalContacts || 0,
+  recentSignalType: company.recentSignalType || [],
+  signals: company.signals || []
+})
 
 const fetcher = (url: string) => fetch(url).then((res) => {
   if (!res.ok) {
@@ -37,6 +54,16 @@ const fetcher = (url: string) => fetch(url).then((res) => {
   }
   return res.json()
 })
+
+// Helper to extract data from paginated or non-paginated response
+const extractData = (response: any) => {
+  // If response has a 'data' property, it's paginated
+  if (response && typeof response === 'object' && 'data' in response) {
+    return response.data;
+  }
+  // Otherwise, assume it's the direct array (backward compatibility)
+  return response;
+}
 
 // Industry color mapping
 const industryColors = {
@@ -61,16 +88,50 @@ export default function CompaniesPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [salesforceCompany, setSalesforceCompany] = useState('')
   const [isImporting, setIsImporting] = useState(false)
-  const { data: companies, isLoading, error, mutate } = useSWR<Company[]>('/api/accounts', fetcher)
+  const { data: response, isLoading, error, mutate } = useSWR('/api/accounts', fetcher)
+  const companies = extractData(response) as Company[]
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null)
 
+  // Real-time subscriptions
+  useEffect(() => {
+    // Only subscribe if using Supabase
+    const USE_SUPABASE = process.env.NEXT_PUBLIC_USE_SUPABASE === 'true';
+    if (!USE_SUPABASE) return;
+
+    console.log('Setting up real-time subscriptions for companies...');
+    
+    const companySubscription = subscriptions.subscribeToCompanies((payload) => {
+      console.log('Company data changed:', payload);
+      
+      // Show notification based on the type of change
+      if (payload.eventType === 'INSERT') {
+        toast({
+          title: "New Company Added",
+          description: `${payload.new?.name || 'A company'} has been added to your list`,
+        });
+      } else if (payload.eventType === 'UPDATE') {
+        toast({
+          title: "Company Updated",
+          description: `${payload.new?.name || 'A company'} has been updated`,
+        });
+      }
+      
+      // Refresh the companies data
+      mutate();
+    });
+
+    return () => {
+      console.log('Cleaning up company subscriptions...');
+      companySubscription.unsubscribe();
+    };
+  }, [mutate])
+
   // Stats calculations
   const totalCompanies = companies?.length || 0
-  const customerCompanies = companies?.filter((c: Company) => c.isTgCustomer === true).length || 0
-  // No longer calculating average score since currentNews is a string
-  const activeContacts = companies?.reduce((acc: number, curr: Company) => acc + (curr.totalContacts || 0), 0) || 0
+  const customerCompanies = companies?.filter((c: Company) => getFieldValue(c).isTgCustomer === true).length || 0
+  const activeContacts = companies?.reduce((acc: number, curr: Company) => acc + (getFieldValue(curr).totalContacts || 0), 0) || 0
 
   // Filter companies based on search
   const filteredCompanies = companies?.filter((c: Company) => 
@@ -91,6 +152,12 @@ export default function CompaniesPage() {
     }
 
     setIsImporting(true);
+    
+    // Show loading toast
+    toast({
+      title: "Importing...",
+      description: `Fetching data for "${salesforceCompany}" from Salesforce`,
+    });
     
     try {
       console.log('Making API request to /api/salesforce with data:', { companyName: salesforceCompany });
@@ -256,14 +323,16 @@ export default function CompaniesPage() {
             </div>
                   </div>
         ) : (
-          filteredCompanies.map((company: Company) => (
+          filteredCompanies.map((company: Company) => {
+            const fields = getFieldValue(company);
+            return (
             <Card key={company.id} className="hover:shadow-lg transition-shadow duration-200 cursor-pointer h-96 flex flex-col" onClick={() => { setSelectedCompany(company); setDialogOpen(true) }}>
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <CardTitle className="text-lg flex items-center gap-2">
-                      {company.name || 'Unnamed Company'}
-                      {company.isTgCustomer && (
+                      {fields.name || 'Unnamed Company'}
+                      {fields.isTgCustomer && (
                         <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
                           Customer
                         </Badge>
@@ -272,17 +341,17 @@ export default function CompaniesPage() {
                     <div className="flex items-center gap-2 mt-2">
                       <Badge 
                         variant="outline" 
-                        className={industryColors[company.industry as keyof typeof industryColors] || industryColors.Other}
+                        className={industryColors[fields.industry as keyof typeof industryColors] || industryColors.Other}
                       >
                         <IconBuilding className="h-3 w-3 mr-1" />
-                        {company.industry || 'Unknown'}
+                        {fields.industry || 'Unknown'}
                       </Badge>
-                      {company.domain && (
+                      {fields.domain && (
                         <Button 
                           variant="ghost" 
                           size="sm" 
                           className="h-6 px-2 text-xs"
-                          onClick={() => window.open(company.domain, '_blank')}
+                          onClick={() => window.open(fields.domain, '_blank')}
                         >
                           <IconExternalLink className="h-3 w-3" />
                         </Button>
@@ -298,11 +367,11 @@ export default function CompaniesPage() {
                 <div className="flex justify-between text-sm">
                   <div className="flex items-center gap-1">
                     <IconUsers className="h-4 w-4 text-muted-foreground" />
-                    <span>{company.totalContacts || 0} contacts</span>
+                    <span>{fields.totalContacts || 0} contacts</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <IconTarget className="h-4 w-4 text-muted-foreground" />
-                    <span>{company.signals?.length || 0} signals</span>
+                    <span>{fields.signals?.length || 0} signals</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <IconClock className="h-4 w-4 text-muted-foreground" />
@@ -311,11 +380,11 @@ export default function CompaniesPage() {
                 </div>
 
                 {/* Recent Signals */}
-                {company.recentSignalType && company.recentSignalType.length > 0 && (
+                {fields.recentSignalType && fields.recentSignalType.length > 0 && (
                         <div>
                     <p className="text-xs font-medium text-muted-foreground mb-2">Recent Signals</p>
                     <div className="flex flex-wrap gap-1">
-                      {company.recentSignalType.slice(0, 3).map((signal: string, idx: number) => (
+                      {fields.recentSignalType.slice(0, 3).map((signal: string, idx: number) => (
                         <Badge 
                           key={idx} 
                           variant="outline" 
@@ -324,9 +393,9 @@ export default function CompaniesPage() {
                           {signal}
                         </Badge>
                       ))}
-                      {company.recentSignalType.length > 3 && (
+                      {fields.recentSignalType.length > 3 && (
                         <Badge variant="outline" className="text-xs">
-                          +{company.recentSignalType.length - 3} more
+                          +{fields.recentSignalType.length - 3} more
                         </Badge>
                       )}
                       </div>
@@ -334,7 +403,7 @@ export default function CompaniesPage() {
                 )}
 
                 {/* AI-Generated Engagement Summary */}
-                {company.currentNews && (
+                {fields.currentNews && (
                     <div>
                     <div className="flex items-center gap-1 mb-2">
                       <IconBrain className="h-3 w-3 text-muted-foreground" />
@@ -342,7 +411,7 @@ export default function CompaniesPage() {
                     </div>
                     <div className="h-40 overflow-y-auto bg-gray-50 p-2 rounded-md">
                       <p className="text-sm text-gray-700 whitespace-pre-line">
-                      {company.currentNews}
+                      {fields.currentNews}
                       </p>
                     </div>
                       </div>
@@ -362,11 +431,11 @@ export default function CompaniesPage() {
                 )}
 
                 {/* Last Signal Date */}
-                {company.lastSignalDate && (
+                {fields.lastSignalDate && (
                   <div className="flex items-center justify-between pt-2 border-t">
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <IconClock className="h-3 w-3" />
-                      Last signal: {company.lastSignalDate}
+                      Last signal: {fields.lastSignalDate}
                 </div>
               </div>
                 )}
@@ -374,7 +443,7 @@ export default function CompaniesPage() {
                 {/* No inline research now */}
             </CardContent>
           </Card>
-          ))
+          )})
         )}
       </div>
 
@@ -396,6 +465,7 @@ export default function CompaniesPage() {
 function CompanyProfile({ company }: { company: Company }) {
   const { data, isLoading, error } = useSWR(`/api/research?account=${company.id}`, fetcher)
   const { data: contacts, isLoading: contactsLoading, error: contactsError } = useSWR(`/api/contacts?company=${company.id}`, fetcher)
+  const fields = getFieldValue(company)
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-h-[85vh] overflow-y-auto pr-2">
@@ -408,17 +478,17 @@ function CompanyProfile({ company }: { company: Company }) {
             Company Information
           </h3>
           <div className="space-y-3 bg-gray-50 p-4 rounded-lg">
-            {company.industry && (
+            {fields.industry && (
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium text-gray-600">Industry:</span>
-                <span className="text-sm">{company.industry}</span>
+                <span className="text-sm">{fields.industry}</span>
               </div>
             )}
-            {company.domain && (
+            {fields.domain && (
               <div className="flex items-center gap-2">
                 <IconWorld className="h-4 w-4 text-gray-600" />
                 <a 
-                  href={`https://${company.domain}`} 
+                  href={`https://${fields.domain}`} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-sm text-blue-600 hover:text-blue-800 underline"
@@ -430,20 +500,20 @@ function CompanyProfile({ company }: { company: Company }) {
             <div className="flex items-center gap-2">
               <IconUsers className="h-4 w-4 text-gray-600" />
               <span className="text-sm font-medium text-gray-600">Contacts:</span>
-              <span className="text-sm">{company.totalContacts || 0}</span>
+              <span className="text-sm">{fields.totalContacts || 0}</span>
             </div>
           </div>
         </div>
 
         {/* Current News */}
-        {company.currentNews && (
+        {fields.currentNews && (
           <div className="space-y-4">
             <h3 className="text-lg font-semibold flex items-center gap-2">
               <IconBrain className="h-5 w-5" />
               Current News
             </h3>
             <div className="bg-blue-50 p-4 rounded-lg">
-              <p className="text-sm whitespace-pre-line text-gray-700">{company.currentNews}</p>
+              <p className="text-sm whitespace-pre-line text-gray-700">{fields.currentNews}</p>
             </div>
           </div>
         )}
@@ -493,24 +563,24 @@ function CompanyProfile({ company }: { company: Company }) {
                 <div key={contact.id} className="border rounded-lg p-4 bg-white">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <h4 className="font-semibold text-base">{contact.Name || 'Unnamed Contact'}</h4>
+                      <h4 className="font-semibold text-base">{contact.Name || contact.name || 'Unnamed Contact'}</h4>
                     </div>
-                    {contact.Title && (
-                      <p className="text-sm text-gray-600">{contact.Title}</p>
+                    {(contact.Title || contact.title) && (
+                      <p className="text-sm text-gray-600">{contact.Title || contact.title}</p>
                     )}
-                    {contact.Email && (
+                    {(contact.Email || contact.email) && (
                       <div className="flex items-center gap-2">
                         <IconMail className="h-4 w-4 text-gray-500" />
-                        <a href={`mailto:${contact.Email}`} className="text-sm text-blue-600 hover:text-blue-800">
-                          {contact.Email}
+                        <a href={`mailto:${contact.Email || contact.email}`} className="text-sm text-blue-600 hover:text-blue-800">
+                          {contact.Email || contact.email}
                         </a>
                       </div>
                     )}
-                    {contact['LinkedIn URL'] && (
+                    {(contact['LinkedIn URL'] || contact.linkedin_url) && (
                       <div className="flex items-center gap-2">
                         <IconExternalLink className="h-4 w-4 text-gray-500" />
                         <a 
-                          href={contact['LinkedIn URL']} 
+                          href={contact['LinkedIn URL'] || contact.linkedin_url} 
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="text-sm text-blue-600 hover:text-blue-800"

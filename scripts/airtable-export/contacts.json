@@ -1,0 +1,1424 @@
+[
+  {
+    "id": "recXZ80ZKj7YhDGBy",
+    "fields": {
+      "Name": "John Doe",
+      "Title": "Chief Technology Officer",
+      "Email": "john.doe@examplee870.com",
+      "LinkedIn URL": "https://www.linkedincfe0.com/in/johndoe",
+      "Role Category": "Exec Sponsor",
+      "Account": [
+        "recgFInDYWd6f5Vp1"
+      ],
+      "Signals": [
+        "recAvC0sTmm7XCzYO"
+      ],
+      "Total Signals": 1,
+      "Latest Signal Date": "2025-07-01",
+      "Signal Summary": {
+        "state": "generated",
+        "value": "Discussed upcoming technology trends.",
+        "isStale": true
+      },
+      "Role Impact Score": {
+        "state": "generated",
+        "value": "High influence in tech decisions.",
+        "isStale": true
+      },
+      "Tasks": [
+        "recKgK4S6UvO7QHVK"
+      ]
+    },
+    "createdTime": "2025-07-23T14:52:16.000Z"
+  },
+  {
+    "id": "recGgLMIukRLyllYS",
+    "fields": {
+      "Name": "Jane Smith",
+      "Title": "Marketing Director",
+      "Email": "jane.smith@example08ef.com",
+      "LinkedIn URL": "https://www.linkedind214.com/in/janesmith",
+      "Role Category": "Champion",
+      "Account": [
+        "reczb4WnWdfBQXbxL"
+      ],
+      "Signals": [
+        "rec6H7JGl7x5v4PK5"
+      ],
+      "Total Signals": 1,
+      "Latest Signal Date": "2025-07-09",
+      "Signal Summary": {
+        "state": "generated",
+        "value": "Led successful marketing campaign.",
+        "isStale": true
+      },
+      "Role Impact Score": {
+        "state": "generated",
+        "value": "Key player in marketing strategies.",
+        "isStale": true
+      },
+      "Tasks": [
+        "rec4WWI1EVE45iSJ1"
+      ]
+    },
+    "createdTime": "2025-07-23T14:52:16.000Z"
+  },
+  {
+    "id": "recZROzFsR24ag8QU",
+    "fields": {
+      "Name": "Michael Brown",
+      "Title": "Procurement Manager",
+      "Email": "michael.brown@example6412.com",
+      "LinkedIn URL": "https://www.linkedin5af8.com/in/michaelbrown",
+      "Role Category": "Buyer",
+      "Account": [
+        "rec8807zYZOvLc7Jf"
+      ],
+      "Signals": [
+        "rec2QNWOkebJfbyKS"
+      ],
+      "Total Signals": 1,
+      "Latest Signal Date": "2025-07-07",
+      "Signal Summary": {
+        "state": "generated",
+        "value": "Negotiated new supplier contracts.",
+        "isStale": true
+      },
+      "Role Impact Score": {
+        "state": "generated",
+        "value": "Influences purchasing decisions.",
+        "isStale": true
+      },
+      "Tasks": [
+        "recPgRj87ZlswSIEM"
+      ]
+    },
+    "createdTime": "2025-07-23T14:52:16.000Z"
+  },
+  {
+    "id": "recn78Wyev5mpqQZi",
+    "fields": {
+      "Name": "Christen George-McFerrin",
+      "Title": "Chief Marketing Officer",
+      "Email": "christen.george-mcferrin@talentguard.com",
+      "LinkedIn URL": "https://www.linkedin.com/in/christengeorgemcferrin/",
+      "Role Category": "Exec Sponsor",
+      "Account": [
+        "rec0ZwtZKDoWEEHrh"
+      ],
+      "Signals": [
+        "recTgXhhnsM8ZnbfK"
+      ],
+      "Total Signals": 1,
+      "Latest Signal Date": "2025-05-07",
+      "Signal Summary": {
+        "state": "generated",
+        "value": "No recent signals available.",
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "generated",
+        "value": "Validates technical solutions.",
+        "isStale": true
+      },
+      "Tasks": [
+        "recC3wCt9ZKjXtPqG"
+      ]
+    },
+    "createdTime": "2025-07-23T14:52:16.000Z"
+  },
+  {
+    "id": "rec1YacV4dTjkuJ60",
+    "fields": {
+      "Name": "Robert Johnson",
+      "Title": "VP of Sales",
+      "Email": "robert.johnson@example004d.com",
+      "LinkedIn URL": "https://www.linkedin929c.com/in/robertjohnson",
+      "Role Category": "Buyer",
+      "Account": [
+        "recgFInDYWd6f5Vp1"
+      ],
+      "Signals": [
+        "rec1s0nDG1hdZN6NK"
+      ],
+      "Total Signals": 1,
+      "Latest Signal Date": "2025-06-20",
+      "Signal Summary": {
+        "state": "generated",
+        "value": "Presented Q2 sales results.",
+        "isStale": true
+      },
+      "Role Impact Score": {
+        "state": "generated",
+        "value": "Drives sales strategy.",
+        "isStale": true
+      },
+      "Tasks": [
+        "recMmylIZPReDhAlv"
+      ]
+    },
+    "createdTime": "2025-07-23T14:52:16.000Z"
+  },
+  {
+    "id": "recm5jMkLrltfy8bm",
+    "fields": {
+      "Name": "Linda Green",
+      "Title": "HR Specialist",
+      "Email": "linda.green@example95fc.com",
+      "LinkedIn URL": "https://www.linkedin0a5c.com/in/lindagreen",
+      "Role Category": "Other",
+      "Account": [
+        "reczb4WnWdfBQXbxL"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": "Organized team-building event.",
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "generated",
+        "value": "Supports employee engagement.",
+        "isStale": true
+      },
+      "Tasks": [
+        "recd3j7CBVitLmSV0"
+      ]
+    },
+    "createdTime": "2025-07-23T14:52:16.000Z"
+  },
+  {
+    "id": "recVFYNVCnRIEHbxL",
+    "fields": {
+      "Name": "Ana Amicarella",
+      "Title": "Chief Executive Officer",
+      "Email": "ana.amicarella@ethosenergy.com",
+      "LinkedIn URL": "https://www.linkedin.com/in/ana-amicarella-6554a913",
+      "Role Category": "Exec Sponsor",
+      "Account": [
+        "recC4vJfPsbVO6qSh"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      }
+    },
+    "createdTime": "2025-07-28T11:57:23.000Z"
+  },
+  {
+    "id": "recd4zm3DpQUJSOPy",
+    "fields": {
+      "Name": "Michael Muse",
+      "Title": "Chief Financial Officer",
+      "Email": "<UNKNOWN>",
+      "LinkedIn URL": "https://www.linkedin.com/in/michael-muse-74723b18/",
+      "Role Category": "Exec Sponsor",
+      "Account": [
+        "recC4vJfPsbVO6qSh"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      }
+    },
+    "createdTime": "2025-07-28T11:57:29.000Z"
+  },
+  {
+    "id": "recm0E5x7gKflUxCS",
+    "fields": {
+      "Name": "Robert Ferlmann",
+      "Title": "Chief Financial Officer",
+      "LinkedIn URL": "https://www.linkedin.com/in/robertferlmann",
+      "Role Category": "Finance",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "recH2tqlMU6Cg6X6A",
+        "recdeBMZzJRPfI82c"
+      ]
+    },
+    "createdTime": "2025-07-28T14:19:48.000Z"
+  },
+  {
+    "id": "recJgBUTzqUWW9WKS",
+    "fields": {
+      "Name": "Robert Ferlmann",
+      "Title": "Chief Financial Officer",
+      "LinkedIn URL": "https://www.linkedin.com/in/robertferlmann",
+      "Role Category": "C-Suite",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Signals": [
+        "recm7EvDVw5TVlBOR",
+        "recDhFg1qQaor1DGB",
+        "recdtxNUQD4Y3kVBF",
+        "recvDVTDVEImTDECp",
+        "recX6HcP3Pv25EBnw"
+      ],
+      "Total Signals": 5,
+      "Signal Summary": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "rectj9XQHs08KmCyr",
+        "recJIsELGvaVi19Lv",
+        "recV1CliEWbt6tGAW",
+        "recFCjwD2UWI9Sgy5"
+      ]
+    },
+    "createdTime": "2025-07-28T14:22:36.000Z"
+  },
+  {
+    "id": "rec2VLfTiY4vCmb6G",
+    "fields": {
+      "Name": "Matt Vonachen",
+      "Title": "Chief Executive Officer",
+      "LinkedIn URL": "https://www.linkedin.com/in/matt-vonachen-7a317440",
+      "Role Category": "C-Suite",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      }
+    },
+    "createdTime": "2025-07-28T14:22:40.000Z"
+  },
+  {
+    "id": "recg8OL2DJ4tE05YU",
+    "fields": {
+      "Name": "Matt Vonachen",
+      "Title": "Chief Executive Officer",
+      "Email": "matt.vonachen@vonachengroup.com",
+      "LinkedIn URL": "https://www.linkedin.com/in/matt-vonachen-7a317440",
+      "Role Category": "C-Suite",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Signals": [
+        "recK2HB89uJLEWhY4",
+        "recNOrXcdfTosDwWS",
+        "recmqwENSxsh9vFMX",
+        "recs40zjGRsdqXYWC",
+        "reci8uYUkcLMIZ4oF"
+      ],
+      "Total Signals": 5,
+      "Signal Summary": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "rectj9XQHs08KmCyr",
+        "recJIsELGvaVi19Lv",
+        "recV1CliEWbt6tGAW",
+        "recFCjwD2UWI9Sgy5",
+        "rec56KtKMvAzKBwWH",
+        "recSr2YKhCC0s3dgP",
+        "recyIRDD80QyDtXmq",
+        "reccXQErkg3sRdcUY"
+      ]
+    },
+    "createdTime": "2025-07-28T14:22:40.000Z"
+  },
+  {
+    "id": "reczyAFlz857yzDIH",
+    "fields": {
+      "Name": "Alexander Crowley",
+      "Title": "Chief Client Officer",
+      "LinkedIn URL": "https://www.linkedin.com/in/alexander-crowley",
+      "Role Category": "C-Suite Executive",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "rectj9XQHs08KmCyr",
+        "recJIsELGvaVi19Lv",
+        "recV1CliEWbt6tGAW",
+        "recFCjwD2UWI9Sgy5",
+        "rec56KtKMvAzKBwWH",
+        "recSr2YKhCC0s3dgP",
+        "recyIRDD80QyDtXmq",
+        "reccXQErkg3sRdcUY"
+      ]
+    },
+    "createdTime": "2025-07-28T14:22:42.000Z"
+  },
+  {
+    "id": "reclbA40HfdJuhAdg",
+    "fields": {
+      "Name": "Tony McMillin",
+      "Title": "Vice President (Recently Deceased)",
+      "Email": "<UNKNOWN>",
+      "LinkedIn URL": "<UNKNOWN>",
+      "Role Category": "Leadership",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Signals": [
+        "recUU4xm0T6LPJVBd",
+        "rec4hUczLfSlVJoKv",
+        "recBFeTjw5shzLskj",
+        "recpSncOWnip8uTsB",
+        "recTenPIqYmQRqv5Z"
+      ],
+      "Total Signals": 5,
+      "Signal Summary": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Tasks": [
+        "recGZK2fcbH3l6wAc",
+        "recHo4QDNuwVn2UD1",
+        "recokRHhaQ8QP1JFp",
+        "recXtbWEZQeDMrnfv",
+        "recBVeBfQZ7P7hfpf"
+      ],
+      "Research": [
+        "recV1CliEWbt6tGAW",
+        "recFCjwD2UWI9Sgy5",
+        "rec56KtKMvAzKBwWH",
+        "recSr2YKhCC0s3dgP",
+        "recyIRDD80QyDtXmq",
+        "reccXQErkg3sRdcUY"
+      ]
+    },
+    "createdTime": "2025-07-28T14:25:40.000Z"
+  },
+  {
+    "id": "rec1bA3mjPnDWSJoC",
+    "fields": {
+      "Name": "Megan Vonachen",
+      "Title": "HR/Hiring Manager",
+      "Email": "megan@vonachengroup.com",
+      "LinkedIn URL": "https://www.linkedin.com/in/megan-vonachen",
+      "Role Category": "HR/People Operations",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Signals": [
+        "rec7TvKPYTEFYljKM",
+        "recXH7fZLQmeEWzvo",
+        "recI915sD5kHHUCbB",
+        "rec9oGNOl7sXGr2jK",
+        "recxrLdkic6FDM20p"
+      ],
+      "Total Signals": 5,
+      "Signal Summary": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Tasks": [
+        "recKbhhzOhzJukWbB",
+        "recy5f7hGf9TlNWaI",
+        "recS0quP9YXuq5MXW",
+        "recWogddDqBX5XlOU"
+      ],
+      "Research": [
+        "recV1CliEWbt6tGAW",
+        "recFCjwD2UWI9Sgy5",
+        "rec56KtKMvAzKBwWH",
+        "recSr2YKhCC0s3dgP",
+        "recyIRDD80QyDtXmq"
+      ]
+    },
+    "createdTime": "2025-07-28T14:25:56.000Z"
+  },
+  {
+    "id": "reccjEx9SdDbhEFBD",
+    "fields": {
+      "Name": "Max Vonachen",
+      "Title": "Family Member / Strategic Influence",
+      "Email": "max@vonachengroup.com",
+      "LinkedIn URL": "https://www.linkedin.com/in/max-vonachen",
+      "Role Category": "Strategic",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "recV1CliEWbt6tGAW",
+        "recFCjwD2UWI9Sgy5",
+        "rec56KtKMvAzKBwWH",
+        "recSr2YKhCC0s3dgP",
+        "recyIRDD80QyDtXmq"
+      ]
+    },
+    "createdTime": "2025-07-28T14:26:06.000Z"
+  },
+  {
+    "id": "rec2E8gHCWnGKBjNI",
+    "fields": {
+      "Name": "Gregg Tewksbury",
+      "Title": "President & CEO",
+      "Role Category": "C-Suite Executive",
+      "Account": [
+        "recJD3CC8Uj98J46m"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "recU1K9EBsl13Wd9v",
+        "recOZiPIchK4d8tw8",
+        "rec40ZhNxjcjwqQq9"
+      ]
+    },
+    "createdTime": "2025-07-28T14:44:34.000Z"
+  },
+  {
+    "id": "recpQrH5giTk48kqf",
+    "fields": {
+      "Name": "Robert Soloway",
+      "Title": "Executive Vice President & Chief Information Officer",
+      "Role Category": "Technology Leadership",
+      "Account": [
+        "recJD3CC8Uj98J46m"
+      ],
+      "Signals": [
+        "rectlpKPHBdcXnA0V",
+        "recMoD1tbPlfYB783",
+        "recL1W4bVHfGl31Dk",
+        "rec3tKpQKNL6wGRFi",
+        "recl0pr1wJ5VjQTfK"
+      ],
+      "Total Signals": 5,
+      "Signal Summary": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "recU1K9EBsl13Wd9v",
+        "recOZiPIchK4d8tw8",
+        "rec40ZhNxjcjwqQq9"
+      ]
+    },
+    "createdTime": "2025-07-28T14:44:42.000Z"
+  },
+  {
+    "id": "recc4yDBvOHbuGwNB",
+    "fields": {
+      "Name": "Angela Strozewski",
+      "Title": "Executive Vice President & Chief Operating Officer",
+      "Role Category": "C-Suite Executive",
+      "Account": [
+        "recJD3CC8Uj98J46m"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "recU1K9EBsl13Wd9v",
+        "recOZiPIchK4d8tw8",
+        "rec40ZhNxjcjwqQq9"
+      ]
+    },
+    "createdTime": "2025-07-28T14:44:44.000Z"
+  },
+  {
+    "id": "recLdm9oUTFwurvok",
+    "fields": {
+      "Name": "Joanne Pearce",
+      "Title": "Chief Digital Officer",
+      "LinkedIn URL": "https://www.linkedin.com/in/joanne-pearce-mba-68a6303",
+      "Role Category": "Technology Leadership",
+      "Account": [
+        "recJD3CC8Uj98J46m"
+      ],
+      "Signals": [
+        "recE3WrA3XoSqvijc",
+        "recPtGOckPp37NaiZ",
+        "reciqnwU2qyoEMDRu",
+        "recUxrydVFD2sPjI0"
+      ],
+      "Total Signals": 4,
+      "Signal Summary": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Tasks": [
+        "recZ0oram5SrtnS9S",
+        "recxvXaFsuEL6XrxC",
+        "recaErylyIszKQTQh",
+        "recYa09nVYcSPKkcd"
+      ],
+      "Research": [
+        "recOZiPIchK4d8tw8",
+        "rec40ZhNxjcjwqQq9",
+        "reccrhJ7n6t49muZk",
+        "recwVg6bBo0oF2Iam",
+        "recO4WI0lgR4Ao14F"
+      ]
+    },
+    "createdTime": "2025-07-28T14:46:40.000Z"
+  },
+  {
+    "id": "recryPAea9erQFkdE",
+    "fields": {
+      "Name": "Michael Manley",
+      "Title": "AVP of Data Architecture and Engineering",
+      "LinkedIn URL": "https://www.linkedin.com/in/michael-manley-nh",
+      "Role Category": "Technology",
+      "Account": [
+        "recJD3CC8Uj98J46m"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "rec40ZhNxjcjwqQq9",
+        "reccrhJ7n6t49muZk",
+        "recwVg6bBo0oF2Iam",
+        "recO4WI0lgR4Ao14F"
+      ]
+    },
+    "createdTime": "2025-07-28T14:46:46.000Z"
+  },
+  {
+    "id": "recR233j2kRIxDpGa",
+    "fields": {
+      "Name": "Robert Clifford",
+      "Title": "VP, Data & Business Intelligence",
+      "LinkedIn URL": "https://www.linkedin.com/in/robertfclifford",
+      "Role Category": "Technology",
+      "Account": [
+        "recJD3CC8Uj98J46m"
+      ],
+      "Signals": [
+        "recGSuNk9lsgZ1bJs",
+        "recf1qHR4k2dhpI1W",
+        "recOdUCqzvVNDHK5M",
+        "recRiemCDe6wfJHb6"
+      ],
+      "Total Signals": 4,
+      "Signal Summary": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Tasks": [
+        "recjavRMPZYnvmmGH",
+        "recfsb6u8WPYYC0YF",
+        "recW2ZZkMaXPLUVEF",
+        "rectIIq5abdaW7HTw"
+      ],
+      "Research": [
+        "rec40ZhNxjcjwqQq9",
+        "reccrhJ7n6t49muZk",
+        "recwVg6bBo0oF2Iam",
+        "recO4WI0lgR4Ao14F"
+      ]
+    },
+    "createdTime": "2025-07-28T14:46:58.000Z"
+  },
+  {
+    "id": "recXtg9hNspTOg64h",
+    "fields": {
+      "Name": "Lynn Hurd",
+      "Title": "SVP, Operations Administration & Payments Officer",
+      "Role Category": "Operations/Payments",
+      "Account": [
+        "recJD3CC8Uj98J46m"
+      ],
+      "Signals": [
+        "rec7mqg2RzXEIRaB1"
+      ],
+      "Total Signals": 1,
+      "Signal Summary": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "rec40ZhNxjcjwqQq9",
+        "reccrhJ7n6t49muZk",
+        "recwVg6bBo0oF2Iam",
+        "recO4WI0lgR4Ao14F"
+      ]
+    },
+    "createdTime": "2025-07-28T14:47:00.000Z"
+  },
+  {
+    "id": "reckwnduAqISvn0DF",
+    "fields": {
+      "Name": "Jaime Badillo",
+      "Title": "SVP, Chief Information Security Officer",
+      "Role Category": "IT & Security",
+      "Account": [
+        "recJD3CC8Uj98J46m"
+      ],
+      "Signals": [
+        "recvZxgmh0ZTpgKuR"
+      ],
+      "Total Signals": 1,
+      "Signal Summary": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "rec40ZhNxjcjwqQq9",
+        "reccrhJ7n6t49muZk",
+        "recwVg6bBo0oF2Iam",
+        "recO4WI0lgR4Ao14F"
+      ]
+    },
+    "createdTime": "2025-07-28T14:47:02.000Z"
+  },
+  {
+    "id": "recGmSuWda8418psA",
+    "fields": {
+      "Name": "Jonathan Dowst",
+      "Title": "EVP & Chief Strategy Officer",
+      "Role Category": "Strategy/Executive Leadership",
+      "Account": [
+        "recJD3CC8Uj98J46m"
+      ],
+      "Signals": [
+        "recYJkERA9pVjdW0R"
+      ],
+      "Total Signals": 1,
+      "Signal Summary": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Tasks": [
+        "recfBOuUn2OKuhDMN",
+        "recKWyRamsPrFGPHf",
+        "rec31pvTiijVI1JSc",
+        "recrJAqrxpurtJ57k"
+      ],
+      "Research": [
+        "rec40ZhNxjcjwqQq9",
+        "reccrhJ7n6t49muZk",
+        "recwVg6bBo0oF2Iam",
+        "recO4WI0lgR4Ao14F"
+      ]
+    },
+    "createdTime": "2025-07-28T14:47:08.000Z"
+  },
+  {
+    "id": "recUfh8Tyuursgyc8",
+    "fields": {
+      "Name": "Matthew Vonachen",
+      "Title": "CEO",
+      "LinkedIn URL": "https://www.linkedin.com/in/matt-vonachen-7a317440",
+      "Role Category": "Executive Leadership",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      }
+    },
+    "createdTime": "2025-07-28T19:24:58.000Z"
+  },
+  {
+    "id": "recOj1GF6gyG6QXJ9",
+    "fields": {
+      "Name": "Robert Soloway",
+      "Title": "Executive Vice President & Chief Information Officer",
+      "Role Category": "Technology Leadership",
+      "Account": [
+        "recJD3CC8Uj98J46m"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "reccrhJ7n6t49muZk",
+        "recwVg6bBo0oF2Iam",
+        "recO4WI0lgR4Ao14F"
+      ]
+    },
+    "createdTime": "2025-07-28T19:25:05.000Z"
+  },
+  {
+    "id": "recYBjNn0symeaaTJ",
+    "fields": {
+      "Name": "Alex Crowley",
+      "Title": "Chief People Officer",
+      "Role Category": "HR Technology",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "rec56KtKMvAzKBwWH",
+        "recSr2YKhCC0s3dgP",
+        "recyIRDD80QyDtXmq",
+        "reccXQErkg3sRdcUY"
+      ]
+    },
+    "createdTime": "2025-07-28T19:25:07.000Z"
+  },
+  {
+    "id": "reco7EDaHkzlZiFA6",
+    "fields": {
+      "Name": "Gregg Tewksbury",
+      "Title": "President & CEO",
+      "Email": "gtewksbury@nhmutual.com",
+      "LinkedIn URL": "https://www.linkedin.com/in/gregg-tewksbury",
+      "Role Category": "Executive",
+      "Account": [
+        "recJD3CC8Uj98J46m"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "reccrhJ7n6t49muZk",
+        "recwVg6bBo0oF2Iam",
+        "recO4WI0lgR4Ao14F"
+      ]
+    },
+    "createdTime": "2025-07-28T19:25:10.000Z"
+  },
+  {
+    "id": "recqFvI7yr3by7TpA",
+    "fields": {
+      "Name": "Robert Ferlmann",
+      "Title": "Chief Financial Officer",
+      "Role Category": "C-Suite Executive",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "rec56KtKMvAzKBwWH"
+      ]
+    },
+    "createdTime": "2025-07-28T19:25:12.000Z"
+  },
+  {
+    "id": "recXRCCexoJ6yM9o8",
+    "fields": {
+      "Name": "Angela Strozewski",
+      "Title": "Executive Vice President & Chief Operating Officer",
+      "Role Category": "C-Suite Executive",
+      "Account": [
+        "recJD3CC8Uj98J46m"
+      ],
+      "Signals": [
+        "recgb8NtZCWMAKbhz",
+        "rec0yuLiUnAkpWdrN",
+        "rec0g6BISOlhCOAOF",
+        "receblh0IrW1jO3l3",
+        "rec5wYOjJ2b9zsBbo"
+      ],
+      "Total Signals": 5,
+      "Signal Summary": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Tasks": [
+        "recaZs5pc8KSgtF5q",
+        "recPqFoiyY6KKdZ1Y",
+        "recn3EFz8bRzhroB9",
+        "recImGjhMd0AKXrAV",
+        "rech6vlrG9ShiGTQ1"
+      ],
+      "Research": [
+        "reccrhJ7n6t49muZk",
+        "recwVg6bBo0oF2Iam",
+        "recO4WI0lgR4Ao14F"
+      ]
+    },
+    "createdTime": "2025-07-28T19:25:13.000Z"
+  },
+  {
+    "id": "recGJpoZq4tUHqYgr",
+    "fields": {
+      "Name": "Matthew Vonachen",
+      "Title": "CEO",
+      "LinkedIn URL": "https://www.linkedin.com/in/matt-vonachen-7a317440",
+      "Role Category": "C-Suite",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "rec56KtKMvAzKBwWH",
+        "recSr2YKhCC0s3dgP",
+        "recyIRDD80QyDtXmq",
+        "reccXQErkg3sRdcUY"
+      ]
+    },
+    "createdTime": "2025-07-28T19:25:29.000Z"
+  },
+  {
+    "id": "recV5Ex6iDq6hSjYK",
+    "fields": {
+      "Name": "Michael Disparano",
+      "Title": "Chief Operating Officer",
+      "Role Category": "C-Suite Executive",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      }
+    },
+    "createdTime": "2025-07-28T19:25:38.000Z"
+  },
+  {
+    "id": "recg9GTCK02ciGuHu",
+    "fields": {
+      "Name": "Robert Ferlmann",
+      "Title": "Chief Financial Officer",
+      "Role Category": "C-Suite",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "recSr2YKhCC0s3dgP",
+        "recyIRDD80QyDtXmq",
+        "reccXQErkg3sRdcUY"
+      ]
+    },
+    "createdTime": "2025-07-28T19:25:42.000Z"
+  },
+  {
+    "id": "recxbDpKfNC0Vybi8",
+    "fields": {
+      "Name": "Michael Disparano",
+      "Title": "Chief Operating Officer",
+      "Role Category": "Operations Leadership",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Signals": [
+        "recxVDv3h4s6lAXIT",
+        "reckvIHhqFvFZBZdv",
+        "recRW9mPxsvpIuoAI",
+        "rec0OJJGEjD2F0mXR"
+      ],
+      "Total Signals": 4,
+      "Signal Summary": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "recSr2YKhCC0s3dgP",
+        "recyIRDD80QyDtXmq",
+        "reccXQErkg3sRdcUY"
+      ]
+    },
+    "createdTime": "2025-07-28T19:26:09.000Z"
+  },
+  {
+    "id": "recdaijJWYifH3Bca",
+    "fields": {
+      "Name": "Sean Litvak",
+      "Title": "Senior Director of Business Development",
+      "LinkedIn URL": "https://www.linkedin.com/in/seanlitvak",
+      "Role Category": "Business Development",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "recSr2YKhCC0s3dgP",
+        "recyIRDD80QyDtXmq"
+      ]
+    },
+    "createdTime": "2025-07-28T19:26:12.000Z"
+  },
+  {
+    "id": "receGjaRkcWCKEbsU",
+    "fields": {
+      "Name": "Jeff Durand",
+      "Title": "Director of Information Technology",
+      "LinkedIn URL": "https://www.linkedin.com/in/jeffrey-durand",
+      "Role Category": "Technology Authority",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Signals": [
+        "rec3vqeevMlGMAU2Q",
+        "recCIb7BJUdLKl7XP",
+        "rec09SyJMT0Dx5Uii",
+        "recorL13PgF0Kgdof",
+        "recOhLJfjs9Kj6ohc"
+      ],
+      "Total Signals": 5,
+      "Signal Summary": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "recSr2YKhCC0s3dgP",
+        "recyIRDD80QyDtXmq"
+      ]
+    },
+    "createdTime": "2025-07-28T19:26:17.000Z"
+  },
+  {
+    "id": "recXM11U4NFk4ppTG",
+    "fields": {
+      "Name": "Max Vonachen",
+      "Title": "Next Generation Leadership",
+      "Role Category": "Leadership",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      }
+    },
+    "createdTime": "2025-07-28T19:26:52.000Z"
+  },
+  {
+    "id": "recBJ04en1Vj5rkIT",
+    "fields": {
+      "Name": "Jeff Durand",
+      "Title": "Director of Information Technology",
+      "LinkedIn URL": "https://www.linkedin.com/in/jeffrey-durand",
+      "Role Category": "Technology Leadership",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "reccXQErkg3sRdcUY"
+      ]
+    },
+    "createdTime": "2025-07-28T19:27:03.000Z"
+  },
+  {
+    "id": "reckyf7AZ6RcxiSKK",
+    "fields": {
+      "Name": "Sean Litvak",
+      "Title": "Senior Director of Business Development",
+      "LinkedIn URL": "https://www.linkedin.com/in/seanlitvak",
+      "Role Category": "Business Development",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "reccXQErkg3sRdcUY"
+      ]
+    },
+    "createdTime": "2025-07-28T19:27:04.000Z"
+  },
+  {
+    "id": "rec42lUq299cBqknQ",
+    "fields": {
+      "Name": "Max Vonachen",
+      "Title": "Business Performance Analyst",
+      "Role Category": "Analytics & Performance",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "reccXQErkg3sRdcUY"
+      ]
+    },
+    "createdTime": "2025-07-28T19:27:20.000Z"
+  },
+  {
+    "id": "reczr7QefeJOjjoRc",
+    "fields": {
+      "Name": "Dustin Chamberlin",
+      "Title": "Vice President of Operations",
+      "Role Category": "Operations Leadership",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "reccXQErkg3sRdcUY"
+      ]
+    },
+    "createdTime": "2025-07-28T19:27:21.000Z"
+  },
+  {
+    "id": "rec1G3nHDi5Mpfgax",
+    "fields": {
+      "Name": "Megan Vonachen",
+      "Title": "HR/Recruitment",
+      "Role Category": "Human Resources",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Research": [
+        "reccXQErkg3sRdcUY"
+      ]
+    },
+    "createdTime": "2025-07-28T19:27:24.000Z"
+  },
+  {
+    "id": "recK7Mu0jBjFBaz1S",
+    "fields": {
+      "Name": "Rich Neely",
+      "Title": "Employee (Role TBD)",
+      "LinkedIn URL": "https://www.linkedin.com/in/rich-neely-4409921",
+      "Role Category": "Operations",
+      "Account": [
+        "rec9VRe71REm6Kd68"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      }
+    },
+    "createdTime": "2025-07-28T19:28:40.000Z"
+  },
+  {
+    "id": "recbg4mQYxZq4wlV1",
+    "fields": {
+      "Name": "John Sedivy",
+      "Title": "Employee (Role TBD)",
+      "LinkedIn URL": "https://www.linkedin.com/in/johnrsedivy",
+      "Role Category": "Operations",
+      "Account": [
+        "rec8pEFOXlkoKDAya"
+      ],
+      "Total Signals": 0,
+      "Signal Summary": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Role Impact Score": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      }
+    },
+    "createdTime": "2025-07-28T19:28:41.000Z"
+  }
+]

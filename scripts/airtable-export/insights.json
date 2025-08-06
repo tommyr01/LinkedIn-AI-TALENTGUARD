@@ -1,0 +1,132 @@
+[
+  {
+    "id": "recgw42JY1jV3Aa9B",
+    "fields": {
+      "Insight ID": 1,
+      "Type": "Pain Point",
+      "Description": "Reporting bug in goal dashboards damaged HR reputation and blocked executive answers.",
+      "Priority": "High",
+      "Direct Quotes": "“Our reputation isn’t great… we can’t answer an executive leader’s response.” – Hazel Smith, May 1 2025\n",
+      "Source": "Meeting Transcript",
+      "Date": "2025-04-30",
+      "Summary (AI)": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Tags (AI)": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Company": [
+        "recPeemRANU5yvpvD"
+      ]
+    },
+    "createdTime": "2025-07-25T22:54:43.000Z"
+  },
+  {
+    "id": "recsLKEdYmSwtzZDc",
+    "fields": {
+      "Insight ID": 2,
+      "Type": "Opportunity",
+      "Description": "Need function- and country-level goal-completion breakdowns to guide follow-ups and cultural compliance.",
+      "Priority": "High",
+      "Direct Quotes": "“I need to see who’s entered goals by function and country.” – Hazel Smith, May 1 & 8 2025\n",
+      "Source": "Meeting Transcript",
+      "Date": "2025-05-07",
+      "Summary (AI)": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Tags (AI)": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Company": [
+        "recPeemRANU5yvpvD"
+      ]
+    },
+    "createdTime": "2025-07-25T22:54:43.000Z"
+  },
+  {
+    "id": "recMfT5XFZ258bUCf",
+    "fields": {
+      "Insight ID": 3,
+      "Type": "Opportunity",
+      "Description": "HR ready for formal monthly SLA reviews with vendor to align usage and business outcomes.",
+      "Priority": "High",
+      "Direct Quotes": "“We should be having a monthly customer check-in… pull our service level agreement and take a look at that.” – Hazel Smith, May 1 2025\n",
+      "Source": "Meeting Transcript",
+      "Date": "2025-04-30",
+      "Summary (AI)": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Tags (AI)": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Company": [
+        "recPeemRANU5yvpvD"
+      ]
+    },
+    "createdTime": "2025-07-25T22:54:43.000Z"
+  },
+  {
+    "id": "recr3CmlJH8ti41sK",
+    "fields": {
+      "Insight ID": 4,
+      "Type": "Pain Point",
+      "Description": "Manual Excel filtering (active, start dates, teams) shows appetite for integrated, dynamic reporting.",
+      "Priority": "High",
+      "Direct Quotes": "“We splice TalentGuard with HRIS data using VLOOKUP to spot terminated employees and compliance gaps.” – Blaine Boxwell, May 8 2025\n",
+      "Source": "Meeting Transcript",
+      "Date": "2025-05-07",
+      "Summary (AI)": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Tags (AI)": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Company": [
+        "recPeemRANU5yvpvD"
+      ]
+    },
+    "createdTime": "2025-07-25T22:54:43.000Z"
+  },
+  {
+    "id": "recSa1IWR3aHmrsFl",
+    "fields": {
+      "Insight ID": 5,
+      "Type": "Pain Point",
+      "Description": "Manual Excel filtering (active, start dates, teams) shows appetite for integrated, dynamic reporting.",
+      "Priority": "High",
+      "Direct Quotes": "“We splice TalentGuard with HRIS data using VLOOKUP to spot terminated employees and compliance gaps.” – Blaine Boxwell, May 8 2025\n",
+      "Source": "Meeting Transcript",
+      "Date": "2025-05-07",
+      "Summary (AI)": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Tags (AI)": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "Company": [
+        "recPeemRANU5yvpvD"
+      ]
+    },
+    "createdTime": "2025-07-25T22:54:43.000Z"
+  }
+]

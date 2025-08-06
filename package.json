@@ -7,7 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "workers": "node scripts/start-workers.js",
+    "workers:dev": "concurrently \"npm run dev\" \"npm run workers\"",
+    "redis:start": "docker run -d --name talentguard-redis -p 6379:6379 redis:7-alpine",
+    "redis:stop": "docker stop talentguard-redis && docker rm talentguard-redis",
+    "queue:status": "curl http://localhost:3000/api/jobs",
+    "queue:clean": "curl -X DELETE http://localhost:3000/api/jobs?action=clean"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
@@ -21,6 +27,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-toast": "^1.2.14",
     "@radix-ui/react-tooltip": "^1.2.7",
+    "@supabase/supabase-js": "^2.53.0",
     "@tabler/icons-react": "^3.34.0",
     "@tailwindcss/container-queries": "^0.1.1",
     "@types/node": "^20.11.0",
@@ -28,10 +35,13 @@
     "@types/react-dom": "^18.2.18",
     "airtable": "^0.12.2",
     "autoprefixer": "^10.4.16",
+    "bullmq": "^5.56.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^17.2.1",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.1.0",
+    "ioredis": "^5.7.0",
     "jsforce": "^3.9.1",
     "lucide-react": "^0.525.0",
     "next": "^14.1.0",
@@ -46,5 +56,9 @@
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.8.3",
     "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0",
+    "tsx": "^4.20.3"
   }
 }

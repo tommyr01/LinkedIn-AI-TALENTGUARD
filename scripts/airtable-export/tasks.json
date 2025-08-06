@@ -1,0 +1,938 @@
+[
+  {
+    "id": "recKgK4S6UvO7QHVK",
+    "fields": {
+      "Task Name": "Follow up with quarterly report",
+      "Task Type": "Email",
+      "Status": "To Do",
+      "Due Date": "2025-07-30",
+      "Owner": "John Doe",
+      "Related Account": [
+        "recgFInDYWd6f5Vp1"
+      ],
+      "Related Contact": [
+        "recXZ80ZKj7YhDGBy"
+      ],
+      "Days Until Due": -7,
+      "Contact Role Category": [
+        "Exec Sponsor"
+      ],
+      "Task Priority": {
+        "state": "generated",
+        "value": "High",
+        "isStale": true
+      },
+      "Suggested Next Action": {
+        "state": "generated",
+        "value": "Review the report and prepare questions",
+        "isStale": true
+      }
+    },
+    "createdTime": "2025-07-23T14:52:16.000Z"
+  },
+  {
+    "id": "rec4WWI1EVE45iSJ1",
+    "fields": {
+      "Task Name": "Schedule meeting with IT department",
+      "Task Type": "Call",
+      "Status": "In Progress",
+      "Due Date": "2025-07-25",
+      "Owner": "Jane Smith",
+      "Related Account": [
+        "reczb4WnWdfBQXbxL"
+      ],
+      "Related Contact": [
+        "recGgLMIukRLyllYS"
+      ],
+      "Days Until Due": -12,
+      "Contact Role Category": [
+        "Champion"
+      ],
+      "Task Priority": {
+        "state": "generated",
+        "value": "Medium",
+        "isStale": true
+      },
+      "Suggested Next Action": {
+        "state": "generated",
+        "value": "Confirm availability and send calendar invite",
+        "isStale": true
+      }
+    },
+    "createdTime": "2025-07-23T14:52:16.000Z"
+  },
+  {
+    "id": "recPgRj87ZlswSIEM",
+    "fields": {
+      "Task Name": "Send updated pricing PDF",
+      "Task Type": "PDF Sent",
+      "Status": "Done",
+      "Due Date": "2025-07-20",
+      "Owner": "Emily Johnson",
+      "Related Account": [
+        "rec8807zYZOvLc7Jf"
+      ],
+      "Related Contact": [
+        "recZROzFsR24ag8QU"
+      ],
+      "Days Until Due": -17,
+      "Contact Role Category": [
+        "Buyer"
+      ],
+      "Task Priority": {
+        "state": "generated",
+        "value": "Low",
+        "isStale": true
+      },
+      "Suggested Next Action": {
+        "state": "generated",
+        "value": "Ensure receipt and ask for feedback",
+        "isStale": true
+      }
+    },
+    "createdTime": "2025-07-23T14:52:16.000Z"
+  },
+  {
+    "id": "recC3wCt9ZKjXtPqG",
+    "fields": {
+      "Task Name": "Check-in with marketing team",
+      "Task Type": "Follow-Up",
+      "Status": "To Do",
+      "Due Date": "2025-07-28",
+      "Owner": "Michael Brown",
+      "Related Account": [
+        "rec0ZwtZKDoWEEHrh"
+      ],
+      "Related Contact": [
+        "recn78Wyev5mpqQZi"
+      ],
+      "Days Until Due": -9,
+      "Contact Role Category": [
+        "Exec Sponsor"
+      ],
+      "Task Priority": {
+        "state": "generated",
+        "value": "Medium",
+        "isStale": true
+      },
+      "Suggested Next Action": {
+        "state": "generated",
+        "value": "Discuss recent campaign performance",
+        "isStale": true
+      }
+    },
+    "createdTime": "2025-07-23T14:52:16.000Z"
+  },
+  {
+    "id": "recMmylIZPReDhAlv",
+    "fields": {
+      "Task Name": "Prepare presentation for board meeting",
+      "Task Type": "Other",
+      "Status": "In Progress",
+      "Due Date": "2025-07-24",
+      "Owner": "Sarah Lee",
+      "Related Account": [
+        "recgFInDYWd6f5Vp1"
+      ],
+      "Related Contact": [
+        "rec1YacV4dTjkuJ60"
+      ],
+      "Days Until Due": -13,
+      "Contact Role Category": [
+        "Buyer"
+      ],
+      "Task Priority": {
+        "state": "generated",
+        "value": "High",
+        "isStale": true
+      },
+      "Suggested Next Action": {
+        "state": "generated",
+        "value": "Finalize slides and rehearse",
+        "isStale": true
+      }
+    },
+    "createdTime": "2025-07-23T14:52:16.000Z"
+  },
+  {
+    "id": "recd3j7CBVitLmSV0",
+    "fields": {
+      "Task Name": "Review contract terms with legal",
+      "Task Type": "Other",
+      "Status": "To Do",
+      "Due Date": "2025-08-01",
+      "Owner": "David Wilson",
+      "Related Account": [
+        "reczb4WnWdfBQXbxL"
+      ],
+      "Related Contact": [
+        "recm5jMkLrltfy8bm"
+      ],
+      "Days Until Due": -5,
+      "Contact Role Category": [
+        "Other"
+      ],
+      "Task Priority": {
+        "state": "generated",
+        "value": "Medium",
+        "isStale": true
+      },
+      "Suggested Next Action": {
+        "state": "generated",
+        "value": "Identify key points and potential issues",
+        "isStale": true
+      }
+    },
+    "createdTime": "2025-07-23T14:52:16.000Z"
+  },
+  {
+    "id": "recSqDlI6cFbuvxMw",
+    "fields": {
+      "Task Name": "High priority for strategic outreach",
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T11:24:52.000Z"
+  },
+  {
+    "id": "recGZK2fcbH3l6wAc",
+    "fields": {
+      "Task Name": "Document leadership gap impact on organization",
+      "Related Contact": [
+        "reclbA40HfdJuhAdg"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "Leadership"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:40.000Z"
+  },
+  {
+    "id": "recHo4QDNuwVn2UD1",
+    "fields": {
+      "Task Name": "Identify interim leadership support opportunities",
+      "Related Contact": [
+        "reclbA40HfdJuhAdg"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "Leadership"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:40.000Z"
+  },
+  {
+    "id": "recokRHhaQ8QP1JFp",
+    "fields": {
+      "Task Name": "Research succession planning needs",
+      "Related Contact": [
+        "reclbA40HfdJuhAdg"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "Leadership"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:40.000Z"
+  },
+  {
+    "id": "recXtbWEZQeDMrnfv",
+    "fields": {
+      "Task Name": "Monitor organizational transition challenges",
+      "Related Contact": [
+        "reclbA40HfdJuhAdg"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "Leadership"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:40.000Z"
+  },
+  {
+    "id": "recBVeBfQZ7P7hfpf",
+    "fields": {
+      "Task Name": "Track workforce management implications",
+      "Related Contact": [
+        "reclbA40HfdJuhAdg"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "Leadership"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:40.000Z"
+  },
+  {
+    "id": "recKbhhzOhzJukWbB",
+    "fields": {
+      "Task Name": "Outreach for HR/workforce management solutions",
+      "Related Contact": [
+        "rec1bA3mjPnDWSJoC"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "HR/People Operations"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:56.000Z"
+  },
+  {
+    "id": "recy5f7hGf9TlNWaI",
+    "fields": {
+      "Task Name": "Position TalentGuard as hiring and development platform",
+      "Related Contact": [
+        "rec1bA3mjPnDWSJoC"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "HR/People Operations"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:56.000Z"
+  },
+  {
+    "id": "recS0quP9YXuq5MXW",
+    "fields": {
+      "Task Name": "Leverage family business connection",
+      "Related Contact": [
+        "rec1bA3mjPnDWSJoC"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "HR/People Operations"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:56.000Z"
+  },
+  {
+    "id": "recWogddDqBX5XlOU",
+    "fields": {
+      "Task Name": "Reference recent hiring activities",
+      "Related Contact": [
+        "rec1bA3mjPnDWSJoC"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "HR/People Operations"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:25:56.000Z"
+  },
+  {
+    "id": "recZ0oram5SrtnS9S",
+    "fields": {
+      "Task Name": "Engage for digital banking solutions",
+      "Related Contact": [
+        "recLdm9oUTFwurvok"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "Technology Leadership"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:46:40.000Z"
+  },
+  {
+    "id": "recxvXaFsuEL6XrxC",
+    "fields": {
+      "Task Name": "Target for customer experience platforms",
+      "Related Contact": [
+        "recLdm9oUTFwurvok"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "Technology Leadership"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:46:40.000Z"
+  },
+  {
+    "id": "recaErylyIszKQTQh",
+    "fields": {
+      "Task Name": "Discuss digital transformation initiatives",
+      "Related Contact": [
+        "recLdm9oUTFwurvok"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "Technology Leadership"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:46:40.000Z"
+  },
+  {
+    "id": "recYa09nVYcSPKkcd",
+    "fields": {
+      "Task Name": "Present technology modernization opportunities",
+      "Related Contact": [
+        "recLdm9oUTFwurvok"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "Technology Leadership"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:46:40.000Z"
+  },
+  {
+    "id": "recjavRMPZYnvmmGH",
+    "fields": {
+      "Task Name": "Research data analytics solutions",
+      "Related Contact": [
+        "recR233j2kRIxDpGa"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "Technology"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:46:58.000Z"
+  },
+  {
+    "id": "recfsb6u8WPYYC0YF",
+    "fields": {
+      "Task Name": "Identify BI platform needs",
+      "Related Contact": [
+        "recR233j2kRIxDpGa"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "Technology"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:46:58.000Z"
+  },
+  {
+    "id": "recW2ZZkMaXPLUVEF",
+    "fields": {
+      "Task Name": "Develop outreach strategy",
+      "Related Contact": [
+        "recR233j2kRIxDpGa"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "Technology"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:46:58.000Z"
+  },
+  {
+    "id": "rectIIq5abdaW7HTw",
+    "fields": {
+      "Task Name": "Connect on LinkedIn",
+      "Related Contact": [
+        "recR233j2kRIxDpGa"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "Technology"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:46:58.000Z"
+  },
+  {
+    "id": "recfBOuUn2OKuhDMN",
+    "fields": {
+      "Task Name": "Corporate strategy",
+      "Related Contact": [
+        "recGmSuWda8418psA"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "Strategy/Executive Leadership"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:47:08.000Z"
+  },
+  {
+    "id": "recKWyRamsPrFGPHf",
+    "fields": {
+      "Task Name": "Digital transformation",
+      "Related Contact": [
+        "recGmSuWda8418psA"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "Strategy/Executive Leadership"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:47:08.000Z"
+  },
+  {
+    "id": "rec31pvTiijVI1JSc",
+    "fields": {
+      "Task Name": "M&A",
+      "Related Contact": [
+        "recGmSuWda8418psA"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "Strategy/Executive Leadership"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:47:08.000Z"
+  },
+  {
+    "id": "recrJAqrxpurtJ57k",
+    "fields": {
+      "Task Name": "Long-term planning",
+      "Related Contact": [
+        "recGmSuWda8418psA"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "Strategy/Executive Leadership"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T14:47:08.000Z"
+  },
+  {
+    "id": "recaZs5pc8KSgtF5q",
+    "fields": {
+      "Task Name": "Research Angela's background and career history",
+      "Related Contact": [
+        "recXRCCexoJ6yM9o8"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "C-Suite Executive"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:25:13.000Z"
+  },
+  {
+    "id": "recPqFoiyY6KKdZ1Y",
+    "fields": {
+      "Task Name": "Identify her key operational priorities at NHMB",
+      "Related Contact": [
+        "recXRCCexoJ6yM9o8"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "C-Suite Executive"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:25:13.000Z"
+  },
+  {
+    "id": "recn3EFz8bRzhroB9",
+    "fields": {
+      "Task Name": "Find her contact information and preferred communication channels",
+      "Related Contact": [
+        "recXRCCexoJ6yM9o8"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "C-Suite Executive"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:25:13.000Z"
+  },
+  {
+    "id": "recImGjhMd0AKXrAV",
+    "fields": {
+      "Task Name": "Analyze her involvement in technology and digital transformation initiatives",
+      "Related Contact": [
+        "recXRCCexoJ6yM9o8"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "C-Suite Executive"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:25:13.000Z"
+  },
+  {
+    "id": "rech6vlrG9ShiGTQ1",
+    "fields": {
+      "Task Name": "Map her influence in the buying committee for operational solutions",
+      "Related Contact": [
+        "recXRCCexoJ6yM9o8"
+      ],
+      "Days Until Due": {
+        "specialValue": "NaN"
+      },
+      "Contact Role Category": [
+        "C-Suite Executive"
+      ],
+      "Task Priority": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      },
+      "Suggested Next Action": {
+        "state": "error",
+        "errorType": "emptyDependency",
+        "value": null,
+        "isStale": false
+      }
+    },
+    "createdTime": "2025-07-28T19:25:13.000Z"
+  }
+]

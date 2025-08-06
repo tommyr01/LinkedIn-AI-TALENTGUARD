@@ -1,0 +1,62 @@
+[
+  {
+    "id": "reciBQHkJ084mzqp6",
+    "fields": {
+      "Title": "Reliable Goal Status Dashboards",
+      "Need Statement": "Restore exec trust with accurate, real-time goal & performance reporting; friction-free enterprise roll-ups and function filters.",
+      "Validation": "Validated",
+      "Product Mapping": "Check-ins & Reviews",
+      "CHRO Value": "Rebuilds HR credibility; enables accountable culture across functions.",
+      "Deal Accelerators": "Fast-start filter fix; CHRO-ready roll-up view.",
+      "Associated Company": [
+        "recPeemRANU5yvpvD"
+      ]
+    },
+    "createdTime": "2025-07-25T22:52:29.000Z"
+  },
+  {
+    "id": "rec7UeskPHpBJuHil",
+    "fields": {
+      "Title": "Function-Level Development Insights",
+      "Need Statement": "Show which departments / regions lag in goal entry & development planning; support DEI and cultural compliance.",
+      "Validation": "Validated",
+      "Product Mapping": "Talent Frameworks + Career Pathing Analytics",
+      "CHRO Value": "Strategic development focus by region & function; improves alignment and DEI outcomes.",
+      "Deal Accelerators": "Dashboard mock-up by country/function; trend comparison for compliance.",
+      "Associated Company": [
+        "recPeemRANU5yvpvD"
+      ]
+    },
+    "createdTime": "2025-07-25T22:52:29.000Z"
+  },
+  {
+    "id": "rec0mzS4pQkXTSEIE",
+    "fields": {
+      "Title": "Institutionalised SLA Reviews",
+      "Need Statement": "Formalise monthly executive-service cadence linking platform usage to HR outcomes; reduce escalations and blind spots.",
+      "Validation": "Validated",
+      "Product Mapping": "Executive Services Add-On",
+      "CHRO Value": "Prevents issues, supports annual talent milestones, deepens strategic partnership.",
+      "Deal Accelerators": "Monthly SLA cadence proposal; baseline-to-trend impact report.",
+      "Associated Company": [
+        "recPeemRANU5yvpvD"
+      ]
+    },
+    "createdTime": "2025-07-25T22:52:29.000Z"
+  },
+  {
+    "id": "rec25hTy7bTVonUWL",
+    "fields": {
+      "Title": "Dynamic HRIS-Integrated Reporting",
+      "Need Statement": "Eliminate Excel splicing by integrating HRIS data (active/inactive, hire/term dates, role filters) into TalentGuard reporting suite.",
+      "Validation": "Validated",
+      "Product Mapping": "Reporting Suite + HRIS Integration Layer",
+      "CHRO Value": "One source of truth; improves decision confidence and data integrity.",
+      "Deal Accelerators": "60-day pilot with hire/term filters; auto-flag compliance alerts.",
+      "Associated Company": [
+        "recPeemRANU5yvpvD"
+      ]
+    },
+    "createdTime": "2025-07-25T22:52:29.000Z"
+  }
+]
