@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
     for (const post of allPosts) {
       try {
         // Use activity_urn as the main URN for TalentGuard company posts
-        const postUrn = post.activity_urn || post.urn
+        const postUrn = (post as any).activity_urn || post.urn
         
         // Check if post already exists
         const existingPost = await talentGuardLinkedIn.getPostByUrn(postUrn)
@@ -167,20 +167,20 @@ export async function POST(request: NextRequest) {
           urn: postUrn,
           status: isNewPost ? 'new' : 'updated',
           posted_at: post.posted_at,
-          engagement: post.stats?.total_reactions || 0,
-          author: post.author?.name || 'TalentGuard'
+          engagement: (post as any).stats?.total_reactions || 0,
+          author: (post as any).author?.name || 'TalentGuard'
         })
 
         if (isNewPost) {
           newPosts++
-          console.log(`✅ Saved new post: ${postUrn} by ${post.author?.name || 'TalentGuard'}`)
+          console.log(`✅ Saved new post: ${postUrn} by ${(post as any).author?.name || 'TalentGuard'}`)
         } else {
           updatedPosts++
           console.log(`✅ Updated existing post: ${postUrn}`)
         }
         
       } catch (error: any) {
-        const postUrn = post.activity_urn || post.urn || 'unknown'
+        const postUrn = (post as any).activity_urn || post.urn || 'unknown'
         console.error(`❌ Error processing post ${postUrn}:`, error.message)
         errors++
         
