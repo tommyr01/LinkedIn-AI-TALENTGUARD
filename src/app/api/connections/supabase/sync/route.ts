@@ -83,17 +83,16 @@ export async function POST(request: NextRequest) {
 
 async function fetchLinkedInProfile(username: string) {
   try {
-    const url = 'https://linkedin-data-api.p.rapidapi.com/get-profile-data-by-url'
+    const url = `https://linkedin-scraper-api-real-time-fast-affordable.p.rapidapi.com/profile/detail?username=${username}`
     const options = {
       method: 'GET',
       headers: {
         'x-rapidapi-key': process.env.RAPIDAPI_KEY!,
-        'x-rapidapi-host': 'linkedin-data-api.p.rapidapi.com'
+        'x-rapidapi-host': 'linkedin-scraper-api-real-time-fast-affordable.p.rapidapi.com'
       }
     }
 
-    const profileUrl = `https://linkedin.com/in/${username}`
-    const response = await fetch(`${url}?url=${encodeURIComponent(profileUrl)}`, options)
+    const response = await fetch(url, options)
     
     if (!response.ok) {
       throw new Error(`LinkedIn API error: ${response.status}`)
@@ -101,11 +100,28 @@ async function fetchLinkedInProfile(username: string) {
 
     const data = await response.json()
     
-    if (!data || !data.fullname) {
-      throw new Error('Invalid LinkedIn profile data received')
+    // Transform the response to match expected format
+    const transformedData = {
+      fullname: data.full_name || data.name || `${data.first_name || ''} ${data.last_name || ''}`.trim(),
+      headline: data.headline || data.description || '',
+      about: data.about || data.summary || '',
+      location: {
+        full: data.location || data.full_location || ''
+      },
+      follower_count: data.follower_count || data.followers_count || 0,
+      connection_count: data.connection_count || data.connections_count || 0,
+      current_company: data.current_company || data.company || '',
+      profile_picture_url: data.profile_picture_url || data.profile_picture || data.avatar_url || '',
+      is_creator: data.is_creator || false,
+      is_influencer: data.is_influencer || false,
+      is_premium: data.is_premium || false
+    }
+    
+    if (!transformedData.fullname) {
+      throw new Error('Invalid LinkedIn profile data received - no name found')
     }
 
-    return data
+    return transformedData
 
   } catch (error) {
     console.error('Error fetching LinkedIn profile:', error)

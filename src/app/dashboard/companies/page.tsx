@@ -372,7 +372,7 @@ export default function CompaniesPage() {
                   <div className="flex items-center gap-1">
                     <IconTarget className="h-4 w-4 text-muted-foreground" />
                     <span>{fields.signals?.length || 0} signals</span>
-                  </div>
+                    </div>
                   <div className="flex items-center gap-1">
                     <IconClock className="h-4 w-4 text-muted-foreground" />
                     <span>{company.tasks?.length || 0} tasks</span>
@@ -413,7 +413,7 @@ export default function CompaniesPage() {
                       <p className="text-sm text-gray-700 whitespace-pre-line">
                       {fields.currentNews}
                       </p>
-                    </div>
+                      </div>
                       </div>
                 )}
 

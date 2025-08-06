@@ -31,15 +31,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Check environment variables
-    if (!process.env.RAPIDAPI_KEY || !process.env.RAPIDAPI_HOST) {
+    if (!process.env.RAPIDAPI_KEY) {
       return NextResponse.json({ 
-        error: 'Missing RapidAPI configuration. Please set RAPIDAPI_KEY and RAPIDAPI_HOST environment variables.' 
+        error: 'Missing RapidAPI configuration. Please set RAPIDAPI_KEY environment variable.' 
       }, { status: 500 })
     }
 
     // Get request parameters
     const body = await request.json().catch(() => ({}))
-    const username = body.username || process.env.LINKEDIN_USERNAME || 'andrewtallents'
+    const companyName = body.companyName || 'talentguard'
     const pageNumber = body.pageNumber || 1
     const maxPages = body.maxPages || 2 // Conservative limit for TalentGuard
 
@@ -48,18 +48,19 @@ export async function POST(request: NextRequest) {
     let hasMorePages = true
     let processedPages = 0
 
-    console.log(`📡 Fetching LinkedIn posts for user: ${username}`)
+    console.log(`📡 Fetching LinkedIn posts for company: ${companyName}`)
 
     while (hasMorePages && processedPages < maxPages) {
-      console.log(`📡 Fetching posts page ${currentPage} for ${username}...`)
+      console.log(`📡 Fetching posts page ${currentPage} for company ${companyName}...`)
       
-      const rapidApiUrl = `https://${process.env.RAPIDAPI_HOST}/profile/posts?username=${username}&page_number=${currentPage}`
+      // Updated to use company posts endpoint
+      const rapidApiUrl = `https://linkedin-scraper-api-real-time-fast-affordable.p.rapidapi.com/company/posts?company_name=${companyName}`
       console.log(`🔗 Request URL: ${rapidApiUrl}`)
       
       const response = await fetch(rapidApiUrl, {
         method: 'GET',
         headers: {
-          'x-rapidapi-host': process.env.RAPIDAPI_HOST,
+          'x-rapidapi-host': 'linkedin-scraper-api-real-time-fast-affordable.p.rapidapi.com',
           'x-rapidapi-key': process.env.RAPIDAPI_KEY,
           'Content-Type': 'application/json'
         }
@@ -193,14 +194,14 @@ export async function POST(request: NextRequest) {
       updatedPosts,
       errors,
       pagesProcessed: processedPages,
-      username
+      companyName
     }
 
     console.log('📈 TalentGuard LinkedIn Sync Summary:', summary)
 
     return NextResponse.json({
       success: true,
-      message: `Successfully synced ${allPosts.length} LinkedIn posts for ${username}`,
+      message: `Successfully synced ${allPosts.length} LinkedIn posts for ${companyName}`,
       data: {
         posts: results,
         summary,
@@ -237,10 +238,10 @@ export async function GET(request: NextRequest) {
       }, { status: 500 })
     }
 
-    const username = request.nextUrl.searchParams.get('username') || process.env.LINKEDIN_USERNAME || 'andrewtallents'
+    const companyName = request.nextUrl.searchParams.get('companyName') || 'talentguard'
     
-    // Get latest posts from database
-    const posts = await talentGuardLinkedIn.getPostsByUsername(username, 10)
+    // Get latest posts from database - this would need to be updated to filter by company
+    const posts = await talentGuardLinkedIn.getPostsByUsername(companyName, 10)
     
     const stats = {
       totalPosts: posts.length,
@@ -254,7 +255,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: {
-        username,
+        companyName,
         stats,
         recentPosts: posts.slice(0, 5).map(post => ({
           urn: post.urn,
