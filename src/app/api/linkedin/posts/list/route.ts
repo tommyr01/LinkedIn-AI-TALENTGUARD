@@ -72,15 +72,15 @@ export async function GET(request: NextRequest) {
     }
 
     const searchParams = request.nextUrl.searchParams
-    const username = searchParams.get('username') || process.env.LINKEDIN_USERNAME || 'andrewtallents'
     const maxRecords = parseInt(searchParams.get('maxRecords') || '50')
     const sortField = searchParams.get('sortField') || 'posted_at'
     const sortDirection = searchParams.get('sortDirection') || 'desc'
+    const companyName = searchParams.get('company') || 'TalentGuard'
 
-    console.log(`📡 Requesting posts for ${username}, limit: ${maxRecords}`)
+    console.log(`📡 Requesting posts for company: ${companyName}, limit: ${maxRecords}`)
 
-    // Fetch posts from Supabase
-    const dbPosts = await talentGuardLinkedIn.getPostsByUsername(username, maxRecords)
+    // Fetch TalentGuard company posts from Supabase (all posts in the database)
+    const dbPosts = await talentGuardLinkedIn.getAllPosts(maxRecords)
     
     console.log(`✅ Successfully fetched ${dbPosts.length} posts from Supabase`)
 
@@ -168,7 +168,7 @@ export async function GET(request: NextRequest) {
         maxRecords,
         sortField,
         sortDirection,
-        username,
+        companyName,
         dataSource: 'supabase-talentguard',
         lastSync: posts.length > 0 ? posts[0].lastSyncedAt : null
       },
@@ -204,15 +204,15 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json().catch(() => ({}))
-    const username = body.username || process.env.LINKEDIN_USERNAME || 'andrewtallents'
+    const companyName = body.companyName || body.company_name || 'TalentGuard'
     
-    console.log(`🔄 Triggering comprehensive LinkedIn sync for ${username}...`)
+    console.log(`🔄 Triggering comprehensive LinkedIn sync for company: ${companyName}...`)
     
     // Trigger posts sync
     const syncResponse = await fetch(`${request.nextUrl.origin}/api/linkedin/posts/sync`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, maxPages: 2 })
+      body: JSON.stringify({ companyName, maxPages: 2 })
     })
     
     if (!syncResponse.ok) {

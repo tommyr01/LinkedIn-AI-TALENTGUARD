@@ -193,7 +193,7 @@ export interface ProspectProfile {
 export class TalentGuardLinkedInService {
   
   // Posts Operations
-  async upsertPost(linkedInPost: LinkedInPost): Promise<DBLinkedInPost> {
+  async upsertPost(linkedInPost: any): Promise<DBLinkedInPost> {
     const dbPost = this.transformPostToDB(linkedInPost)
     
     const { data, error } = await supabase
@@ -210,8 +210,11 @@ export class TalentGuardLinkedInService {
       throw new Error(`Failed to save post: ${error.message}`)
     }
 
-    // Record engagement history
-    await this.recordEngagementHistory(linkedInPost.urn, linkedInPost.stats)
+    // Record engagement history if stats exist
+    const urn = linkedInPost.activity_urn || linkedInPost.urn
+    if (urn && linkedInPost.stats) {
+      await this.recordEngagementHistory(urn, linkedInPost.stats)
+    }
 
     return data
   }
@@ -226,6 +229,21 @@ export class TalentGuardLinkedInService {
 
     if (error) {
       console.error('Error fetching posts:', error)
+      throw new Error(`Failed to fetch posts: ${error.message}`)
+    }
+
+    return data || []
+  }
+
+  async getAllPosts(limit: number = 50): Promise<DBLinkedInPost[]> {
+    const { data, error } = await supabase
+      .from('linkedin_posts')
+      .select('*')
+      .order('posted_at', { ascending: false })
+      .limit(limit)
+
+    if (error) {
+      console.error('Error fetching all posts:', error)
       throw new Error(`Failed to fetch posts: ${error.message}`)
     }
 
@@ -430,7 +448,7 @@ export class TalentGuardLinkedInService {
   }
 
   // Transform functions
-  private transformPostToDB(post: LinkedInPost): Partial<DBLinkedInPost> {
+  private transformPostToDB(post: any): Partial<DBLinkedInPost> {
     // Handle different timestamp formats from LinkedIn API
     let postedAt: string | undefined = undefined
     if (post.posted_at) {
@@ -439,35 +457,42 @@ export class TalentGuardLinkedInService {
       } else if (typeof post.posted_at === 'object' && post.posted_at.date) {
         postedAt = new Date(post.posted_at.date).toISOString()
       } else if (typeof post.posted_at === 'object' && post.posted_at.timestamp) {
+        // Fix: timestamp is already in milliseconds, not seconds
         postedAt = new Date(post.posted_at.timestamp).toISOString()
       }
     }
 
+    // Use activity_urn as the main URN for TalentGuard company posts
+    const urn = post.activity_urn || post.urn
+    const fullUrn = post.full_urn || post.activity_urn || post.urn
+    const postUrl = post.post_url || post.url
+
     return {
-      urn: post.urn,
-      full_urn: post.full_urn,
+      urn: urn,
+      full_urn: fullUrn,
       posted_at: postedAt,
-      text: post.text,
-      url: post.url,
-      post_type: post.post_type,
-      author_first_name: post.author.first_name,
-      author_last_name: post.author.last_name,
-      author_headline: post.author.headline,
-      author_username: post.author.username,
-      author_profile_url: post.author.profile_url,
-      author_profile_picture: post.author.profile_picture,
-      total_reactions: post.stats.total_reactions,
-      like_count: post.stats.like,
-      support_count: post.stats.support,
-      love_count: post.stats.love,
-      insight_count: post.stats.insight,
-      celebrate_count: post.stats.celebrate,
-      comments_count: post.stats.comments,
-      reposts_count: post.stats.reposts,
-      document_title: post.document?.title,
-      document_page_count: post.document?.page_count,
-      document_url: post.document?.url,
-      document_thumbnail: post.document?.thumbnail,
+      text: post.text || '',
+      url: postUrl,
+      post_type: post.post_type || 'regular',
+      // Company posts have different author structure
+      author_first_name: post.author?.name?.split(' ')[0] || 'TalentGuard',
+      author_last_name: post.author?.name?.split(' ').slice(1).join(' ') || '',
+      author_headline: '', // Company posts don't have author headlines
+      author_username: 'talentguard', // Fixed username for company posts
+      author_profile_url: post.author?.company_url || 'https://www.linkedin.com/company/talentguard',
+      author_profile_picture: post.author?.logo_url || '',
+      total_reactions: post.stats?.total_reactions || 0,
+      like_count: post.stats?.like || 0,
+      support_count: post.stats?.support || 0,
+      love_count: post.stats?.love || 0,
+      insight_count: post.stats?.insight || 0,
+      celebrate_count: post.stats?.celebrate || 0,
+      comments_count: post.stats?.comments || 0,
+      reposts_count: post.stats?.reposts || 0,
+      document_title: post.document?.title || null,
+      document_page_count: post.document?.page_count || null,
+      document_url: post.document?.url || null,
+      document_thumbnail: post.document?.thumbnail || null,
       last_synced_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     }

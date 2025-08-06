@@ -247,7 +247,7 @@ export function LinkedInPostsTable({ posts, stats, onRefresh, isLoading = false 
           : "space-y-4 max-w-4xl"
         }>
           {paginatedPosts.map((post) => (
-            <Card key={post.id} className="hover:shadow-lg transition-shadow duration-200">
+            <Card key={post.postUrn} className="hover:shadow-lg transition-shadow duration-200">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
