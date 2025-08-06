@@ -22,11 +22,11 @@ interface PostStats {
 
 interface LinkedInStatsCardsProps {
   stats: PostStats
-  lastSync?: string | null
+  lastSync?: string | null | undefined
 }
 
 export function LinkedInStatsCards({ stats, lastSync }: LinkedInStatsCardsProps) {
-  const formatLastSync = (syncTime: string | null) => {
+  const formatLastSync = (syncTime: string | null | undefined) => {
     if (!syncTime) return 'Never'
     const date = new Date(syncTime)
     const now = new Date()
@@ -37,7 +37,7 @@ export function LinkedInStatsCards({ stats, lastSync }: LinkedInStatsCardsProps)
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   }
 
-  const getSyncColor = (syncTime: string | null) => {
+  const getSyncColor = (syncTime: string | null | undefined) => {
     if (!syncTime) return 'bg-gray-100 text-gray-600'
     
     const date = new Date(syncTime)

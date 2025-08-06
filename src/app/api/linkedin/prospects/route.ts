@@ -180,10 +180,10 @@ export async function POST(request: NextRequest) {
                 email: '', // LinkedIn doesn't provide email
                 title: prospect.current_role || '',
                 linkedin_url: prospect.profile_url,
-                role_category: mapICPCategoryToRoleCategory(prospect.icp_category),
+                role_category: mapICPCategoryToRoleCategory(prospect.icp_category || 'Not Qualified'),
                 // Add ICP data as metadata
                 signal_summary: {
-                  value: `LinkedIn engagement prospect (ICP Score: ${prospect.icp_score}/100)`,
+                  value: `LinkedIn engagement prospect (ICP Score: ${prospect.icp_score || 0}/100)`,
                   isStale: false
                 }
               }
@@ -219,7 +219,7 @@ export async function POST(request: NextRequest) {
               const signalData = {
                 type: 'LinkedIn Engagement',
                 description: `${prospect.name} from ${prospect.current_company} engaged with LinkedIn content`,
-                strength: prospect.icp_score >= 80 ? 'Strong' : prospect.icp_score >= 60 ? 'Medium' : 'Weak',
+                strength: (prospect.icp_score || 0) >= 80 ? 'Strong' : (prospect.icp_score || 0) >= 60 ? 'Medium' : 'Weak',
                 source: 'LinkedIn',
                 metadata: {
                   profileUrl: prospect.profile_url,

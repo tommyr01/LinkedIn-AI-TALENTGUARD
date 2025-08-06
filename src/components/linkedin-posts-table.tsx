@@ -347,10 +347,10 @@ export function LinkedInPostsTable({ posts, stats, onRefresh, isLoading = false 
                   {/* Extended engagement types */}
                   {(post.support || post.love || post.insight || post.celebrate) && (
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      {post.support > 0 && <span>👏 {post.support}</span>}
-                      {post.love > 0 && <span>❤️ {post.love}</span>}
-                      {post.insight > 0 && <span>💡 {post.insight}</span>}
-                      {post.celebrate > 0 && <span>🎉 {post.celebrate}</span>}
+                      {(post.support || 0) > 0 && <span>👏 {post.support}</span>}
+                      {(post.love || 0) > 0 && <span>❤️ {post.love}</span>}
+                      {(post.insight || 0) > 0 && <span>💡 {post.insight}</span>}
+                      {(post.celebrate || 0) > 0 && <span>🎉 {post.celebrate}</span>}
                     </div>
                   )}
                 </div>
