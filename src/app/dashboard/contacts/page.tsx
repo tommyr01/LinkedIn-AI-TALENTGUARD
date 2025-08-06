@@ -8,29 +8,55 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { IconSearch, IconMail, IconUsers, IconExternalLink, IconTarget, IconBrain, IconCalendar, IconClipboardList } from '@tabler/icons-react'
 
-// Type definition for API contact data based on actual Airtable structure
+// Type definition for API contact data (works with both Airtable and Supabase)
 interface Contact {
   id: string
-  Name: string
-  Title: string
-  Email: string
-  'LinkedIn URL': string
-  'Role Category': string
-  Account: string[]
-  'Total Signals': number
-  'Latest Signal Date': string
-  'Signal Summary': {
+  // Airtable fields (PascalCase)
+  Name?: string
+  Title?: string
+  Email?: string
+  'LinkedIn URL'?: string
+  'Role Category'?: string
+  Account?: string[]
+  'Total Signals'?: number
+  'Latest Signal Date'?: string
+  'Signal Summary'?: {
     state: string
     value: string
     isStale: boolean
   }
-  'Role Impact Score': {
+  'Role Impact Score'?: {
     state: string
     value: string
     isStale: boolean
   }
-  Tasks: string[]
+  Tasks?: string[]
+  // Supabase fields (snake_case)
+  name?: string
+  title?: string
+  email?: string
+  linkedin_url?: string
+  role_category?: string
+  account_id?: string
+  total_signals?: number
+  latest_signal_date?: string
+  created_at?: string
 }
+
+// Helper function to get normalized field values
+const getFieldValue = (contact: Contact) => ({
+  name: contact.Name || contact.name || 'Unnamed Contact',
+  title: contact.Title || contact.title || 'No title',
+  email: contact.Email || contact.email || 'No email',
+  linkedinUrl: contact['LinkedIn URL'] || contact.linkedin_url || '',
+  roleCategory: contact['Role Category'] || contact.role_category || 'Unknown',
+  totalSignals: contact['Total Signals'] || contact.total_signals || 0,
+  latestSignalDate: contact['Latest Signal Date'] || contact.latest_signal_date || 'No date',
+  signalSummary: contact['Signal Summary'],
+  roleImpactScore: contact['Role Impact Score'],
+  tasks: contact.Tasks || [],
+  account: contact.Account || (contact.account_id ? [contact.account_id] : [])
+})
 
 const fetcher = (url: string) => fetch(url).then((res) => {
   if (!res.ok) {
@@ -54,15 +80,22 @@ export default function ContactsPage() {
 
   // Stats calculations
   const totalContacts = contacts?.length || 0
-  const execSponsors = contacts?.filter((c: Contact) => c['Role Category'] === 'Exec Sponsor').length || 0
-  const avgSignals = Math.round((contacts?.reduce((acc: number, curr: Contact) => acc + (curr['Total Signals'] || 0), 0) || 0) / (totalContacts || 1))
+  const execSponsors = contacts?.filter((c: Contact) => {
+    const fields = getFieldValue(c);
+    return fields.roleCategory === 'Exec Sponsor';
+  }).length || 0
+  const avgSignals = Math.round((contacts?.reduce((acc: number, curr: Contact) => {
+    const fields = getFieldValue(curr);
+    return acc + fields.totalSignals;
+  }, 0) || 0) / (totalContacts || 1))
 
   // Filter contacts based on search
-  const filteredContacts = contacts?.filter((c: Contact) => 
-    c.Name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.Title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c['Role Category']?.toLowerCase().includes(searchQuery.toLowerCase())
-  ) || []
+  const filteredContacts = contacts?.filter((c: Contact) => {
+    const fields = getFieldValue(c);
+    return fields.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           fields.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           fields.roleCategory.toLowerCase().includes(searchQuery.toLowerCase());
+  }) || []
 
   if (isLoading) {
     return (
@@ -156,28 +189,30 @@ export default function ContactsPage() {
                     </div>
                   </div>
         ) : (
-          filteredContacts.map((contact: Contact) => (
+          filteredContacts.map((contact: Contact) => {
+            const fields = getFieldValue(contact);
+            return (
             <Card key={contact.id} className="hover:shadow-lg transition-shadow duration-200">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <CardTitle className="text-lg flex items-center gap-2">
-                      {contact.Name || 'Unnamed Contact'}
+                      {fields.name}
                       <Badge 
                         variant="outline" 
-                        className={roleCategoryColors[contact['Role Category'] as keyof typeof roleCategoryColors] || roleCategoryColors.Other}
+                        className={roleCategoryColors[fields.roleCategory as keyof typeof roleCategoryColors] || roleCategoryColors.Other}
                       >
-                        {contact['Role Category'] || 'Unknown'}
+                        {fields.roleCategory}
                       </Badge>
                     </CardTitle>
                     <div className="flex items-center gap-2 mt-2">
-                      <span className="text-sm text-muted-foreground">{contact.Title || 'No title'}</span>
-                      {contact['LinkedIn URL'] && (
+                      <span className="text-sm text-muted-foreground">{fields.title}</span>
+                      {fields.linkedinUrl && (
                         <Button 
                           variant="ghost" 
                           size="sm" 
                           className="h-6 px-2 text-xs"
-                          onClick={() => window.open(contact['LinkedIn URL'], '_blank')}
+                          onClick={() => window.open(fields.linkedinUrl, '_blank')}
                         >
                           <IconExternalLink className="h-3 w-3" />
                         </Button>
@@ -186,7 +221,7 @@ export default function ContactsPage() {
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold">
-                      {contact['Total Signals'] || 'N/A'}
+                      {fields.totalSignals || 'N/A'}
                     </div>
                     <div className="text-xs text-muted-foreground">Total Signals</div>
                   </div>
@@ -198,46 +233,46 @@ export default function ContactsPage() {
                 <div className="flex justify-between text-sm">
                   <div className="flex items-center gap-1">
                     <IconMail className="h-4 w-4 text-muted-foreground" />
-                    <span>{contact.Email || 'No email'}</span>
+                    <span>{fields.email}</span>
                         </div>
                   <div className="flex items-center gap-1">
                     <IconCalendar className="h-4 w-4 text-muted-foreground" />
-                    <span>{contact['Latest Signal Date'] || 'No date'}</span>
+                    <span>{fields.latestSignalDate}</span>
                         </div>
                   <div className="flex items-center gap-1">
                     <IconClipboardList className="h-4 w-4 text-muted-foreground" />
-                    <span>{contact.Tasks?.length || 0} tasks</span>
+                    <span>{fields.tasks?.length || 0} tasks</span>
                         </div>
                       </div>
 
                 {/* AI-Generated Signal Summary */}
-                {contact['Signal Summary']?.value && (
+                {fields.signalSummary?.value && (
                   <div>
                     <div className="flex items-center gap-1 mb-2">
                       <IconBrain className="h-3 w-3 text-muted-foreground" />
                       <p className="text-xs font-medium text-muted-foreground">Signal Summary</p>
                         </div>
                     <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded-md">
-                      {contact['Signal Summary'].value}
+                      {fields.signalSummary.value}
                     </p>
                   </div>
                 )}
 
                 {/* AI-Generated Role Impact Score */}
-                {contact['Role Impact Score']?.value && (
+                {fields.roleImpactScore?.value && (
                           <div>
                     <div className="flex items-center gap-1 mb-2">
                       <IconTarget className="h-3 w-3 text-muted-foreground" />
                       <p className="text-xs font-medium text-muted-foreground">Role Impact Score</p>
                           </div>
                     <p className="text-sm text-blue-700 bg-blue-50 p-2 rounded-md">
-                      {contact['Role Impact Score'].value}
+                      {fields.roleImpactScore.value}
                     </p>
                         </div>
                 )}
                     </CardContent>
                   </Card>
-          ))
+          )})
         )}
       </div>
     </div>

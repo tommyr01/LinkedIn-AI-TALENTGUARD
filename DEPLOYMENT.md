@@ -28,6 +28,13 @@ REDIS_HOST=your_redis_host
 REDIS_PORT=6379
 ```
 
+**LinkedIn Integration Variables:**
+```bash
+RAPIDAPI_KEY=your_rapidapi_key_here
+RAPIDAPI_HOST=linkedin-scraper-host.rapidapi.com
+LINKEDIN_USERNAME=your_linkedin_username
+```
+
 ### 3. Deploy
 1. Import your GitHub repository in Vercel
 2. Configure environment variables (above)
@@ -131,6 +138,54 @@ CMD ["npm", "start"]
 docker build -t talentguard-app .
 docker run -p 3000:3000 --env-file .env.local talentguard-app
 ```
+
+## 📱 LinkedIn Integration Setup
+
+### Prerequisites
+1. **RapidAPI Account**: Sign up at [RapidAPI](https://rapidapi.com)
+2. **LinkedIn Scraper API**: Subscribe to a LinkedIn scraper service on RapidAPI
+3. **Supabase Database**: LinkedIn integration requires the Supabase database setup
+
+### LinkedIn Database Setup
+1. **Run LinkedIn Schema Migration**:
+   ```bash
+   # Execute the LinkedIn schema SQL in your Supabase SQL editor
+   cat scripts/linkedin-schema.sql
+   ```
+   Copy and paste the SQL content into Supabase SQL Editor and run.
+
+2. **Verify Tables Created**:
+   - linkedin_posts
+   - linkedin_comments  
+   - linkedin_profiles
+   - post_engagement_history
+   - linkedin_connections
+   - connection_posts
+
+### RapidAPI Configuration
+1. Go to [RapidAPI](https://rapidapi.com) and sign up
+2. Search for "LinkedIn" APIs and subscribe to a LinkedIn scraping service
+3. Get your RapidAPI key from your dashboard
+4. Add to environment variables:
+   ```bash
+   RAPIDAPI_KEY=your_key_here
+   RAPIDAPI_HOST=api-host-from-rapidapi
+   LINKEDIN_USERNAME=username_to_track
+   ```
+
+### LinkedIn Features Available
+- **Post Tracking**: Sync LinkedIn posts and engagement metrics
+- **Prospect Identification**: Identify high-value prospects from post engagement
+- **ICP Scoring**: Automatically score prospects based on role, company, engagement
+- **Contact Integration**: Add LinkedIn prospects to existing TalentGuard contacts
+- **Analytics Dashboard**: View LinkedIn content performance and prospect insights
+
+### Accessing LinkedIn Features
+After deployment with LinkedIn variables configured:
+1. Navigate to **Dashboard → LinkedIn Content** to view posts
+2. Click **"Sync from LinkedIn"** to import your LinkedIn posts
+3. View **LinkedIn Prospects** to see identified high-value prospects
+4. Use bulk actions to add prospects to contacts or generate signals
 
 ## 🗄️ Database Migration
 
