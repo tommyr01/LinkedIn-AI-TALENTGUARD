@@ -169,7 +169,7 @@ const enrichmentWorker = new Worker<EnrichmentJobData>(
         });
 
         if (!updateResult.success) {
-          throw new Error(`Failed to update contact: ${updateResult.error?.message}`);
+          throw new Error(`Failed to update contact: ${updateResult.error ? String(updateResult.error) : 'Unknown error'}`);
         }
       }
       

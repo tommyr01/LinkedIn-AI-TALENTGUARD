@@ -185,6 +185,22 @@ export const companyOperations = {
     }
   },
 
+  async getById(id: string) {
+    try {
+      const { data: company, error } = await supabase
+        .from('company')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+      if (error) throw error
+      return { success: true, data: company }
+    } catch (error) {
+      console.error('Error finding company by ID:', error)
+      return { success: false, error }
+    }
+  },
+
   async findByDomain(domain: string) {
     try {
       const { data: company, error } = await supabase
@@ -256,6 +272,38 @@ export const contactOperations = {
     }
   },
 
+  async getById(id: string) {
+    try {
+      const { data: contact, error } = await supabase
+        .from('contacts')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+      if (error) throw error
+      return { success: true, data: contact }
+    } catch (error) {
+      console.error('Error finding contact by ID:', error)
+      return { success: false, error }
+    }
+  },
+
+  async getByCompany(companyId: string) {
+    try {
+      const { data: contacts, error } = await supabase
+        .from('contacts')
+        .select('*')
+        .eq('account_id', companyId)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      return { success: true, data: contacts }
+    } catch (error) {
+      console.error('Error finding contacts by company:', error)
+      return { success: false, error }
+    }
+  },
+
   async findByEmail(email: string) {
     try {
       const { data: contact, error } = await supabase
@@ -298,7 +346,7 @@ export const signalOperations = {
         .from('signals')
         .insert({
           ...data,
-          metadata: data.metadata ? JSON.stringify(data.metadata) : null,
+          // metadata: data.metadata ? JSON.stringify(data.metadata) : null, // Commented out - field doesn't exist
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         })
@@ -333,6 +381,29 @@ export const signalOperations = {
       console.error('Error fetching recent signals:', error)
       return { success: false, error }
     }
+  },
+
+  async getByCompany(companyId: string, options: { limit?: number } = {}) {
+    try {
+      const { data: signals, error } = await supabase
+        .from('signals')
+        .select('*')
+        .eq('account_id', companyId)
+        .order('created_at', { ascending: false })
+        .limit(options.limit || 50)
+
+      if (error) throw error
+      
+      const parsedSignals = signals?.map(signal => ({
+        ...signal,
+        metadata: signal.metadata ? JSON.parse(signal.metadata as string) : {}
+      }))
+
+      return { success: true, data: parsedSignals }
+    } catch (error) {
+      console.error('Error fetching signals by company:', error)
+      return { success: false, error }
+    }
   }
 }
 
@@ -344,8 +415,8 @@ export const researchOperations = {
         .from('research')
         .insert({
           ...data,
-          insights: data.insights ? JSON.stringify(data.insights) : null,
-          recommendations: data.recommendations ? JSON.stringify(data.recommendations) : null,
+          // insights: data.insights ? JSON.stringify(data.insights) : null, // Commented out - field doesn't exist
+          // recommendations: data.recommendations ? JSON.stringify(data.recommendations) : null, // Commented out - field doesn't exist
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         })

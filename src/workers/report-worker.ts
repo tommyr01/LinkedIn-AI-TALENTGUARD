@@ -73,9 +73,9 @@ class ReportGenerationService {
     return report;
   }
 
-  private static groupSignalsByType(signals: any[]) {
+  private static groupSignalsByType(signals: any[]): Record<string, number> {
     const groups: Record<string, number> = {};
-    signals.forEach(signal => {
+    signals.forEach((signal: any) => {
       const type = signal.signal_type || signal.type || 'Unknown';
       groups[type] = (groups[type] || 0) + 1;
     });
@@ -237,7 +237,7 @@ const reportWorker = new Worker<ReportJobData>(
       if (emailTo) {
         console.log(`Sending report ${reportRecord.id} to ${emailTo}...`);
         // This would integrate with your email service (SendGrid, etc.)
-        await this.mockSendEmail(emailTo, report);
+        await mockSendEmail(emailTo, report);
       }
       
       await job.updateProgress(100);
@@ -271,7 +271,7 @@ const reportWorker = new Worker<ReportJobData>(
 );
 
 // Mock email service
-reportWorker.mockSendEmail = async function(emailTo: string, report: any) {
+async function mockSendEmail(emailTo: string, report: any) {
   // Simulate email sending delay
   await new Promise(resolve => setTimeout(resolve, 1000));
   

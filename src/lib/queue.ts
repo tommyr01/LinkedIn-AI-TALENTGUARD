@@ -6,8 +6,8 @@ const redisConnection = new Redis({
   host: process.env.REDIS_HOST || 'localhost',
   port: parseInt(process.env.REDIS_PORT || '6379'),
   maxRetriesPerRequest: 3,
-  retryDelayOnFailover: 100,
   enableOfflineQueue: false,
+  lazyConnect: true,
 });
 
 // Job types and data interfaces

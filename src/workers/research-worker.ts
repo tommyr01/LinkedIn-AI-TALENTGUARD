@@ -127,16 +127,11 @@ const researchWorker = new Worker<ResearchJobData>(
         topic: 'Market Analysis',
         account_id: companyId,
         research_created_date: new Date().toISOString(),
-        key_insights: research.keyInsights,
-        industry_trends: research.industryTrends,
-        competitive_analysis: research.competitiveAnalysis,
-        risk_factors: research.riskFactors,
-        opportunities: research.opportunities,
-        sources: research.sources
+        insight_bullets: research.keyInsights.join('\n')
       });
 
       if (!researchRecord.success) {
-        throw new Error(`Failed to save research: ${researchRecord.error?.message}`);
+        throw new Error(`Failed to save research: ${researchRecord.error ? String(researchRecord.error) : 'Unknown error'}`);
       }
 
       // Update company with current news
