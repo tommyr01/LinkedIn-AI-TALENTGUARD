@@ -6,20 +6,43 @@ const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('🔄 Connection sync API called')
+    
     const { username, createRecord } = await request.json()
+    console.log(`📝 Request data:`, { username, createRecord })
 
     if (!username) {
+      console.error('❌ Username is required')
       return NextResponse.json({ error: 'Username is required' }, { status: 400 })
     }
 
+    // Check if RAPIDAPI_KEY is available
+    if (!process.env.RAPIDAPI_KEY) {
+      console.error('❌ RAPIDAPI_KEY environment variable not found')
+      return NextResponse.json({ 
+        error: 'LinkedIn API not configured - missing RAPIDAPI_KEY',
+        debug: 'Check Vercel environment variables'
+      }, { status: 500 })
+    }
+
+    console.log(`📡 Fetching LinkedIn data for username: ${username}`)
+    
     // Get LinkedIn profile data via RapidAPI
     const linkedinData = await fetchLinkedInProfile(username)
     
     if (!linkedinData) {
+      console.error('❌ Failed to fetch LinkedIn profile data')
       return NextResponse.json({ 
-        error: 'Failed to fetch LinkedIn profile data' 
+        error: 'Failed to fetch LinkedIn profile data',
+        debug: 'Check API logs for details'
       }, { status: 404 })
     }
+
+    console.log('✅ LinkedIn data fetched successfully:', {
+      name: linkedinData.fullname,
+      company: linkedinData.current_company,
+      followers: linkedinData.follower_count
+    })
 
     // If createRecord is false, just return the data
     if (!createRecord) {
@@ -83,7 +106,11 @@ export async function POST(request: NextRequest) {
 
 async function fetchLinkedInProfile(username: string) {
   try {
+    console.log(`🔍 Making LinkedIn API request for: ${username}`)
+    
     const url = `https://linkedin-scraper-api-real-time-fast-affordable.p.rapidapi.com/profile/detail?username=${username}`
+    console.log(`📞 API URL: ${url}`)
+    
     const options = {
       method: 'GET',
       headers: {
@@ -92,13 +119,24 @@ async function fetchLinkedInProfile(username: string) {
       }
     }
 
+    console.log(`🔑 Using API key: ${process.env.RAPIDAPI_KEY?.substring(0, 10)}...`)
+
     const response = await fetch(url, options)
     
+    console.log(`📥 API response status: ${response.status} ${response.statusText}`)
+    
     if (!response.ok) {
-      throw new Error(`LinkedIn API error: ${response.status}`)
+      const errorText = await response.text()
+      console.error(`❌ API Error Response:`, {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText
+      })
+      throw new Error(`LinkedIn API error: ${response.status} - ${errorText}`)
     }
 
     const data = await response.json()
+    console.log(`📄 Raw API response:`, JSON.stringify(data, null, 2))
     
     // Transform the response to match expected format
     const transformedData = {
@@ -117,14 +155,23 @@ async function fetchLinkedInProfile(username: string) {
       is_premium: data.is_premium || false
     }
     
+    console.log(`🔄 Transformed data:`, transformedData)
+    
     if (!transformedData.fullname) {
+      console.error('❌ No name found in transformed data')
+      console.log('🐛 Available fields in raw data:', Object.keys(data))
       throw new Error('Invalid LinkedIn profile data received - no name found')
     }
 
+    console.log(`✅ Successfully transformed LinkedIn data for: ${transformedData.fullname}`)
     return transformedData
 
-  } catch (error) {
-    console.error('Error fetching LinkedIn profile:', error)
+  } catch (error: any) {
+    console.error('💥 Error fetching LinkedIn profile:', {
+      username,
+      error: error.message,
+      stack: error.stack
+    })
     return null
   }
 }
