@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { airtableBase, tables } from '@/lib/airtable';
-import { supabase, companyOperations } from '@/lib/supabase';
+import { supabase, companyOperations, isSupabaseConfigured, validateSupabaseConfig } from '@/lib/supabase';
 
 // Feature flag - set to true to use Supabase
 const USE_SUPABASE = process.env.USE_SUPABASE === 'true' || false;
@@ -13,6 +13,17 @@ export async function GET(request: Request) {
     const offset = (page - 1) * limit;
     
     if (USE_SUPABASE) {
+      // Validate Supabase configuration at runtime
+      if (!isSupabaseConfigured()) {
+        const { error } = validateSupabaseConfig();
+        console.error('Supabase configuration error:', error);
+        return NextResponse.json({
+          error: 'Supabase not configured properly',
+          details: error,
+          fallback: 'Falling back to Airtable'
+        }, { status: 500 });
+      }
+      
       // Supabase implementation with pagination
       console.log(`Fetching accounts from Supabase (page ${page}, limit ${limit})...`);
       
@@ -114,6 +125,16 @@ export async function POST(request: Request) {
     const data = await request.json();
     
     if (USE_SUPABASE) {
+      // Validate Supabase configuration at runtime
+      if (!isSupabaseConfigured()) {
+        const { error } = validateSupabaseConfig();
+        console.error('Supabase configuration error:', error);
+        return NextResponse.json({
+          error: 'Supabase not configured properly',
+          details: error
+        }, { status: 500 });
+      }
+      
       // Supabase implementation
       console.log('Creating account in Supabase...');
       

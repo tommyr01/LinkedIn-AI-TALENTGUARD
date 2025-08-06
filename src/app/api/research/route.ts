@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { airtableBase, tables } from '@/lib/airtable';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured, validateSupabaseConfig } from '@/lib/supabase';
 
 // Feature flag - set to true to use Supabase
 const USE_SUPABASE = process.env.USE_SUPABASE === 'true' || false;
@@ -11,6 +11,16 @@ export async function GET(request: NextRequest) {
     const accountId = searchParams.get('account');
 
     if (USE_SUPABASE) {
+      // Validate Supabase configuration at runtime
+      if (!isSupabaseConfigured()) {
+        const { error } = validateSupabaseConfig();
+        console.error('Supabase configuration error:', error);
+        return NextResponse.json({
+          error: 'Supabase not configured properly',
+          details: error
+        }, { status: 500 });
+      }
+      
       // Supabase implementation
       console.log('Fetching research from Supabase...');
       

@@ -142,11 +142,44 @@ export interface Database {
   }
 }
 
-// Initialize Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+// Initialize Supabase client with build-safe configuration
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
+// Create client with fallbacks for build-time safety
+export const supabase = createClient<Database>(
+  supabaseUrl || 'https://placeholder.supabase.co', // Fallback URL for build
+  supabaseAnonKey || 'placeholder-key', // Fallback key for build
+  {
+    auth: {
+      persistSession: false // Disable session persistence for server-side usage
+    }
+  }
+)
+
+// Runtime validation helper
+export function validateSupabaseConfig(): { isValid: boolean; error?: string } {
+  if (!supabaseUrl || supabaseUrl === 'https://placeholder.supabase.co') {
+    return {
+      isValid: false,
+      error: 'NEXT_PUBLIC_SUPABASE_URL environment variable is required'
+    }
+  }
+  
+  if (!supabaseAnonKey || supabaseAnonKey === 'placeholder-key') {
+    return {
+      isValid: false,
+      error: 'NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable is required'
+    }
+  }
+  
+  return { isValid: true }
+}
+
+// Helper to check if Supabase is properly configured
+export function isSupabaseConfigured(): boolean {
+  return validateSupabaseConfig().isValid
+}
 
 // Company operations
 export const companyOperations = {
