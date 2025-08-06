@@ -12,6 +12,7 @@ import {
   IconInnerShadowTop,
   IconBrandLinkedin,
   IconChartDots3,
+  IconNetwork,
 } from "@tabler/icons-react"
 
 import Link from "next/link"
@@ -52,6 +53,12 @@ const data = {
       title: "Signals",
       url: "/dashboard/signals",
       icon: IconTarget,
+      visible: true,
+    },
+    {
+      title: "LinkedIn Connections",
+      url: "/dashboard/connections",
+      icon: IconNetwork,
       visible: true,
     },
     {
