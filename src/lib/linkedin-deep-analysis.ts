@@ -97,11 +97,40 @@ export interface LinkedInProfileAnalysis {
   }
 }
 
+export interface ContentThemeAnalysis {
+  mainTopics: Array<{
+    theme: string
+    frequency: number
+    relevanceScore: number
+    examplePosts: string[]
+  }>
+  postingFrequency: {
+    postsPerMonth: number
+    mostActiveMonth: string
+    consistencyScore: number
+  }
+  engagementPatterns: {
+    averageEngagement: number
+    highPerformingPosts: PostAnalysis[]
+    engagementTrends: Array<{
+      month: string
+      avgEngagement: number
+    }>
+  }
+  talentManagementInsights: {
+    isExpert: boolean
+    specificExpertise: string[]
+    authorityIndicators: string[]
+    practicalExperience: string[]
+  }
+}
+
 export interface ComprehensiveLinkedInProfile {
   connectionId: string
   connectionName: string
   articles: LinkedInArticle[]
   postsAnalysis: PostAnalysis[]
+  contentThemes: ContentThemeAnalysis
   activityPatterns: ActivityPatternAnalysis
   profileAnalysis: LinkedInProfileAnalysis
   expertiseScores: {
@@ -162,6 +191,9 @@ export class LinkedInDeepAnalysisService {
       // Analyze LinkedIn posts
       const postsAnalysis = await this.analyzeLinkedInPosts(connection)
       
+      // Analyze content themes from posts
+      const contentThemes = this.analyzeContentThemes(postsAnalysis)
+      
       // Analyze activity patterns
       const activityPatterns = await this.analyzeActivityPatterns(connection)
       
@@ -174,11 +206,18 @@ export class LinkedInDeepAnalysisService {
       // Assess authority
       const authorityAssessment = this.assessAuthority(articles, postsAnalysis, activityPatterns)
 
+      console.log(`📋 Content analysis summary for ${connection.full_name}:`)
+      console.log(`   - ${postsAnalysis.length} posts analyzed`)
+      console.log(`   - ${contentThemes.mainTopics.length} main topics identified`) 
+      console.log(`   - Overall expertise: ${expertiseScores.overallExpertise}`)
+      console.log(`   - Talent management focus: ${contentThemes.talentManagementInsights.isExpert ? 'Yes' : 'No'}`)
+
       return {
         connectionId: connection.id,
         connectionName: connection.full_name,
         articles,
         postsAnalysis,
+        contentThemes,
         activityPatterns,
         profileAnalysis,
         expertiseScores,
@@ -249,7 +288,19 @@ export class LinkedInDeepAnalysisService {
     // Get posts from database
     const posts = await supabaseLinkedIn?.getConnectionPosts(connection.id) || []
     
-    return posts.map(post => this.analyzePost(post)).filter(Boolean)
+    console.log(`📊 Found ${posts.length} LinkedIn posts for analysis`)
+    
+    if (posts.length === 0) {
+      console.log('⚠️  No LinkedIn posts found - intelligence report will be limited')
+      return []
+    }
+    
+    // Analyze each post for detailed content insights
+    const analyses = posts.map(post => this.analyzePost(post)).filter(Boolean)
+    
+    console.log(`✅ Analyzed ${analyses.length} posts for content themes and expertise`)
+    
+    return analyses
   }
 
   /**
@@ -258,10 +309,15 @@ export class LinkedInDeepAnalysisService {
   private analyzePost(post: DBConnectionPost): PostAnalysis {
     const content = post.post_text || ''
     
-    return {
+    // Enhanced logging for content analysis
+    if (content.length > 100) {
+      console.log(`🔍 Analyzing post from ${post.posted_date}: "${content.substring(0, 100)}..."`)
+    }
+    
+    const analysis = {
       post_id: post.id,
       content,
-      engagement: post.total_reactions,
+      engagement: post.total_reactions || 0,
       date: post.posted_date || post.created_at,
       topicRelevance: this.calculateTopicRelevance(content),
       expertiseSignals: this.extractAuthoritySignals(content),
@@ -269,6 +325,16 @@ export class LinkedInDeepAnalysisService {
       originalThinking: this.detectOriginalThinking(content),
       practicalValue: this.assessPracticalValue(content)
     }
+    
+    // Log analysis insights for debugging
+    if (analysis.topicRelevance > 30) {
+      console.log(`💡 High relevance post (${analysis.topicRelevance}): ${analysis.contentType}`)
+    }
+    if (analysis.expertiseSignals.length > 0) {
+      console.log(`🎯 Found ${analysis.expertiseSignals.length} expertise signals`)
+    }
+    
+    return analysis
   }
 
   /**
@@ -361,14 +427,46 @@ export class LinkedInDeepAnalysisService {
   private calculateTopicRelevance(content: string): number {
     const contentLower = content.toLowerCase()
     let relevanceScore = 0
+    let foundKeywords: string[] = []
     
-    const allKeywords = [...this.TALENT_KEYWORDS, ...this.PEOPLE_DEV_KEYWORDS, ...this.HR_TECH_KEYWORDS]
-    
-    allKeywords.forEach(keyword => {
+    // Check talent management keywords (highest weight)
+    this.TALENT_KEYWORDS.forEach(keyword => {
       if (contentLower.includes(keyword.toLowerCase())) {
-        relevanceScore += 10
+        relevanceScore += 15
+        foundKeywords.push(keyword)
       }
     })
+    
+    // Check people development keywords
+    this.PEOPLE_DEV_KEYWORDS.forEach(keyword => {
+      if (contentLower.includes(keyword.toLowerCase())) {
+        relevanceScore += 12
+        foundKeywords.push(keyword)
+      }
+    })
+    
+    // Check HR technology keywords
+    this.HR_TECH_KEYWORDS.forEach(keyword => {
+      if (contentLower.includes(keyword.toLowerCase())) {
+        relevanceScore += 10
+        foundKeywords.push(keyword)
+      }
+    })
+    
+    // Bonus for multiple keyword categories
+    const categories = [
+      this.TALENT_KEYWORDS.some(k => contentLower.includes(k.toLowerCase())),
+      this.PEOPLE_DEV_KEYWORDS.some(k => contentLower.includes(k.toLowerCase())),
+      this.HR_TECH_KEYWORDS.some(k => contentLower.includes(k.toLowerCase()))
+    ].filter(Boolean).length
+    
+    if (categories >= 2) relevanceScore += 10
+    if (categories === 3) relevanceScore += 15
+    
+    // Log high-relevance content for debugging
+    if (relevanceScore > 50 && foundKeywords.length > 0) {
+      console.log(`🔥 High relevance content (${relevanceScore}): found ${foundKeywords.join(', ')}`)
+    }
     
     return Math.min(100, relevanceScore)
   }
@@ -655,6 +753,236 @@ export class LinkedInDeepAnalysisService {
       thoughtLeadership,
       overallAuthority,
       confidenceLevel: Math.min(100, confidenceLevel)
+    }
+  }
+
+  /**
+   * Analyze content themes and patterns from posts analysis
+   */
+  private analyzeContentThemes(postsAnalysis: PostAnalysis[]): ContentThemeAnalysis {
+    console.log(`🎨 Analyzing content themes from ${postsAnalysis.length} posts`)
+    
+    if (postsAnalysis.length === 0) {
+      return this.getEmptyContentThemes()
+    }
+
+    // Extract main topics from all posts
+    const topicMap = new Map<string, { frequency: number, relevanceScore: number, examples: string[] }>()
+    
+    postsAnalysis.forEach(post => {
+      const content = post.content.toLowerCase()
+      
+      // Check for talent management themes
+      this.TALENT_KEYWORDS.forEach(keyword => {
+        if (content.includes(keyword.toLowerCase())) {
+          const existing = topicMap.get(keyword) || { frequency: 0, relevanceScore: 0, examples: [] }
+          existing.frequency += 1
+          existing.relevanceScore += post.topicRelevance
+          if (existing.examples.length < 3) {
+            existing.examples.push(post.content.substring(0, 100) + '...')
+          }
+          topicMap.set(keyword, existing)
+        }
+      })
+
+      // Check for people development themes  
+      this.PEOPLE_DEV_KEYWORDS.forEach(keyword => {
+        if (content.includes(keyword.toLowerCase())) {
+          const existing = topicMap.get(keyword) || { frequency: 0, relevanceScore: 0, examples: [] }
+          existing.frequency += 1
+          existing.relevanceScore += post.topicRelevance
+          if (existing.examples.length < 3) {
+            existing.examples.push(post.content.substring(0, 100) + '...')
+          }
+          topicMap.set(keyword, existing)
+        }
+      })
+
+      // Check for HR tech themes
+      this.HR_TECH_KEYWORDS.forEach(keyword => {
+        if (content.includes(keyword.toLowerCase())) {
+          const existing = topicMap.get(keyword) || { frequency: 0, relevanceScore: 0, examples: [] }
+          existing.frequency += 1
+          existing.relevanceScore += post.topicRelevance
+          if (existing.examples.length < 3) {
+            existing.examples.push(post.content.substring(0, 100) + '...')
+          }
+          topicMap.set(keyword, existing)
+        }
+      })
+    })
+
+    // Convert to sorted main topics
+    const mainTopics = Array.from(topicMap.entries())
+      .map(([theme, data]) => ({
+        theme,
+        frequency: data.frequency,
+        relevanceScore: Math.round(data.relevanceScore / data.frequency),
+        examplePosts: data.examples
+      }))
+      .filter(topic => topic.frequency > 0)
+      .sort((a, b) => b.frequency - a.frequency)
+      .slice(0, 10) // Top 10 themes
+
+    // Analyze posting frequency
+    const postDates = postsAnalysis.map(p => new Date(p.date)).filter(d => !isNaN(d.getTime()))
+    const postingFrequency = this.analyzePostingFrequency(postDates)
+
+    // Analyze engagement patterns
+    const engagementPatterns = this.analyzeEngagementPatterns(postsAnalysis)
+
+    // Analyze talent management insights
+    const talentManagementInsights = this.analyzeTalentManagementInsights(postsAnalysis, topicMap)
+
+    console.log(`✅ Found ${mainTopics.length} main themes, posting ${postingFrequency.postsPerMonth} times/month`)
+
+    return {
+      mainTopics,
+      postingFrequency,
+      engagementPatterns,
+      talentManagementInsights
+    }
+  }
+
+  /**
+   * Get empty content themes structure
+   */
+  private getEmptyContentThemes(): ContentThemeAnalysis {
+    return {
+      mainTopics: [],
+      postingFrequency: {
+        postsPerMonth: 0,
+        mostActiveMonth: '',
+        consistencyScore: 0
+      },
+      engagementPatterns: {
+        averageEngagement: 0,
+        highPerformingPosts: [],
+        engagementTrends: []
+      },
+      talentManagementInsights: {
+        isExpert: false,
+        specificExpertise: [],
+        authorityIndicators: [],
+        practicalExperience: []
+      }
+    }
+  }
+
+  /**
+   * Analyze posting frequency patterns
+   */
+  private analyzePostingFrequency(postDates: Date[]): ContentThemeAnalysis['postingFrequency'] {
+    if (postDates.length === 0) {
+      return { postsPerMonth: 0, mostActiveMonth: '', consistencyScore: 0 }
+    }
+
+    // Calculate posts per month
+    const monthsSpan = postDates.length > 1 
+      ? Math.max(1, (postDates[0].getTime() - postDates[postDates.length - 1].getTime()) / (1000 * 60 * 60 * 24 * 30))
+      : 1
+    const postsPerMonth = Math.round(postDates.length / monthsSpan * 10) / 10
+
+    // Find most active month
+    const monthCounts = new Map<string, number>()
+    postDates.forEach(date => {
+      const monthKey = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`
+      monthCounts.set(monthKey, (monthCounts.get(monthKey) || 0) + 1)
+    })
+    
+    const mostActiveMonth = Array.from(monthCounts.entries())
+      .sort((a, b) => b[1] - a[1])[0]?.[0] || ''
+
+    // Calculate consistency score (0-100)
+    const monthlyVariance = Array.from(monthCounts.values())
+    const avgMonthly = monthlyVariance.reduce((sum, count) => sum + count, 0) / monthlyVariance.length
+    const variance = monthlyVariance.reduce((sum, count) => sum + Math.pow(count - avgMonthly, 2), 0) / monthlyVariance.length
+    const consistencyScore = Math.max(0, Math.round(100 - (Math.sqrt(variance) / avgMonthly) * 100))
+
+    return { postsPerMonth, mostActiveMonth, consistencyScore }
+  }
+
+  /**
+   * Analyze engagement patterns
+   */
+  private analyzeEngagementPatterns(postsAnalysis: PostAnalysis[]): ContentThemeAnalysis['engagementPatterns'] {
+    if (postsAnalysis.length === 0) {
+      return { averageEngagement: 0, highPerformingPosts: [], engagementTrends: [] }
+    }
+
+    const averageEngagement = Math.round(
+      postsAnalysis.reduce((sum, post) => sum + post.engagement, 0) / postsAnalysis.length
+    )
+
+    const highPerformingPosts = postsAnalysis
+      .filter(post => post.engagement > averageEngagement * 1.5)
+      .sort((a, b) => b.engagement - a.engagement)
+      .slice(0, 5)
+
+    // Simple engagement trends (would be more sophisticated with more data)
+    const engagementTrends = postsAnalysis
+      .map(post => ({
+        month: new Date(post.date).toISOString().substring(0, 7),
+        engagement: post.engagement
+      }))
+      .reduce((acc, { month, engagement }) => {
+        const existing = acc.find(item => item.month === month)
+        if (existing) {
+          existing.totalEngagement += engagement
+          existing.count += 1
+        } else {
+          acc.push({ month, totalEngagement: engagement, count: 1 })
+        }
+        return acc
+      }, [] as Array<{ month: string, totalEngagement: number, count: number }>)
+      .map(({ month, totalEngagement, count }) => ({
+        month,
+        avgEngagement: Math.round(totalEngagement / count)
+      }))
+      .sort((a, b) => a.month.localeCompare(b.month))
+
+    return { averageEngagement, highPerformingPosts, engagementTrends }
+  }
+
+  /**
+   * Analyze talent management specific insights
+   */
+  private analyzeTalentManagementInsights(
+    postsAnalysis: PostAnalysis[], 
+    topicMap: Map<string, { frequency: number, relevanceScore: number, examples: string[] }>
+  ): ContentThemeAnalysis['talentManagementInsights'] {
+    
+    // Check if person is a talent management expert
+    const talentPosts = postsAnalysis.filter(post => post.topicRelevance > 50)
+    const experienceSignals = postsAnalysis.flatMap(post => post.expertiseSignals)
+    const isExpert = talentPosts.length >= 3 && experienceSignals.length >= 2
+
+    // Extract specific expertise areas
+    const specificExpertise: string[] = []
+    Array.from(topicMap.entries())
+      .filter(([_, data]) => data.frequency >= 2)
+      .forEach(([keyword, _]) => {
+        if (this.TALENT_KEYWORDS.includes(keyword)) {
+          specificExpertise.push(keyword)
+        }
+      })
+
+    // Extract authority indicators
+    const authorityIndicators = experienceSignals
+      .filter(signal => signal.confidence > 80)
+      .map(signal => signal.signal)
+      .slice(0, 5)
+
+    // Extract practical experience examples
+    const practicalExperience = postsAnalysis
+      .flatMap(post => this.extractRealExamples(post.content))
+      .slice(0, 5)
+
+    return {
+      isExpert,
+      specificExpertise,
+      authorityIndicators,
+      practicalExperience
     }
   }
 
