@@ -239,8 +239,8 @@ function mapLinkedInProfileToSupabase(profileData: any) {
     duration: currentJob?.duration || '',
     start_date: startDate,
     is_current: currentJob?.is_current || false,
-    company_linkedin_url: profile.current_company_url || currentJob?.company_linkedin_url || '', // Use current_company_url
-    current_company_urn: profile.current_company_urn || ''
+    company_linkedin_url: profile.current_company_url || currentJob?.company_linkedin_url || '' // Use current_company_url
+    // Removed current_company_urn - this column doesn't exist in the database
   }
   
   console.log(`✅ Final mapped connection data:`, {
