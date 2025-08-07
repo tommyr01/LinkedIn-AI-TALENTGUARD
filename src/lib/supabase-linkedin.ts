@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { randomUUID } from 'crypto'
 import { icpScorer, ProspectProfile } from './icp-scorer'
 import { enhancedICPScorer, type LinkedInCommentAuthor, type EnhancedProspectProfile } from './enhanced-icp-scorer'
 
@@ -869,6 +870,7 @@ export class SupabaseLinkedInService {
     })
 
     return {
+      id: randomUUID(), // Generate UUID for the post primary key
       connection_id: connectionId,
       post_urn: postData.urn || postData.post_urn,
       full_urn: postData.full_urn,
