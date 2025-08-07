@@ -60,7 +60,15 @@ export default function ConnectionsPage() {
   const loadConnections = async (showLoading = true) => {
     try {
       if (showLoading) setIsLoading(true)
-      const res = await fetch('/api/connections/supabase/list', { cache: 'no-store' })
+      // Add timestamp to force fresh data
+      const timestamp = new Date().getTime()
+      const res = await fetch(`/api/connections/supabase/list?t=${timestamp}`, { 
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      })
       if (!res.ok) {
         const errorData = await res.json()
         throw new Error(errorData.error || 'Failed to load connections')
@@ -71,6 +79,7 @@ export default function ConnectionsPage() {
       setConnections(data)
       setLastRefresh(new Date())
       console.log(`✅ Loaded ${data.length} connections from Supabase`)
+      toast.success(`Loaded ${data.length} connections`)
     } catch (e: any) {
       console.error('Error loading connections:', e)
       toast.error(e.message || 'Failed to load connections')
@@ -84,7 +93,15 @@ export default function ConnectionsPage() {
       if (showLoading) setIsLoadingPosts(true)
       console.log('🔍 Loading connection posts from Supabase...')
       
-      const res = await fetch('/api/connections/posts/list?limit=200', { cache: 'no-store' })
+      // Add timestamp to force fresh data
+      const timestamp = new Date().getTime()
+      const res = await fetch(`/api/connections/posts/list?limit=200&t=${timestamp}`, { 
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      })
       if (!res.ok) {
         const errorData = await res.json()
         throw new Error(errorData.error || 'Failed to load connection posts')
@@ -122,11 +139,13 @@ export default function ConnectionsPage() {
     }
   }
 
-  const handleRefresh = () => {
-    loadConnections(true)
+  const handleRefresh = async () => {
+    toast.info('Refreshing data from Supabase...')
+    await loadConnections(true)
     if (activeTab === 'posts') {
-      loadConnectionPosts(true)
+      await loadConnectionPosts(true)
     }
+    toast.success('Data refreshed!')
   }
 
   useEffect(() => {
@@ -140,14 +159,17 @@ export default function ConnectionsPage() {
     }
   }, [activeTab])
 
-  // Auto-refresh every 30 seconds
+  // Auto-refresh every 5 seconds for near real-time updates
   useEffect(() => {
     const interval = setInterval(() => {
       loadConnections(false) // Don't show loading for auto-refresh
-    }, 30000) // 30 seconds
+      if (activeTab === 'posts') {
+        loadConnectionPosts(false)
+      }
+    }, 5000) // 5 seconds for more responsive updates
 
     return () => clearInterval(interval)
-  }, [])
+  }, [activeTab])
 
   // Refresh when page regains focus
   useEffect(() => {
