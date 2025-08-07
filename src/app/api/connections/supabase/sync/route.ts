@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { randomUUID } from 'crypto'
 import { linkedInScraper, extractUsernameFromLinkedInUrl } from '../../../../../lib/linkedin-scraper'
 import { supabaseLinkedIn } from '../../../../../lib/supabase-linkedin'
 
@@ -217,7 +216,6 @@ function mapLinkedInProfileToSupabase(profileData: any) {
   }
   
   const mappedData = {
-    id: randomUUID(), // Generate unique ID for the database record
     full_name: profile.fullname || 'Unknown',
     first_name: profile.first_name || '',
     last_name: profile.last_name || '',
@@ -241,12 +239,11 @@ function mapLinkedInProfileToSupabase(profileData: any) {
     duration: currentJob?.duration || '',
     start_date: startDate,
     is_current: currentJob?.is_current || false,
-    company_linkedin_url: profile.current_company_url || currentJob?.company_linkedin_url || '' // Use current_company_url
-    // Removed current_company_urn - this column doesn't exist in the database
+    company_linkedin_url: profile.current_company_url || currentJob?.company_linkedin_url || '', // Use current_company_url
+    current_company_urn: profile.current_company_urn || ''
   }
   
   console.log(`✅ Final mapped connection data:`, {
-    id: mappedData.id,
     full_name: mappedData.full_name,
     username: mappedData.username,
     headline: mappedData.headline,
