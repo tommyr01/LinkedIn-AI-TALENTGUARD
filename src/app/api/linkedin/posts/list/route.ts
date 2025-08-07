@@ -88,44 +88,44 @@ export async function GET(request: NextRequest) {
       }, { status: 500 })
     }
 
-    // Fetch connection posts from Supabase (these are the posts that were successfully saved)
-    const dbPosts = await supabaseLinkedIn.getAllConnectionPosts()
+    // Fetch TalentGuard LinkedIn posts from Supabase (YOUR posts)
+    const dbPosts = await supabaseLinkedIn.getTalentGuardPosts()
     
-    console.log(`✅ Successfully fetched ${dbPosts.length} connection posts from Supabase`)
+    console.log(`✅ Successfully fetched ${dbPosts.length} TalentGuard posts from Supabase`)
 
     // Transform Supabase data to match the TalentGuard ConnectionPost interface
     const posts: TalentGuardConnectionPost[] = dbPosts.map((post) => ({
       id: post.id || '',
       connectionName: `${post.author_first_name || ''} ${post.author_last_name || ''}`.trim() || 'Unknown Author',
       connectionCompany: extractCompanyFromHeadline(post.author_headline || ''),
-      content: post.post_text || '',
-      postedAt: post.posted_date || post.created_at || '',
-      postUrn: post.post_urn || '',
-      postUrl: post.post_url || '',
-      likesCount: post.likes || 0,
+      content: post.text || '',
+      postedAt: post.posted_at || post.created_at || '',
+      postUrn: post.urn || '',
+      postUrl: post.url || '',
+      likesCount: post.like_count || 0,
       commentsCount: post.comments_count || 0,
       totalReactions: post.total_reactions || 0,
-      reposts: post.reposts || 0,
+      reposts: post.reposts_count || 0,
       authorFirstName: post.author_first_name || '',
       authorLastName: post.author_last_name || '',
       authorHeadline: post.author_headline || '',
-      authorLinkedInUrl: post.author_linkedin_url || '',
+      authorLinkedInUrl: post.author_profile_url || '',
       authorProfilePicture: post.author_profile_picture || '',
       postType: post.post_type || 'regular',
-      mediaType: post.media_type || '',
-      mediaUrl: post.media_url || '',
-      mediaThumbnail: post.media_thumbnail || '',
+      mediaType: post.document_title ? 'document' : '',
+      mediaUrl: post.document_url || '',
+      mediaThumbnail: post.document_thumbnail || '',
       createdTime: post.created_at || '',
-      hasMedia: !!(post.media_url || post.media_type),
+      hasMedia: !!(post.document_url || post.document_thumbnail),
       
       // Extended LinkedIn-specific data
-      support: post.support || 0,
-      love: post.love || 0,
-      insight: post.insight || 0,
-      celebrate: post.celebrate || 0,
-      documentTitle: undefined,
-      documentPageCount: undefined,
-      lastSyncedAt: post.created_at
+      support: post.support_count || 0,
+      love: post.love_count || 0,
+      insight: post.insight_count || 0,
+      celebrate: post.celebrate_count || 0,
+      documentTitle: post.document_title,
+      documentPageCount: post.document_page_count,
+      lastSyncedAt: post.last_synced_at || post.created_at
     }))
 
     // Calculate summary stats

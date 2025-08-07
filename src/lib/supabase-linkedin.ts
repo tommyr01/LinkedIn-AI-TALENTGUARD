@@ -675,6 +675,25 @@ export class SupabaseLinkedInService {
     return data || []
   }
 
+  async getTalentGuardPosts(): Promise<any[]> {
+    this.checkSupabaseConnection()
+    
+    console.log('📡 Fetching TalentGuard LinkedIn posts from Supabase...')
+    
+    const { data, error } = await supabase!
+      .from('linkedin_posts')
+      .select('*')
+      .order('posted_at', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching TalentGuard LinkedIn posts:', error)
+      throw new Error(`Failed to fetch TalentGuard posts: ${error.message}`)
+    }
+
+    console.log(`✅ Retrieved ${data?.length || 0} TalentGuard posts from database`)
+    return data || []
+  }
+
   // Transform functions
   private transformPostToDB(post: LinkedInPost): Partial<DBLinkedInPost> {
     // Handle different timestamp formats from LinkedIn API

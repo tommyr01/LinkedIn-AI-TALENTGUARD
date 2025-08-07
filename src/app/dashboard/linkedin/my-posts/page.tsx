@@ -83,21 +83,52 @@ export default function MyPostsPage() {
   }
 
 
-  // Refresh posts data - this will reload connection posts from database
+  // Refresh posts data - this will sync TalentGuard posts from LinkedIn
   const refreshPosts = async () => {
     setIsLoading(true)
     try {
-      console.log('🔄 Refreshing connection posts from database...')
-      toast.info('Refreshing posts from database...')
+      console.log('🔄 Refreshing TalentGuard posts from LinkedIn...')
+      toast.info('Fetching latest TalentGuard posts from LinkedIn...')
       
-      // Simply fetch the latest posts from the database
-      await fetchPosts()
+      // Call the sync API to fetch TalentGuard posts from LinkedIn
+      const syncResponse = await fetch('/api/linkedin/posts/sync', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          companyName: 'talentguard',
+          maxPages: 2 // Fetch more pages to get more posts
+        })
+      })
+
+      if (!syncResponse.ok) {
+        const errorData = await syncResponse.json().catch(() => ({}))
+        throw new Error(errorData.error || `Sync failed: HTTP ${syncResponse.status}`)
+      }
+
+      const syncData = await syncResponse.json()
       
-      toast.success('Posts refreshed successfully!')
+      if (syncData.success) {
+        const summary = syncData.data?.summary || { newPosts: 0, updatedPosts: 0, totalFetched: 0 }
+        toast.success(`LinkedIn sync completed! ${summary.newPosts} new posts, ${summary.updatedPosts} updated posts`)
+        
+        // Now fetch the updated data from database
+        await fetchPosts()
+      } else {
+        throw new Error(syncData.error || 'LinkedIn sync operation failed')
+      }
 
     } catch (error: any) {
-      console.error('Error refreshing posts:', error)
+      console.error('Error refreshing posts from LinkedIn:', error)
       toast.error(`Failed to refresh posts: ${error.message}`)
+      
+      // Even if sync fails, try to load existing posts from database
+      try {
+        await fetchPosts()
+      } catch (fetchError) {
+        console.error('Also failed to fetch existing posts:', fetchError)
+      }
     } finally {
       setIsLoading(false)
     }
@@ -118,7 +149,7 @@ export default function MyPostsPage() {
         <div>
           <h2 className="text-3xl font-bold tracking-tight">My LinkedIn Posts</h2>
           <p className="text-muted-foreground">
-            View and analyze LinkedIn posts from your connections with engagement data
+            View and analyze your TalentGuard LinkedIn posts with automatic prospect identification
           </p>
         </div>
         <div className="flex items-center space-x-2">
@@ -128,7 +159,7 @@ export default function MyPostsPage() {
             disabled={isLoading}
           >
             <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-            {isLoading ? 'Refreshing...' : 'Refresh'}
+            {isLoading ? 'Syncing from LinkedIn...' : 'Refresh from LinkedIn'}
           </Button>
           <Button variant="outline" onClick={() => window.open('/dashboard/content', '_self')}>
             <Plus className="mr-2 h-4 w-4" />
