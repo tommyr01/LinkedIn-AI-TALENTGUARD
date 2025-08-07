@@ -91,7 +91,7 @@ export class ConnectionIntelligenceService {
   /**
    * Generate complete intelligence profile for a connection
    */
-  async generateIntelligenceProfile(connectionId: string): Promise<ConnectionIntelligenceProfile> {
+  async generateIntelligenceProfile(connectionId: string, forceRefresh: boolean = false): Promise<ConnectionIntelligenceProfile> {
     const startTime = Date.now()
     
     console.log(`🧠 Generating intelligence profile for connection: ${connectionId}`)
@@ -101,6 +101,19 @@ export class ConnectionIntelligenceService {
       const connection = await this.getConnectionById(connectionId)
       if (!connection) {
         throw new Error(`Connection not found: ${connectionId}`)
+      }
+
+      // Check if we already have intelligence data (unless forcing refresh)
+      if (!forceRefresh && supabaseLinkedIn) {
+        try {
+          const existingProfile = await supabaseLinkedIn.getIntelligenceProfile(connectionId)
+          if (existingProfile) {
+            console.log(`✅ Found existing intelligence profile for ${connection.full_name}, returning cached data`)
+            return existingProfile
+          }
+        } catch (error) {
+          console.log('No existing intelligence profile found, will generate new one')
+        }
       }
       
       // Run web research and LinkedIn analysis in parallel
@@ -554,13 +567,23 @@ export class ConnectionIntelligenceService {
    * Store intelligence profile in database
    */
   private async storeIntelligenceProfile(profile: ConnectionIntelligenceProfile): Promise<void> {
-    // This would store the intelligence profile in a dedicated table
-    // For now, we'll log it
-    console.log(`💾 Storing intelligence profile for ${profile.connectionName}`, {
-      overallExpertise: profile.unifiedScores.overallExpertise,
-      verificationStatus: profile.intelligenceAssessment.verificationStatus,
-      confidenceLevel: profile.intelligenceAssessment.confidenceLevel
-    })
+    if (!supabaseLinkedIn) {
+      console.warn('⚠️  Supabase not available, intelligence profile will not be persisted')
+      console.log(`💾 Would store intelligence profile for ${profile.connectionName}`, {
+        overallExpertise: profile.unifiedScores.overallExpertise,
+        verificationStatus: profile.intelligenceAssessment.verificationStatus,
+        confidenceLevel: profile.intelligenceAssessment.confidenceLevel
+      })
+      return
+    }
+
+    try {
+      await supabaseLinkedIn.storeIntelligenceProfile(profile)
+      console.log(`✅ Successfully persisted intelligence profile for ${profile.connectionName}`)
+    } catch (error) {
+      console.error(`❌ Failed to store intelligence profile for ${profile.connectionName}:`, error)
+      // Don't throw error to prevent research failure due to storage issues
+    }
   }
 
   /**

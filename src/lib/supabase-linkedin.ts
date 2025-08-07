@@ -3,7 +3,7 @@ import { randomUUID } from 'crypto'
 import { icpScorer, ProspectProfile } from './icp-scorer'
 import { enhancedICPScorer, type LinkedInCommentAuthor, type EnhancedProspectProfile } from './enhanced-icp-scorer'
 
-const supabaseUrl = process.env.SUPABASE_URL
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 // Handle missing environment variables gracefully during build
@@ -934,6 +934,328 @@ export class SupabaseLinkedInService {
       media_type: postData.media?.type,
       media_url: postData.media?.url,
       media_thumbnail: postData.media?.thumbnail
+    }
+  }
+
+  // ===== CONNECTION INTELLIGENCE METHODS =====
+
+  /**
+   * Store connection intelligence profile
+   */
+  async storeIntelligenceProfile(profile: any): Promise<void> {
+    if (!supabase) {
+      throw new Error('Supabase not configured')
+    }
+
+    try {
+      console.log(`💾 Storing intelligence profile for ${profile.connectionName}`)
+
+      // Store the main intelligence profile
+      const { data: profileData, error: profileError } = await supabase
+        .from('connection_intelligence_profiles')
+        .upsert({
+          connection_id: profile.connectionId,
+          connection_name: profile.connectionName,
+          company: profile.company,
+          title: profile.title,
+          profile_url: profile.profileUrl,
+          unified_scores: profile.unifiedScores,
+          data_quality: profile.intelligenceAssessment.dataQuality,
+          confidence_level: profile.intelligenceAssessment.confidenceLevel,
+          verification_status: profile.intelligenceAssessment.verificationStatus,
+          expertise_verification: profile.intelligenceAssessment.expertiseVerification,
+          red_flags: profile.intelligenceAssessment.redFlags,
+          strengths: profile.intelligenceAssessment.strengths,
+          recommendations: profile.intelligenceAssessment.recommendations,
+          research_duration: profile.researchDuration,
+          researched_at: profile.researchedAt,
+          last_updated_at: profile.lastUpdatedAt
+        }, {
+          onConflict: 'connection_id'
+        })
+        .select()
+        .single()
+
+      if (profileError) {
+        console.error('❌ Error storing intelligence profile:', profileError)
+        throw profileError
+      }
+
+      // Store web research results if available
+      if (profile.webResearch) {
+        const { error: webError } = await supabase
+          .from('web_research_results')
+          .upsert({
+            connection_id: profile.connectionId,
+            search_query: profile.webResearch.searchQuery,
+            articles_found: profile.webResearch.articlesFound,
+            expertise_signals: profile.webResearch.expertiseSignals,
+            talent_management_score: profile.webResearch.talentManagementScore,
+            people_development_score: profile.webResearch.peopleDevelopmentScore,
+            hr_technology_score: profile.webResearch.hrTechnologyScore,
+            leadership_score: profile.webResearch.leadershipScore,
+            overall_relevance_score: profile.webResearch.overallRelevanceScore,
+            research_quality: profile.webResearch.researchQuality,
+            researched_at: profile.webResearch.researched_at
+          }, {
+            onConflict: 'connection_id'
+          })
+
+        if (webError) {
+          console.error('❌ Error storing web research:', webError)
+          throw webError
+        }
+      }
+
+      // Store LinkedIn deep analysis if available
+      if (profile.linkedInAnalysis) {
+        const { error: linkedInError } = await supabase
+          .from('linkedin_deep_analysis')
+          .upsert({
+            connection_id: profile.connectionId,
+            articles_analysis: profile.linkedInAnalysis.articles,
+            posts_analysis: profile.linkedInAnalysis.postsAnalysis,
+            activity_patterns: profile.linkedInAnalysis.activityPatterns,
+            profile_analysis: profile.linkedInAnalysis.profileAnalysis,
+            expertise_scores: profile.linkedInAnalysis.expertiseScores,
+            authority_assessment: profile.linkedInAnalysis.authorityAssessment,
+            analysed_at: profile.linkedInAnalysis.analysedAt
+          }, {
+            onConflict: 'connection_id'
+          })
+
+        if (linkedInError) {
+          console.error('❌ Error storing LinkedIn analysis:', linkedInError)
+          throw linkedInError
+        }
+      }
+
+      // Store expertise signals
+      if (profile.webResearch?.expertiseSignals || profile.linkedInAnalysis?.postsAnalysis) {
+        await this.storeExpertiseSignals(profile.connectionId, profile)
+      }
+
+      console.log(`✅ Successfully stored intelligence profile for ${profile.connectionName}`)
+
+    } catch (error) {
+      console.error(`❌ Failed to store intelligence profile:`, error)
+      throw error
+    }
+  }
+
+  /**
+   * Store expertise signals for easier querying
+   */
+  private async storeExpertiseSignals(connectionId: string, profile: any): Promise<void> {
+    if (!supabase) return
+
+    const signals: any[] = []
+
+    // Add web research signals
+    if (profile.webResearch?.expertiseSignals) {
+      profile.webResearch.expertiseSignals.forEach((signal: any) => {
+        signals.push({
+          connection_id: connectionId,
+          signal_type: 'web',
+          signal: signal.signal,
+          confidence: signal.confidence,
+          source: signal.source,
+          context: signal.context,
+          category: this.categorizeSignal(signal.signal)
+        })
+      })
+    }
+
+    // Add LinkedIn analysis signals
+    if (profile.linkedInAnalysis?.postsAnalysis) {
+      profile.linkedInAnalysis.postsAnalysis.forEach((post: any) => {
+        if (post.expertiseSignals) {
+          post.expertiseSignals.forEach((signal: any) => {
+            signals.push({
+              connection_id: connectionId,
+              signal_type: 'linkedin',
+              signal: signal.signal,
+              confidence: signal.confidence,
+              source: 'linkedin_post',
+              context: signal.context,
+              category: this.categorizeSignal(signal.signal)
+            })
+          })
+        }
+      })
+    }
+
+    if (signals.length > 0) {
+      // Delete existing signals for this connection
+      await supabase
+        .from('expertise_signals')
+        .delete()
+        .eq('connection_id', connectionId)
+
+      // Insert new signals
+      const { error } = await supabase
+        .from('expertise_signals')
+        .insert(signals)
+
+      if (error) {
+        console.error('❌ Error storing expertise signals:', error)
+      }
+    }
+  }
+
+  /**
+   * Categorize expertise signal for storage
+   */
+  private categorizeSignal(signal: string): string {
+    const signalLower = signal.toLowerCase()
+    
+    if (signalLower.includes('talent')) return 'talent_management'
+    if (signalLower.includes('development') || signalLower.includes('coaching')) return 'people_development'
+    if (signalLower.includes('hr tech') || signalLower.includes('hris')) return 'hr_technology'
+    if (signalLower.includes('leadership') || signalLower.includes('manage')) return 'leadership'
+    
+    return 'general'
+  }
+
+  /**
+   * Retrieve intelligence profile for a connection
+   */
+  async getIntelligenceProfile(connectionId: string): Promise<any | null> {
+    if (!supabase) {
+      throw new Error('Supabase not configured')
+    }
+
+    try {
+      // Get the main intelligence profile
+      const { data: profile, error: profileError } = await supabase
+        .from('connection_intelligence_profiles')
+        .select('*')
+        .eq('connection_id', connectionId)
+        .single()
+
+      if (profileError) {
+        if (profileError.code === 'PGRST116') { // Not found
+          return null
+        }
+        throw profileError
+      }
+
+      // Get web research data
+      const { data: webResearch } = await supabase
+        .from('web_research_results')
+        .select('*')
+        .eq('connection_id', connectionId)
+        .single()
+
+      // Get LinkedIn analysis data
+      const { data: linkedInAnalysis } = await supabase
+        .from('linkedin_deep_analysis')
+        .select('*')
+        .eq('connection_id', connectionId)
+        .single()
+
+      // Reconstruct the intelligence profile object
+      return {
+        connectionId: profile.connection_id,
+        connectionName: profile.connection_name,
+        company: profile.company,
+        title: profile.title,
+        profileUrl: profile.profile_url,
+        webResearch,
+        linkedInAnalysis,
+        unifiedScores: profile.unified_scores,
+        intelligenceAssessment: {
+          dataQuality: profile.data_quality,
+          confidenceLevel: profile.confidence_level,
+          verificationStatus: profile.verification_status,
+          expertiseVerification: profile.expertise_verification,
+          redFlags: profile.red_flags,
+          strengths: profile.strengths,
+          recommendations: profile.recommendations
+        },
+        researchDuration: profile.research_duration,
+        researchedAt: profile.researched_at,
+        lastUpdatedAt: profile.last_updated_at
+      }
+
+    } catch (error) {
+      console.error(`❌ Failed to retrieve intelligence profile for ${connectionId}:`, error)
+      throw error
+    }
+  }
+
+  /**
+   * Get all intelligence profiles with basic info
+   */
+  async getAllIntelligenceProfiles(): Promise<any[]> {
+    if (!supabase) {
+      throw new Error('Supabase not configured')
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('connection_intelligence_profiles')
+        .select(`
+          connection_id,
+          connection_name,
+          company,
+          title,
+          unified_scores,
+          data_quality,
+          confidence_level,
+          verification_status,
+          researched_at,
+          research_duration
+        `)
+        .order('researched_at', { ascending: false })
+
+      if (error) throw error
+
+      return data?.map(profile => ({
+        connectionId: profile.connection_id,
+        connectionName: profile.connection_name,
+        company: profile.company,
+        title: profile.title,
+        unifiedScores: profile.unified_scores,
+        intelligenceAssessment: {
+          dataQuality: profile.data_quality,
+          confidenceLevel: profile.confidence_level,
+          verificationStatus: profile.verification_status,
+          strengths: [], // Basic view doesn't include full details
+          recommendations: [],
+          redFlags: []
+        },
+        researchDuration: profile.research_duration,
+        researched_at: profile.researched_at
+      })) || []
+
+    } catch (error) {
+      console.error('❌ Failed to get intelligence profiles:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Delete intelligence profile and associated data
+   */
+  async deleteIntelligenceProfile(connectionId: string): Promise<void> {
+    if (!supabase) {
+      throw new Error('Supabase not configured')
+    }
+
+    try {
+      // Delete in order due to foreign key constraints
+      await supabase.from('expertise_signals').delete().eq('connection_id', connectionId)
+      await supabase.from('web_articles').delete().eq('connection_id', connectionId)
+      await supabase.from('web_research_results').delete().eq('connection_id', connectionId)
+      await supabase.from('linkedin_deep_analysis').delete().eq('connection_id', connectionId)
+      await supabase.from('connection_intelligence_profiles').delete().eq('connection_id', connectionId)
+
+      console.log(`✅ Deleted intelligence profile for connection ${connectionId}`)
+
+    } catch (error) {
+      console.error(`❌ Failed to delete intelligence profile for ${connectionId}:`, error)
+      throw error
     }
   }
 }

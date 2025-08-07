@@ -69,9 +69,10 @@ export default function IntelligenceDashboard() {
   const [isBatchProcessing, setBatchProcessing] = useState(false)
   const [batchProgress, setBatchProgress] = useState({ completed: 0, total: 0 })
 
-  // Load connections on mount
+  // Load connections and intelligence profiles on mount
   useEffect(() => {
     loadConnections()
+    loadIntelligenceProfiles()
   }, [])
 
   const loadConnections = async () => {
@@ -107,6 +108,40 @@ export default function IntelligenceDashboard() {
       setConnections([])
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const loadIntelligenceProfiles = async () => {
+    try {
+      console.log('🧠 Loading existing intelligence profiles...')
+      
+      const response = await fetch('/api/intelligence/profiles', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        console.log('No existing intelligence profiles found or error:', errorData.error)
+        return
+      }
+
+      const data = await response.json()
+      
+      if (data.success && data.data.profiles) {
+        setIntelligenceProfiles(data.data.profiles)
+        console.log(`✅ Loaded ${data.data.profiles.length} intelligence profiles`)
+        
+        if (data.data.profiles.length > 0) {
+          toast.success(`Loaded ${data.data.profiles.length} existing intelligence profiles`, {
+            description: `${data.data.highValueProspects} high-value prospects found`
+          })
+        }
+      }
+      
+    } catch (error: any) {
+      console.error('Error loading intelligence profiles:', error)
+      // Don't show error toast for intelligence profiles as this is optional data
     }
   }
 
@@ -323,11 +358,14 @@ export default function IntelligenceDashboard() {
         <div className="flex items-center space-x-2">
           <Button 
             variant="outline"
-            onClick={loadConnections}
+            onClick={() => {
+              loadConnections()
+              loadIntelligenceProfiles()
+            }}
             disabled={isLoading}
           >
             <Users className="mr-2 h-4 w-4" />
-            {isLoading ? 'Loading...' : 'Refresh Connections'}
+            {isLoading ? 'Loading...' : 'Refresh Data'}
           </Button>
         </div>
       </div>
