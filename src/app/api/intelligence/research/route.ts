@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { connectionIntelligenceService } from '@/lib/connection-intelligence-service'
-import { isSupabaseConfigured, validateSupabaseConfig } from '@/lib/supabase'
+import { isIntelligenceSupabaseConfigured, validateIntelligenceSupabaseConfig } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -12,12 +12,12 @@ export const maxDuration = 300 // 5 minutes for intelligence research
  */
 export async function POST(request: NextRequest) {
   try {
-    // Validate Supabase configuration
-    if (!isSupabaseConfigured()) {
-      const { error } = validateSupabaseConfig()
+    // Validate Intelligence Supabase configuration
+    if (!isIntelligenceSupabaseConfigured()) {
+      const { error } = validateIntelligenceSupabaseConfig()
       return NextResponse.json({
         success: false,
-        error: 'Supabase not configured properly',
+        error: 'Intelligence Supabase configuration incomplete',
         details: error
       }, { status: 500 })
     }
@@ -78,12 +78,12 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
-    // Validate Supabase configuration
-    if (!isSupabaseConfigured()) {
-      const { error } = validateSupabaseConfig()
+    // Validate Intelligence Supabase configuration
+    if (!isIntelligenceSupabaseConfigured()) {
+      const { error } = validateIntelligenceSupabaseConfig()
       return NextResponse.json({
         success: false,
-        error: 'Supabase not configured properly',
+        error: 'Intelligence Supabase configuration incomplete',
         details: error
       }, { status: 500 })
     }

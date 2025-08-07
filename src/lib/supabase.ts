@@ -176,6 +176,31 @@ export function validateSupabaseConfig(): { isValid: boolean; error?: string } {
   return { isValid: true }
 }
 
+// Intelligence-specific validation helper for service role operations
+export function validateIntelligenceSupabaseConfig(): { isValid: boolean; error?: string } {
+  if (!supabaseUrl || supabaseUrl === 'https://placeholder.supabase.co') {
+    return {
+      isValid: false,
+      error: 'NEXT_PUBLIC_SUPABASE_URL environment variable is required'
+    }
+  }
+  
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!serviceRoleKey) {
+    return {
+      isValid: false,
+      error: 'SUPABASE_SERVICE_ROLE_KEY environment variable is required for intelligence operations'
+    }
+  }
+  
+  return { isValid: true }
+}
+
+// Helper to check if intelligence operations are properly configured
+export function isIntelligenceSupabaseConfigured(): boolean {
+  return validateIntelligenceSupabaseConfig().isValid
+}
+
 // Helper to check if Supabase is properly configured
 export function isSupabaseConfigured(): boolean {
   return validateSupabaseConfig().isValid

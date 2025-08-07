@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseLinkedIn } from '@/lib/supabase-linkedin'
-import { isSupabaseConfigured, validateSupabaseConfig } from '@/lib/supabase'
+import { isIntelligenceSupabaseConfigured, validateIntelligenceSupabaseConfig } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,12 +10,12 @@ export const dynamic = 'force-dynamic'
  */
 export async function GET(request: NextRequest) {
   try {
-    // Validate Supabase configuration
-    if (!isSupabaseConfigured()) {
-      const { error } = validateSupabaseConfig()
+    // Validate Intelligence Supabase configuration
+    if (!isIntelligenceSupabaseConfigured()) {
+      const { error } = validateIntelligenceSupabaseConfig()
       return NextResponse.json({
         success: false,
-        error: 'Supabase not configured properly',
+        error: 'Intelligence Supabase configuration incomplete',
         details: error
       }, { status: 500 })
     }
@@ -85,12 +85,12 @@ export async function GET(request: NextRequest) {
  */
 export async function DELETE(request: NextRequest) {
   try {
-    // Validate Supabase configuration
-    if (!isSupabaseConfigured()) {
-      const { error } = validateSupabaseConfig()
+    // Validate Intelligence Supabase configuration
+    if (!isIntelligenceSupabaseConfigured()) {
+      const { error } = validateIntelligenceSupabaseConfig()
       return NextResponse.json({
         success: false,
-        error: 'Supabase not configured properly',
+        error: 'Intelligence Supabase configuration incomplete',
         details: error
       }, { status: 500 })
     }
