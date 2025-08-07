@@ -559,17 +559,39 @@ export class SupabaseLinkedInService {
     
     console.log(`💾 Saving post ${dbPost.post_urn} for connection ${connectionId}`)
     
-    const { data, error } = await supabase!
+    // First try to find existing post by post_urn to avoid duplicates
+    const { data: existingPost } = await supabase!
       .from('connection_posts')
-      .upsert(dbPost, { 
-        onConflict: 'post_urn',
-        ignoreDuplicates: false 
-      })
-      .select()
+      .select('id')
+      .eq('post_urn', dbPost.post_urn)
       .single()
 
+    let data, error
+    if (existingPost) {
+      // Update existing post
+      console.log(`🔄 Updating existing post ${dbPost.post_urn}`)
+      const result = await supabase!
+        .from('connection_posts')
+        .update(dbPost)
+        .eq('post_urn', dbPost.post_urn)
+        .select()
+        .single()
+      data = result.data
+      error = result.error
+    } else {
+      // Insert new post
+      console.log(`➕ Inserting new post ${dbPost.post_urn}`)
+      const result = await supabase!
+        .from('connection_posts')
+        .insert(dbPost)
+        .select()
+        .single()
+      data = result.data
+      error = result.error
+    }
+
     if (error) {
-      console.error('❌ Error upserting connection post:', {
+      console.error('❌ Error saving connection post:', {
         error: error.message,
         post_urn: dbPost.post_urn,
         connection_id: connectionId,
