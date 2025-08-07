@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import type { ConnectionPost } from "./connection-posts-table"
+import { CommentsList } from "./comments-list"
 
 interface PostDetailDialogProps {
   post: ConnectionPost | null
@@ -360,8 +361,18 @@ export function PostDetailDialog({
 
             <Separator />
 
+            {/* Comments Section */}
+            <div className="space-y-4">
+              <CommentsList 
+                postUrl={post.postUrl || ''}
+                initialCommentsCount={post.commentsCount}
+              />
+            </div>
+
             {onGenerateComment && (
               <>
+                <Separator />
+
                 {/* Comment Generation Section */}
                 <div className="space-y-4">
                   <h5 className="font-semibold text-base">AI Comment Generation</h5>
