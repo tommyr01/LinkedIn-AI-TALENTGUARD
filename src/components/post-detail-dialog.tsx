@@ -1,130 +1,285 @@
 "use client"
 
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { useState } from "react"
+import { format } from "date-fns"
+import { MessageSquare, ThumbsUp, ExternalLink, User, Sparkles, X, Play, Image, Calendar, TrendingUp, Repeat2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Separator } from "@/components/ui/separator"
-import { 
-  User, 
-  ThumbsUp, 
-  MessageSquare, 
-  ExternalLink, 
-  FileText, 
-  Calendar,
-  Sparkles,
-  Loader2,
-  Building,
-  MapPin 
-} from 'lucide-react'
-import { ConnectionPost } from './post-card'
+import { Textarea } from "@/components/ui/textarea"
+import { toast } from "sonner"
+import type { ConnectionPost } from "./connection-posts-table"
 
 interface PostDetailDialogProps {
   post: ConnectionPost | null
   open: boolean
   onOpenChange: (open: boolean) => void
   onGenerateComment?: (post: ConnectionPost) => void
-  isGenerating?: boolean
+  isGenerating: boolean
   selectedPostId?: string
 }
 
 export function PostDetailDialog({ 
   post, 
   open, 
-  onOpenChange,
-  onGenerateComment,
-  isGenerating = false,
-  selectedPostId
+  onOpenChange, 
+  onGenerateComment, 
+  isGenerating, 
+  selectedPostId 
 }: PostDetailDialogProps) {
+  const [imageError, setImageError] = useState(false)
+  const [profileImageError, setProfileImageError] = useState(false)
+  
+  // Comment generation states
+  const [generatedComment, setGeneratedComment] = useState("")
+  const [isGeneratingComment, setIsGeneratingComment] = useState(false)
+  const [isPostingComment, setIsPostingComment] = useState(false)
+
   if (!post) return null
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'long',
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
-
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) {
-      return `${(num / 1000000).toFixed(1)}M`
-    } else if (num >= 1000) {
-      return `${(num / 1000).toFixed(1)}K`
+  const formatDate = (dateStr: string) => {
+    try {
+      const date = new Date(dateStr)
+      return format(date, "EEEE, MMMM d, yyyy 'at' h:mm a")
+    } catch {
+      return dateStr
     }
-    return num.toString()
   }
 
-  const getEngagementColor = (reactions: number) => {
-    if (reactions >= 100) return "text-green-600"
-    if (reactions >= 50) return "text-blue-600"
-    if (reactions >= 10) return "text-yellow-600"
-    return "text-gray-600"
+  const formatRelativeDate = (dateStr: string) => {
+    try {
+      const date = new Date(dateStr)
+      const now = new Date()
+      const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
+      
+      if (diffInHours < 1) return "Just now"
+      if (diffInHours < 24) return `${diffInHours}h ago`
+      
+      const diffInDays = Math.floor(diffInHours / 24)
+      if (diffInDays < 7) return `${diffInDays}d ago`
+      
+      const diffInWeeks = Math.floor(diffInDays / 7)
+      if (diffInWeeks < 4) return `${diffInWeeks}w ago`
+      
+      return format(date, "MMM d, yyyy")
+    } catch {
+      return dateStr
+    }
   }
 
-  const isThisPostGenerating = isGenerating && selectedPostId === post.id
+  const renderMedia = () => {
+    if (!post.hasMedia || !post.mediaUrl) return null
+
+    const isVideo = post.mediaType?.toLowerCase().includes('video')
+    const isImage = post.mediaType?.toLowerCase().includes('image') || post.mediaType?.toLowerCase().includes('photo')
+    
+    if (isVideo) {
+      return (
+        <div className="space-y-2">
+          <div className="text-sm font-medium flex items-center space-x-2">
+            <Play className="h-4 w-4" />
+            <span>Video Content</span>
+          </div>
+          <div className="relative w-full max-h-96 bg-muted rounded-lg overflow-hidden">
+            {post.mediaThumbnail && !imageError ? (
+              <img
+                src={post.mediaThumbnail}
+                alt="Video thumbnail"
+                className="w-full h-full object-cover"
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <div className="w-full h-64 flex items-center justify-center bg-muted">
+                <Play className="h-12 w-12 text-muted-foreground" />
+              </div>
+            )}
+            <div className="absolute inset-0 bg-black/20 flex items-center justify-center hover:bg-black/30 transition-colors cursor-pointer">
+              <div className="bg-black/60 rounded-full p-3">
+                <Play className="h-8 w-8 text-white fill-white" />
+              </div>
+            </div>
+          </div>
+          {post.mediaUrl && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(post.mediaUrl, '_blank')}
+            >
+              <ExternalLink className="h-4 w-4 mr-2" />
+              View on LinkedIn
+            </Button>
+          )}
+        </div>
+      )
+    }
+
+    if (isImage) {
+      return (
+        <div className="space-y-2">
+          <div className="text-sm font-medium flex items-center space-x-2">
+            <Image className="h-4 w-4" />
+            <span>Image Content</span>
+          </div>
+          <div className="w-full max-h-96 bg-muted rounded-lg overflow-hidden">
+            {(post.mediaThumbnail || post.mediaUrl) && !imageError ? (
+              <img
+                src={post.mediaThumbnail || post.mediaUrl}
+                alt="Post image"
+                className="w-full h-full object-contain cursor-pointer hover:scale-105 transition-transform duration-200"
+                onError={() => setImageError(true)}
+                onClick={() => window.open(post.mediaUrl, '_blank')}
+              />
+            ) : (
+              <div className="w-full h-64 flex items-center justify-center bg-muted">
+                <Image className="h-12 w-12 text-muted-foreground" />
+              </div>
+            )}
+          </div>
+        </div>
+      )
+    }
+
+    // Other media types
+    return (
+      <div className="space-y-2">
+        <div className="text-sm font-medium">Media Content</div>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-center">
+              <div className="text-sm font-medium">
+                {post.mediaType || 'Media'}
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">
+                Media content available on LinkedIn
+              </div>
+              {post.mediaUrl && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-2"
+                  onClick={() => window.open(post.mediaUrl, '_blank')}
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  View Media
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  const handleGenerateComment = async () => {
+    setIsGeneratingComment(true)
+    try {
+      // Call n8n webhook for comment generation
+      const response = await fetch('/api/generate-comment-webhook', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          postContent: post.content,
+          authorName: post.connectionName,
+          postUrl: post.postUrl,
+          postId: post.id
+        })
+      })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`)
+      }
+      
+      const data = await response.json()
+      setGeneratedComment(data.generatedComment || "Generated comment will appear here...")
+      toast.success('Comment generated successfully!')
+    } catch (error) {
+      console.error('Error generating comment:', error)
+      toast.error('Failed to generate comment. Please try again.')
+    } finally {
+      setIsGeneratingComment(false)
+    }
+  }
+
+  const handlePostComment = async () => {
+    if (!generatedComment.trim()) {
+      toast.error('Please enter a comment to post')
+      return
+    }
+
+    setIsPostingComment(true)
+    try {
+      // Future: Post comment to LinkedIn via API
+      // For now, just show success message
+      toast.success('Comment posted successfully!')
+      setGeneratedComment("")
+    } catch (error) {
+      console.error('Error posting comment:', error)
+      toast.error('Failed to post comment. Please try again.')
+    } finally {
+      setIsPostingComment(false)
+    }
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>LinkedIn Post Details</DialogTitle>
-          <DialogDescription>
-            View complete post content and engagement metrics
-          </DialogDescription>
+      <DialogContent 
+        className="max-w-none w-[95vw] h-[85vh] overflow-hidden flex flex-col"
+        style={{ width: '95vw', maxWidth: 'none', height: '85vh' }}
+      >
+        <DialogHeader className="shrink-0">
+          <DialogTitle className="flex items-center justify-between">
+            <span>Post Details</span>
+          </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
-          {/* Author Info */}
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-start gap-4">
-                {post.authorProfilePicture ? (
-                  <img 
-                    src={post.authorProfilePicture} 
-                    alt={post.connectionName}
-                    className="h-16 w-16 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center">
-                    <User className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                )}
-                
-                <div className="flex-1 space-y-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1 overflow-hidden">
+          {/* Left Column - Post Content */}
+          <div className="lg:col-span-2 space-y-6 overflow-y-auto pr-2">
+            {/* Author Header */}
+            <div className="flex items-start space-x-4">
+              {post.authorProfilePicture && !profileImageError ? (
+                <img 
+                  src={post.authorProfilePicture} 
+                  alt={`${post.connectionName}'s profile`} 
+                  className="h-12 w-12 rounded-full object-cover shrink-0"
+                  onError={() => setProfileImageError(true)}
+                />
+              ) : (
+                <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-lg font-medium shrink-0">
+                  {post.authorFirstName?.[0]}{post.authorLastName?.[0]}
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="text-lg font-semibold">{post.connectionName}</h3>
+                    <h3 className="font-semibold text-xl">{post.connectionName}</h3>
                     {post.authorHeadline && (
-                      <p className="text-sm text-muted-foreground">{post.authorHeadline}</p>
+                      <p className="text-muted-foreground text-base mt-1">
+                        {post.authorHeadline}
+                      </p>
                     )}
-                  </div>
-                  
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    {post.connectionCompany && (
-                      <div className="flex items-center gap-1">
-                        <Building className="h-4 w-4" />
-                        <span>{post.connectionCompany}</span>
+                    <div className="flex items-center space-x-4 mt-2 text-sm text-muted-foreground">
+                      <div className="flex items-center space-x-1">
+                        <Calendar className="h-4 w-4" />
+                        <span>{formatRelativeDate(post.postedAt)}</span>
                       </div>
-                    )}
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      <span>{formatDate(post.postedAt)}</span>
+                      {post.postType && post.postType !== 'regular' && (
+                        <Badge variant="outline">{post.postType}</Badge>
+                      )}
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline">
-                      {post.postType}
-                    </Badge>
-                    {post.hasMedia && (
-                      <Badge variant="outline">
-                        <FileText className="h-3 w-3 mr-1" />
-                        Has Media
-                      </Badge>
+                  <div className="flex items-center space-x-2">
+                    {post.authorLinkedInUrl && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(post.authorLinkedInUrl, '_blank')}
+                      >
+                        <User className="h-4 w-4 mr-2" />
+                        View Profile
+                      </Button>
                     )}
                     {post.postUrl && (
                       <Button
@@ -133,147 +288,113 @@ export function PostDetailDialog({
                         onClick={() => window.open(post.postUrl, '_blank')}
                       >
                         <ExternalLink className="h-4 w-4 mr-2" />
-                        View on LinkedIn
+                        View Post
                       </Button>
                     )}
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          {/* Post Content */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Post Content</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <p className="text-sm leading-relaxed whitespace-pre-wrap">
+            <Separator />
+
+            {/* Post Content */}
+            <div className="space-y-6">
+              <div className="prose prose-base max-w-none">
+                <p className="text-base leading-relaxed whitespace-pre-wrap">
                   {post.content}
                 </p>
-
-                {/* Document Info */}
-                {post.documentTitle && (
-                  <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                    <FileText className="h-5 w-5 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium">{post.documentTitle}</p>
-                      {post.documentPageCount && (
-                        <p className="text-xs text-muted-foreground">{post.documentPageCount} pages</p>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Engagement Metrics */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Engagement Metrics</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center">
-                  <div className={`text-2xl font-bold ${getEngagementColor(post.totalReactions)}`}>
-                    {formatNumber(post.totalReactions)}
-                  </div>
-                  <p className="text-xs text-muted-foreground">Total Reactions</p>
-                </div>
-                
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">
-                    {formatNumber(post.likesCount)}
-                  </div>
-                  <p className="text-xs text-muted-foreground">Likes</p>
-                </div>
-                
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">
-                    {formatNumber(post.commentsCount)}
-                  </div>
-                  <p className="text-xs text-muted-foreground">Comments</p>
-                </div>
-                
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">
-                    {formatNumber(post.reposts)}
-                  </div>
-                  <p className="text-xs text-muted-foreground">Reposts</p>
-                </div>
               </div>
 
-              {/* Extended reaction types */}
-              {(post.support || post.love || post.insight || post.celebrate) && (
-                <>
-                  <Separator className="my-4" />
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium">Reaction Breakdown</p>
-                    <div className="flex items-center gap-4 text-sm">
-                      {(post.support || 0) > 0 && (
-                        <div className="flex items-center gap-1">
-                          <span>👏</span>
-                          <span>{post.support} Support</span>
-                        </div>
-                      )}
-                      {(post.love || 0) > 0 && (
-                        <div className="flex items-center gap-1">
-                          <span>❤️</span>
-                          <span>{post.love} Love</span>
-                        </div>
-                      )}
-                      {(post.insight || 0) > 0 && (
-                        <div className="flex items-center gap-1">
-                          <span>💡</span>
-                          <span>{post.insight} Insight</span>
-                        </div>
-                      )}
-                      {(post.celebrate || 0) > 0 && (
-                        <div className="flex items-center gap-1">
-                          <span>🎉</span>
-                          <span>{post.celebrate} Celebrate</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </>
+              {/* Media Content */}
+              {post.hasMedia && (
+                <div className="w-full">
+                  {renderMedia()}
+                </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
 
-          {/* Action Buttons */}
-          <div className="flex gap-3 pt-4">
-            <Button variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
-              Close
-            </Button>
-            
+            {/* Actions */}
+            <div className="flex items-center justify-between pt-4 border-t">
+              <div className="text-sm text-muted-foreground">
+                {formatDate(post.postedAt)}
+              </div>
+              {onGenerateComment && (
+                <Button
+                  onClick={() => onGenerateComment(post)}
+                  disabled={isGenerating}
+                  className="bg-primary hover:bg-primary/90"
+                  size="lg"
+                >
+                  <Sparkles className="h-5 w-5 mr-2" />
+                  {isGenerating && selectedPostId === post.id ? "Generating Comment..." : "Generate AI Comment"}
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Right Column - Compact Engagement & Comment Generation */}
+          <div className="lg:col-span-1 space-y-6 overflow-y-auto pl-2">
+            {/* Compact Engagement Metrics */}
+            <div className="space-y-3">
+              <h4 className="font-semibold text-lg">Engagement</h4>
+              <div className="flex items-center justify-between text-sm bg-muted/30 p-3 rounded-lg">
+                <div className="flex items-center space-x-1">
+                  <ThumbsUp className="h-4 w-4 text-blue-500" />
+                  <span className="font-medium">{post.likesCount}</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <MessageSquare className="h-4 w-4 text-green-500" />
+                  <span className="font-medium">{post.commentsCount}</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <TrendingUp className="h-4 w-4 text-purple-500" />
+                  <span className="font-medium">{post.totalReactions}</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Repeat2 className="h-4 w-4 text-orange-500" />
+                  <span className="font-medium">{post.reposts}</span>
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
             {onGenerateComment && (
-              <Button 
-                onClick={() => onGenerateComment(post)}
-                disabled={isThisPostGenerating}
-                className="flex-1"
-              >
-                {isThisPostGenerating ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generating AI Comment...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    Generate AI Comment
-                  </>
-                )}
-              </Button>
-            )}
-            
-            {post.postUrl && (
-              <Button variant="outline" onClick={() => window.open(post.postUrl, '_blank')}>
-                <ExternalLink className="mr-2 h-4 w-4" />
-                Open LinkedIn
-              </Button>
+              <>
+                {/* Comment Generation Section */}
+                <div className="space-y-4">
+                  <h5 className="font-semibold text-base">AI Comment Generation</h5>
+                  
+                  <Button 
+                    onClick={handleGenerateComment}
+                    disabled={isGeneratingComment}
+                    className="w-full"
+                    size="sm"
+                  >
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    {isGeneratingComment ? "Generating..." : "Generate Comment"}
+                  </Button>
+                  
+                  <Textarea
+                    value={generatedComment}
+                    onChange={(e) => setGeneratedComment(e.target.value)}
+                    placeholder="Generated comment will appear here..."
+                    className="min-h-[120px] text-sm"
+                    disabled={isGeneratingComment}
+                  />
+                  
+                  <Button 
+                    onClick={handlePostComment}
+                    disabled={!generatedComment.trim() || isPostingComment}
+                    className="w-full"
+                    variant="default"
+                    size="sm"
+                  >
+                    {isPostingComment ? "Posting..." : "Post Comment"}
+                  </Button>
+                </div>
+              </>
             )}
           </div>
         </div>

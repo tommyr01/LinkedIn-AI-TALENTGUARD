@@ -12,11 +12,36 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
-import { PostCard, type ConnectionPost } from "./post-card"
+import { PostCard } from "./post-card"
 import { PostDetailDialog } from "./post-detail-dialog"
 
-// Re-export ConnectionPost for external usage
-export type { ConnectionPost }
+// Types based on our connection posts data structure
+export type ConnectionPost = {
+  id: string
+  connectionName: string
+  connectionCompany?: string
+  content: string
+  postedAt: string
+  postUrn: string
+  postUrl?: string
+  likesCount: number
+  commentsCount: number
+  totalReactions: number
+  reposts: number
+  authorFirstName: string
+  authorLastName: string
+  authorHeadline?: string
+  authorLinkedInUrl?: string
+  authorProfilePicture?: string
+  postType: string
+  mediaType?: string
+  mediaUrl?: string
+  mediaThumbnail?: string
+  createdTime: string
+  hasMedia?: boolean
+  documentTitle?: string
+  documentPageCount?: number
+}
 
 export type PostStats = {
   totalPosts: number
