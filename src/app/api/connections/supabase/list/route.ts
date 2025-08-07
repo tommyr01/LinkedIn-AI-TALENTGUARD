@@ -6,6 +6,9 @@ const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
 export async function GET(request: NextRequest) {
   try {
+    console.log('📡 Fetching connections from Supabase...')
+    console.log('🔑 Using Supabase URL:', supabaseUrl)
+    
     const supabase = createClient(supabaseUrl, supabaseKey)
     
     const { data: connections, error } = await supabase
@@ -14,12 +17,14 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false })
 
     if (error) {
-      console.error('Supabase error:', error)
+      console.error('❌ Supabase error:', error)
       return NextResponse.json({ 
         error: 'Failed to fetch connections from database',
         details: error.message
       }, { status: 500 })
     }
+    
+    console.log(`✅ Successfully fetched ${connections?.length || 0} connections from Supabase`)
 
     // Transform data to match the expected format
     const transformedConnections = connections.map((conn: any) => ({
@@ -33,12 +38,14 @@ export async function GET(request: NextRequest) {
       engagementScore: calculateEngagementScore(conn),
       tags: generateTags(conn),
       notes: conn.about ? conn.about.substring(0, 200) : '',
-      startDate: conn.created_at,
+      startDate: conn.start_date || conn.created_at, // Use employment start_date if available
       followerCount: conn.follower_count || 0,
       connectionCount: conn.connection_count || 0,
-      companyLinkedinUrl: '', // Would need company data
+      companyLinkedinUrl: conn.company_linkedin_url || '', // Use actual company URL
       location: conn.full_location || 'N/A'
     }))
+    
+    console.log(`🔄 Transformed ${transformedConnections.length} connections for display`)
 
     return NextResponse.json(transformedConnections)
 
