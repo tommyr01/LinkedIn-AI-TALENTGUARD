@@ -199,20 +199,40 @@ export class LinkedInScraperService {
     try {
       const url = `${this.baseUrl}/profile/detail?username=${encodeURIComponent(username)}`;
       
-      console.log(`Fetching LinkedIn profile for username: ${username}`);
+      console.log(`📡 Fetching LinkedIn profile for username: ${username}`);
+      console.log(`🔗 Request URL: ${url}`);
+      console.log(`🔑 Request headers:`, {
+        'x-rapidapi-host': 'linkedin-scraper-api-real-time-fast-affordable.p.rapidapi.com',
+        'x-rapidapi-key': this.apiKey.substring(0, 8) + '...' + this.apiKey.substring(this.apiKey.length - 4)
+      });
       
       const response = await fetch(url, {
         method: 'GET',
         headers: this.getHeaders(),
       });
 
+      console.log(`📥 API response status: ${response.status} ${response.statusText}`);
+
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('LinkedIn API error:', response.status, errorText);
-        throw new Error(`LinkedIn API error: ${response.status} ${errorText}`);
+        console.error('💥 LinkedIn API error:', {
+          status: response.status,
+          statusText: response.statusText,
+          responseBody: errorText,
+          url: url,
+          username: username
+        });
+        throw new Error(`LinkedIn API error: ${response.status} - ${errorText}`);
       }
 
       const data: LinkedInProfile = await response.json();
+      
+      console.log(`✅ LinkedIn API response parsed successfully:`, {
+        success: data.success,
+        hasData: !!data.data,
+        hasBasicInfo: !!data.data?.basic_info,
+        profileName: data.data?.basic_info?.fullname
+      });
       
       if (!data.success) {
         throw new Error(data.message || 'Failed to fetch LinkedIn profile');

@@ -30,6 +30,12 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`🔍 Enriching profile for username: ${usernameToUse}`)
+    console.log(`🔑 Environment check:`, {
+      hasRapidApiKey: !!process.env.RAPIDAPI_KEY,
+      rapidApiKeyPrefix: process.env.RAPIDAPI_KEY?.substring(0, 8) + '...',
+      hasSupabaseUrl: !!process.env.SUPABASE_URL,
+      hasSupabaseKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY
+    })
 
     // Check if Supabase connection is available
     if (!supabaseLinkedIn) {
@@ -39,12 +45,24 @@ export async function POST(request: NextRequest) {
       }, { status: 500 })
     }
 
+    console.log(`📡 About to call LinkedIn API for profile: ${usernameToUse}`)
+    
     // Fetch LinkedIn profile data
     const profile = await linkedInScraper.getProfile(usernameToUse)
     console.log(`✅ LinkedIn profile fetched successfully:`, {
       name: profile.data.basic_info.fullname,
       company: profile.data.basic_info.current_company,
-      hasProfilePicture: !!profile.data.basic_info.profile_picture_url
+      hasProfilePicture: !!profile.data.basic_info.profile_picture_url,
+      publicIdentifier: profile.data.basic_info.public_identifier,
+      followerCount: profile.data.basic_info.follower_count,
+      experienceCount: profile.data.experience?.length || 0
+    })
+    
+    console.log(`🔍 Raw profile data structure:`, {
+      hasBasicInfo: !!profile.data.basic_info,
+      hasExperience: !!profile.data.experience,
+      basicInfoKeys: Object.keys(profile.data.basic_info || {}),
+      firstExperienceKeys: profile.data.experience?.[0] ? Object.keys(profile.data.experience[0]) : []
     })
     
     // Map to Supabase fields using exact column names
@@ -104,13 +122,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(response)
 
   } catch (error: any) {
-    console.error('Error enriching LinkedIn profile:', {
+    console.error('💥 Error enriching LinkedIn profile:', {
       message: error.message,
       stack: error.stack,
       username: usernameToUse,
       hasRapidApiKey: !!process.env.RAPIDAPI_KEY,
+      rapidApiKeyLength: process.env.RAPIDAPI_KEY?.length,
       hasSupabaseConfig: !!(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
-      createRecord
+      createRecord,
+      errorName: error.name,
+      errorCode: error.code
     })
     
     // Provide helpful error messages
@@ -148,11 +169,33 @@ export async function POST(request: NextRequest) {
 
 // Helper function to map LinkedIn profile to Supabase connection format
 function mapLinkedInProfileToSupabase(profileData: any) {
+  console.log(`🔍 Mapping profile data to Supabase format:`, {
+    hasBasicInfo: !!profileData.basic_info,
+    hasExperience: !!profileData.experience,
+    profileDataKeys: Object.keys(profileData || {}),
+    basicInfoKeys: Object.keys(profileData.basic_info || {}),
+    experienceLength: profileData.experience?.length || 0
+  })
+  
   const profile = profileData.basic_info || profileData
   const experience = profileData.experience || []
   
+  console.log(`📋 Profile mapping details:`, {
+    fullname: profile.fullname,
+    publicIdentifier: profile.public_identifier,
+    currentCompany: profile.current_company,
+    hasLocation: !!profile.location,
+    locationFull: profile.location?.full
+  })
+  
   // Find current job from experience array
   const currentJob = experience.find((exp: any) => exp.is_current) || experience[0]
+  console.log(`💼 Current job details:`, {
+    hasCurrentJob: !!currentJob,
+    jobTitle: currentJob?.title,
+    jobCompany: currentJob?.company,
+    isCurrent: currentJob?.is_current
+  })
   
   // Format start date if available
   let startDate = ''
@@ -172,7 +215,7 @@ function mapLinkedInProfileToSupabase(profileData: any) {
       : profile.creator_hashtags
   }
   
-  return {
+  const mappedData = {
     full_name: profile.fullname || 'Unknown',
     first_name: profile.first_name || '',
     last_name: profile.last_name || '',
@@ -199,6 +242,18 @@ function mapLinkedInProfileToSupabase(profileData: any) {
     company_linkedin_url: profile.current_company_url || currentJob?.company_linkedin_url || '', // Use current_company_url
     current_company_urn: profile.current_company_urn || ''
   }
+  
+  console.log(`✅ Final mapped connection data:`, {
+    full_name: mappedData.full_name,
+    username: mappedData.username,
+    headline: mappedData.headline,
+    current_company: mappedData.current_company,
+    title: mappedData.title,
+    follower_count: mappedData.follower_count,
+    hasProfilePicture: !!mappedData.profile_picture_url
+  })
+  
+  return mappedData
 }
 
 // Helper function to convert month name to number
