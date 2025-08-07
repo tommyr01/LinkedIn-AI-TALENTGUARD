@@ -2,11 +2,12 @@
 
 import { useState } from "react"
 import { format } from "date-fns"
-import { ThumbsUp, Heart, Lightbulb, Trophy, Users, MessageSquare, User, ChevronDown, ChevronUp, Search, Loader2 } from "lucide-react"
+import { ThumbsUp, Heart, Lightbulb, Trophy, Users, MessageSquare, User, ChevronDown, ChevronUp, Search, Loader2, Reply, Send, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { Textarea } from "@/components/ui/textarea"
 import { LinkedInComment } from "../lib/linkedin-scraper"
 import { ProspectProfile } from "../lib/icp-scorer"
 import { toast } from "sonner"
@@ -15,6 +16,7 @@ interface CommentProps {
   comment: LinkedInComment
   isReply?: boolean
   onResearchCommenter?: (prospect: ProspectProfile) => void
+  onReplyPosted?: () => void  // Callback to refresh comments after posting a reply
 }
 
 const REACTION_ICONS = {
@@ -33,10 +35,15 @@ const REACTION_COLORS = {
   praise: "text-green-500",
 }
 
-export function Comment({ comment, isReply = false, onResearchCommenter }: CommentProps) {
+export function Comment({ comment, isReply = false, onResearchCommenter, onReplyPosted }: CommentProps) {
   const [showReplies, setShowReplies] = useState(false)
   const [imageError, setImageError] = useState(false)
   const [isResearching, setIsResearching] = useState(false)
+  
+  // Reply functionality state
+  const [showReplyInput, setShowReplyInput] = useState(false)
+  const [replyText, setReplyText] = useState("")
+  const [isPostingReply, setIsPostingReply] = useState(false)
 
   const formatDate = (timestamp: number) => {
     try {
@@ -88,6 +95,67 @@ export function Comment({ comment, isReply = false, onResearchCommenter }: Comme
       toast.error(`Research failed: ${error.message}`)
     } finally {
       setIsResearching(false)
+    }
+  }
+
+  const handleReplyClick = () => {
+    setShowReplyInput(true)
+    setReplyText("")
+  }
+
+  const handleCancelReply = () => {
+    setShowReplyInput(false)
+    setReplyText("")
+  }
+
+  const handlePostReply = async () => {
+    if (!replyText.trim()) {
+      toast.error('Please enter a reply')
+      return
+    }
+
+    setIsPostingReply(true)
+    try {
+      console.log('💬 Posting reply to comment:', comment.comment_id)
+      
+      const response = await fetch('/api/posts/reply', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          commentId: comment.comment_id,
+          commentUrl: comment.comment_url,
+          replyText: replyText.trim(),
+          authorName: comment.author.name
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `HTTP ${response.status}`)
+      }
+
+      const data = await response.json()
+      
+      if (data.success) {
+        toast.success('Reply posted successfully!')
+        setReplyText("")
+        setShowReplyInput(false)
+        
+        // Refresh the comments to show the new reply
+        if (onReplyPosted) {
+          onReplyPosted()
+        }
+      } else {
+        throw new Error(data.error || 'Failed to post reply')
+      }
+
+    } catch (error: any) {
+      console.error('Error posting reply:', error)
+      toast.error(`Failed to post reply: ${error.message}`)
+    } finally {
+      setIsPostingReply(false)
     }
   }
 
@@ -208,10 +276,83 @@ export function Comment({ comment, isReply = false, onResearchCommenter }: Comme
                   <span>{comment.stats.comments} repl{comment.stats.comments !== 1 ? 'ies' : 'y'}</span>
                 </div>
               )}
+              
+              {/* Reply Button */}
+              {!isReply && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleReplyClick}
+                  disabled={showReplyInput}
+                  className="h-6 px-2 text-xs hover:bg-muted/50"
+                >
+                  <Reply className="h-3 w-3 mr-1" />
+                  Reply
+                </Button>
+              )}
             </div>
           </div>
         </CardContent>
       </Card>
+
+      {/* Reply Input Section */}
+      {showReplyInput && (
+        <Card className="border-l-4 border-primary/30 bg-muted/30">
+          <CardContent className="p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <h5 className="text-sm font-medium text-muted-foreground">
+                Replying to {comment.author.name}
+              </h5>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCancelReply}
+                disabled={isPostingReply}
+                className="h-6 w-6 p-0 hover:bg-background"
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            </div>
+            
+            <Textarea
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+              placeholder="Write your reply..."
+              className="min-h-[80px] text-sm resize-none"
+              disabled={isPostingReply}
+            />
+            
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">
+                {replyText.length}/500 characters
+              </span>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCancelReply}
+                  disabled={isPostingReply}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handlePostReply}
+                  disabled={!replyText.trim() || isPostingReply || replyText.length > 500}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  {isPostingReply ? (
+                    <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                  ) : (
+                    <Send className="h-3 w-3 mr-1" />
+                  )}
+                  {isPostingReply ? 'Posting...' : 'Post Reply'}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Replies Section */}
       {comment.replies && comment.replies.length > 0 && (
@@ -240,6 +381,7 @@ export function Comment({ comment, isReply = false, onResearchCommenter }: Comme
                   comment={reply}
                   isReply={true}
                   onResearchCommenter={onResearchCommenter}
+                  onReplyPosted={onReplyPosted}
                 />
               ))}
             </div>

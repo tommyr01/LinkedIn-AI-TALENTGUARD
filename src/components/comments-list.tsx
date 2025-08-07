@@ -239,6 +239,7 @@ export function CommentsList({ postUrl, initialCommentsCount = 0 }: CommentsList
                     key={comment.comment_id}
                     comment={comment}
                     onResearchCommenter={handleResearchCommenter}
+                    onReplyPosted={() => fetchComments(false)}
                   />
                 ))}
               </div>
