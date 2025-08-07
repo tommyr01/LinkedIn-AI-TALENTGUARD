@@ -10,6 +10,9 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '50')
     const offset = parseInt(searchParams.get('offset') || '0')
     
+    console.log('📡 Fetching connection posts from Supabase...')
+    console.log('📊 Parameters:', { limit, offset })
+    
     const supabase = createClient(supabaseUrl, supabaseKey)
     
     // Fetch connection posts with connection details
@@ -28,11 +31,42 @@ export async function GET(request: NextRequest) {
       .range(offset, offset + limit - 1)
 
     if (error) {
-      console.error('Supabase error:', error)
+      console.error('❌ Supabase error fetching posts:', error)
       return NextResponse.json({ 
         error: 'Failed to fetch connection posts from database',
         details: error.message
       }, { status: 500 })
+    }
+    
+    console.log(`✅ Successfully fetched ${posts?.length || 0} posts from Supabase`)
+    
+    // If no posts, return empty result
+    if (!posts || posts.length === 0) {
+      console.log('ℹ️ No connection posts found in database')
+      return NextResponse.json({
+        success: true,
+        posts: [],
+        stats: {
+          totalPosts: 0,
+          totalLikes: 0,
+          totalComments: 0,
+          totalReactions: 0,
+          uniqueConnections: 0,
+          averageEngagement: 0,
+          totalReposts: 0,
+          totalSupport: 0,
+          totalLove: 0,
+          totalInsight: 0,
+          totalCelebrate: 0,
+          postsWithMedia: 0,
+          documentsShared: 0
+        },
+        meta: {
+          total: 0,
+          offset,
+          limit
+        }
+      })
     }
 
     // Transform to match expected format
@@ -67,6 +101,13 @@ export async function GET(request: NextRequest) {
 
     // Calculate stats
     const stats = calculatePostStats(transformedPosts)
+    
+    console.log(`🔄 Transformed ${transformedPosts.length} posts for display`)
+    console.log('📈 Post stats:', {
+      totalPosts: stats.totalPosts,
+      uniqueConnections: stats.uniqueConnections,
+      averageEngagement: stats.averageEngagement
+    })
 
     return NextResponse.json({
       success: true,

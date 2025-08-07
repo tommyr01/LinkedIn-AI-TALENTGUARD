@@ -826,8 +826,17 @@ export class SupabaseLinkedInService {
         postedDate = postData.posted_at
       } else if (typeof postData.posted_at === 'object' && postData.posted_at.date) {
         postedDate = new Date(postData.posted_at.date).toISOString()
+      } else if (typeof postData.posted_at === 'object' && postData.posted_at.timestamp) {
+        // Handle timestamp format
+        postedDate = new Date(postData.posted_at.timestamp * 1000).toISOString()
       }
     }
+    
+    console.log(`🔄 Transforming post ${postData.urn}:`, {
+      posted_at_type: typeof postData.posted_at,
+      posted_at_value: postData.posted_at,
+      converted_date: postedDate
+    })
 
     return {
       connection_id: connectionId,
