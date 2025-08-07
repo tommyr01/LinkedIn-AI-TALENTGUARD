@@ -9,6 +9,7 @@ export async function POST(request: NextRequest) {
   let usernameToUse = ''
   let createRecord = true
   
+  // Force Vercel deployment - 2025-08-07 10:35
   try {
     const body = await request.json()
     const { username, linkedinUrl, createRecord: shouldCreate = true } = body
