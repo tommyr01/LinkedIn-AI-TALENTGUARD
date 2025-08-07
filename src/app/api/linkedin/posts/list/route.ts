@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { talentGuardLinkedIn } from '@/lib/supabase-linkedin'
+import { supabaseLinkedIn } from '@/lib/supabase-linkedin'
 import { isSupabaseConfigured, validateSupabaseConfig } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
     console.log(`📡 Requesting posts for company: ${companyName}, limit: ${maxRecords}`)
 
     // Fetch TalentGuard company posts from Supabase (all posts in the database)
-    const dbPosts = await talentGuardLinkedIn.getAllPosts(maxRecords)
+    const dbPosts = await supabaseLinkedIn.getPostsWithStats()
     
     console.log(`✅ Successfully fetched ${dbPosts.length} posts from Supabase`)
 

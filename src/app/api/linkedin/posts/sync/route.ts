@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { talentGuardLinkedIn, type LinkedInPost } from '@/lib/supabase-linkedin'
+import { supabaseLinkedIn, type LinkedInPost } from '@/lib/supabase-linkedin'
 import { isSupabaseConfigured, validateSupabaseConfig } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
@@ -157,11 +157,11 @@ export async function POST(request: NextRequest) {
         const postUrn = (post as any).activity_urn || post.urn
         
         // Check if post already exists
-        const existingPost = await talentGuardLinkedIn.getPostByUrn(postUrn)
+        const existingPost = await supabaseLinkedIn.getPostByUrn(postUrn)
         const isNewPost = !existingPost
 
         // Save/update post
-        const savedPost = await talentGuardLinkedIn.upsertPost(post)
+        const savedPost = await supabaseLinkedIn.upsertPost(post)
         
         results.push({
           urn: postUrn,
@@ -245,7 +245,7 @@ export async function GET(request: NextRequest) {
     const companyName = request.nextUrl.searchParams.get('companyName') || 'talentguard'
     
     // Get latest posts from database - this would need to be updated to filter by company
-    const posts = await talentGuardLinkedIn.getPostsByUsername(companyName, 10)
+    const posts = await supabaseLinkedIn.getPostsByUsername(companyName, 10)
     
     const stats = {
       totalPosts: posts.length,

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { talentGuardLinkedIn } from '@/lib/supabase-linkedin'
+import { supabaseLinkedIn } from '@/lib/supabase-linkedin'
 import { isSupabaseConfigured, validateSupabaseConfig } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     console.log(`📡 Requesting prospects with min ICP score: ${minScore}`)
 
     // Fetch high-value prospects
-    const prospects = await talentGuardLinkedIn.getHighValueProspects(minScore)
+    const prospects = await supabaseLinkedIn.getHighValueProspects(minScore)
     
     // Filter by category if specified
     const filteredProspects = category 
@@ -172,7 +172,7 @@ export async function POST(request: NextRequest) {
         for (const prospectId of prospectIds) {
           try {
             // Get prospect details
-            const prospect = await talentGuardLinkedIn.getProfileByUrl(prospectId) // Using profile URL as ID
+            const prospect = await supabaseLinkedIn.getProfileByUrl(prospectId) // Using profile URL as ID
             if (prospect) {
               // Create contact record (this would call the existing contacts API)
               const contactData = {
@@ -213,7 +213,7 @@ export async function POST(request: NextRequest) {
         // Generate buyer signals for selected prospects
         for (const prospectId of prospectIds) {
           try {
-            const prospect = await talentGuardLinkedIn.getProfileByUrl(prospectId)
+            const prospect = await supabaseLinkedIn.getProfileByUrl(prospectId)
             if (prospect) {
               // Create signal record
               const signalData = {
@@ -244,7 +244,7 @@ export async function POST(request: NextRequest) {
         // Mark prospects as researched/not researched
         for (const prospectId of prospectIds) {
           try {
-            await talentGuardLinkedIn.upsertProfile({
+            await supabaseLinkedIn.upsertProfile({
               profile_url: prospectId,
               profile_researched: data.researched || true,
               last_researched_at: new Date().toISOString()
