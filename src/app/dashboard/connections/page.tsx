@@ -66,6 +66,8 @@ export default function ConnectionsPage() {
         throw new Error(errorData.error || 'Failed to load connections')
       }
       const data: Connection[] = await res.json()
+      console.log('📥 Raw API response:', data)
+      console.log(`📊 Connection details:`, data.map(c => ({ id: c.id, name: c.name })))
       setConnections(data)
       setLastRefresh(new Date())
       console.log(`✅ Loaded ${data.length} connections from Supabase`)

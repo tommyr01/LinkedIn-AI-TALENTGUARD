@@ -557,6 +557,8 @@ export class SupabaseLinkedInService {
     
     const dbPost = this.transformConnectionPostToDB(connectionId, postData)
     
+    console.log(`💾 Saving post ${dbPost.post_urn} for connection ${connectionId}`)
+    
     const { data, error } = await supabase!
       .from('connection_posts')
       .upsert(dbPost, { 
@@ -567,10 +569,16 @@ export class SupabaseLinkedInService {
       .single()
 
     if (error) {
-      console.error('Error upserting connection post:', error)
+      console.error('❌ Error upserting connection post:', {
+        error: error.message,
+        post_urn: dbPost.post_urn,
+        connection_id: connectionId,
+        details: error.details
+      })
       throw new Error(`Failed to save connection post: ${error.message}`)
     }
-
+    
+    console.log(`✅ Successfully saved post ${dbPost.post_urn}`)
     return data
   }
 

@@ -25,14 +25,24 @@ export async function GET(request: NextRequest) {
     }
     
     console.log(`✅ Successfully fetched ${connections?.length || 0} connections from Supabase`)
+    
+    // Log raw connections for debugging
+    if (connections && connections.length > 0) {
+      console.log('📊 Raw connections data:', connections.map((c: any) => ({
+        id: c.id,
+        full_name: c.full_name,
+        username: c.username,
+        created_at: c.created_at
+      })))
+    }
 
-    // Transform data to match the expected format
-    const transformedConnections = connections.map((conn: any) => ({
+    // Transform data to match the expected format - ensure we have an array
+    const transformedConnections = (connections || []).map((conn: any) => ({
       id: conn.id,
-      name: conn.full_name,
+      name: conn.full_name || 'Unknown',
       role: conn.title || conn.headline || 'N/A',
       company: conn.current_company || 'N/A',
-      linkedinUrl: `https://linkedin.com/in/${conn.username}`,
+      linkedinUrl: conn.username ? `https://linkedin.com/in/${conn.username}` : '#',
       profilePictureUrl: conn.profile_picture_url,
       lastEngagement: calculateLastEngagement(conn.last_synced_at),
       engagementScore: calculateEngagementScore(conn),
@@ -46,6 +56,7 @@ export async function GET(request: NextRequest) {
     }))
     
     console.log(`🔄 Transformed ${transformedConnections.length} connections for display`)
+    console.log('📤 Returning connections:', transformedConnections.map(c => c.name))
 
     return NextResponse.json(transformedConnections)
 
