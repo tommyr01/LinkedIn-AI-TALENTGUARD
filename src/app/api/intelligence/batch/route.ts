@@ -4,7 +4,7 @@ import { isSupabaseConfigured, validateSupabaseConfig } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
-export const maxDuration = 900 // 15 minutes for batch processing
+export const maxDuration = 600 // 10 minutes for batch processing (Vercel limit)
 
 /**
  * POST /api/intelligence/batch
