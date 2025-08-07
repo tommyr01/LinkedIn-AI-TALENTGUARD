@@ -145,7 +145,8 @@ export class ConnectionIntelligenceService {
       
     } catch (error) {
       console.error(`❌ Error generating intelligence profile for ${connectionId}:`, error)
-      throw new Error(`Intelligence profile generation failed: ${error.message}`)
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      throw new Error(`Intelligence profile generation failed: ${errorMessage}`)
     }
   }
 
@@ -602,14 +603,15 @@ export class ConnectionIntelligenceService {
           console.log(`✅ Completed ${result.completed}/${result.totalConnections}: ${profile.connectionName}`)
           
         } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error)
           result.errors.push({
             connectionId,
-            error: error.message
+            error: errorMessage
           })
           result.failed++
           result.inProgress--
           
-          console.error(`❌ Failed ${connectionId}:`, error.message)
+          console.error(`❌ Failed ${connectionId}:`, errorMessage)
         }
       })
       

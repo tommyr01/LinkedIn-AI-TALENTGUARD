@@ -119,7 +119,8 @@ export class WebResearchService {
 
     } catch (error) {
       console.error(`❌ Error researching ${connection.full_name}:`, error)
-      throw new Error(`Web research failed: ${error.message}`)
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      throw new Error(`Web research failed: ${errorMessage}`)
     }
   }
 
@@ -372,7 +373,9 @@ export class WebResearchService {
     
     // Normalize scores to 0-100 range
     Object.keys(scores).forEach(key => {
-      scores[key] = Math.min(100, Math.round(scores[key]))
+      if (key !== 'overall') {
+        scores[key as keyof typeof scores] = Math.min(100, Math.round(scores[key as keyof typeof scores]))
+      }
     })
     
     scores.overall = Math.round(

@@ -188,7 +188,8 @@ export class LinkedInDeepAnalysisService {
 
     } catch (error) {
       console.error(`❌ Error in LinkedIn analysis for ${connection.full_name}:`, error)
-      throw new Error(`LinkedIn analysis failed: ${error.message}`)
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      throw new Error(`LinkedIn analysis failed: ${errorMessage}`)
     }
   }
 
@@ -570,7 +571,7 @@ export class LinkedInDeepAnalysisService {
     // Normalize scores
     Object.keys(scores).forEach(key => {
       if (key !== 'overallExpertise') {
-        scores[key] = Math.min(100, Math.round(scores[key]))
+        scores[key as keyof typeof scores] = Math.min(100, Math.round(scores[key as keyof typeof scores]))
       }
     })
     

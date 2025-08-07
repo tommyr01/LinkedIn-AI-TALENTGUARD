@@ -270,9 +270,9 @@ export default function IntelligenceDashboard() {
         
         switch (filterBy) {
           case 'high_value':
-            return profile?.unifiedScores.overallExpertise > 70
+            return (profile?.unifiedScores?.overallExpertise ?? 0) > 70
           case 'verified':
-            return profile?.intelligenceAssessment.verificationStatus === 'verified'
+            return profile?.intelligenceAssessment?.verificationStatus === 'verified'
           case 'unresearched':
             return !profile
           default:
