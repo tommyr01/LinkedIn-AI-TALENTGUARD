@@ -82,27 +82,44 @@ export function AddConnectionModal({ open, onOpenChange, onConnectionCreated }: 
   const handleSave = async () => {
     if (useLinkedInData && enrichedData) {
       // Save using LinkedIn enriched data
+      console.log('🔄 Starting LinkedIn connection save process...', {
+        username: linkedinUsername,
+        hasEnrichedData: !!enrichedData,
+        enrichedDataName: enrichedData.fullname
+      })
+      
       setIsSaving(true)
       try {
+        console.log('📡 Making API request to save connection...')
+        const requestBody = { 
+          username: linkedinUsername,
+          createRecord: true // Create the full enriched record
+        }
+        console.log('📝 Request body:', requestBody)
+        
         const res = await fetch('/api/connections/supabase/sync', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            username: linkedinUsername,
-            createRecord: true // Create the full enriched record
-          })
+          body: JSON.stringify(requestBody)
         })
+        
+        console.log('📥 API response status:', res.status, res.statusText)
         
         if (!res.ok) {
           const errorData = await res.json()
+          console.error('❌ API error response:', errorData)
           throw new Error(errorData.error || 'Failed to create connection')
         }
+        
+        const responseData = await res.json()
+        console.log('✅ API success response:', responseData)
         
         toast.success('Connection added with LinkedIn data!')
         onConnectionCreated?.()
         handleReset()
         onOpenChange(false)
       } catch (error: any) {
+        console.error('💥 Error during save process:', error)
         toast.error(error.message || 'Error adding connection')
       } finally {
         setIsSaving(false)
