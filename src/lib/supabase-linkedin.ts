@@ -142,6 +142,7 @@ export interface DBLinkedInComment {
 
 // LinkedIn Connection types
 export interface LinkedInConnection {
+  id?: string // Added to pass through generated UUID
   full_name: string
   first_name?: string
   last_name?: string
@@ -786,6 +787,7 @@ export class SupabaseLinkedInService {
   // Connection transform functions
   private transformConnectionToDB(connection: LinkedInConnection): Partial<DBLinkedInConnection> {
     return {
+      id: connection.id, // Pass through the generated UUID
       full_name: connection.full_name,
       first_name: connection.first_name,
       last_name: connection.last_name,
