@@ -30,6 +30,14 @@ export async function POST(request: NextRequest) {
       }, { status: 500 })
     }
 
+    // Check if supabaseLinkedIn service is available
+    if (!supabaseLinkedIn) {
+      return NextResponse.json({
+        error: 'Supabase LinkedIn service not available',
+        details: 'Please check SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables'
+      }, { status: 500 })
+    }
+
     // Check environment variables
     if (!process.env.RAPIDAPI_KEY) {
       return NextResponse.json({ 
@@ -239,6 +247,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         error: 'Supabase not configured properly',
         details: error
+      }, { status: 500 })
+    }
+
+    // Check if supabaseLinkedIn service is available
+    if (!supabaseLinkedIn) {
+      return NextResponse.json({
+        error: 'Supabase LinkedIn service not available',
+        details: 'Please check SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables'
       }, { status: 500 })
     }
 

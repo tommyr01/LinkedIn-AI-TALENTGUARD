@@ -20,6 +20,15 @@ export async function GET(request: NextRequest) {
       }, { status: 500 })
     }
 
+    // Check if supabaseLinkedIn service is available
+    if (!supabaseLinkedIn) {
+      return NextResponse.json({
+        success: false,
+        error: 'Supabase LinkedIn service not available',
+        details: 'Please check SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables'
+      }, { status: 500 })
+    }
+
     const searchParams = request.nextUrl.searchParams
     const minScore = parseInt(searchParams.get('minScore') || '60')
     const limit = parseInt(searchParams.get('limit') || '50')
@@ -148,6 +157,15 @@ export async function POST(request: NextRequest) {
         success: false,
         error: 'Supabase not configured properly',
         details: error
+      }, { status: 500 })
+    }
+
+    // Check if supabaseLinkedIn service is available
+    if (!supabaseLinkedIn) {
+      return NextResponse.json({
+        success: false,
+        error: 'Supabase LinkedIn service not available',
+        details: 'Please check SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables'
       }, { status: 500 })
     }
 

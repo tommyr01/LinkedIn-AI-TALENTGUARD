@@ -79,6 +79,15 @@ export async function GET(request: NextRequest) {
 
     console.log(`📡 Requesting posts for company: ${companyName}, limit: ${maxRecords}`)
 
+    // Check if supabaseLinkedIn service is available
+    if (!supabaseLinkedIn) {
+      return NextResponse.json({
+        success: false,
+        error: 'Supabase LinkedIn service not available',
+        details: 'Please check SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables'
+      }, { status: 500 })
+    }
+
     // Fetch TalentGuard company posts from Supabase (all posts in the database)
     const dbPosts = await supabaseLinkedIn.getPostsWithStats()
     
