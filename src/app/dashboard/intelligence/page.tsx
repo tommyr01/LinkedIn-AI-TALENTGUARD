@@ -25,6 +25,7 @@ import {
   Star
 } from 'lucide-react'
 import { toast } from "sonner"
+import { IntelligenceCard } from "@/components/intelligence/intelligence-card"
 
 interface Connection {
   id: string
@@ -323,22 +324,6 @@ export default function IntelligenceDashboard() {
     return intelligenceProfiles.find(p => p.connectionId === connectionId)
   }
 
-  const getVerificationBadgeVariant = (status: string) => {
-    switch (status) {
-      case 'verified': return 'default'
-      case 'likely': return 'secondary'
-      case 'unverified': return 'outline'
-      default: return 'outline'
-    }
-  }
-
-  const getExpertiseColor = (score: number) => {
-    if (score >= 80) return 'text-green-600'
-    if (score >= 60) return 'text-blue-600'
-    if (score >= 40) return 'text-yellow-600'
-    return 'text-gray-500'
-  }
-
   const stats = {
     totalConnections: connections.length,
     researchedConnections: intelligenceProfiles.length,
@@ -514,94 +499,15 @@ export default function IntelligenceDashboard() {
               const isSelected = selectedConnections.includes(connection.id)
               
               return (
-                <div
+                <IntelligenceCard
                   key={connection.id}
-                  className={`border rounded-lg p-4 transition-colors ${
-                    isSelected ? 'border-blue-300 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3">
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={() => toggleConnectionSelection(connection.id)}
-                          className="rounded border-gray-300"
-                        />
-                        <div>
-                          <h4 className="font-semibold text-lg">{connection.full_name}</h4>
-                          <p className="text-muted-foreground">
-                            {connection.title} {connection.current_company && `at ${connection.current_company}`}
-                          </p>
-                          {connection.username && (
-                            <div className="flex items-center mt-1">
-                              <LinkedinIcon className="h-3 w-3 mr-1 text-blue-600" />
-                              <span className="text-xs text-muted-foreground">
-                                linkedin.com/in/{connection.username}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {profile && (
-                        <div className="mt-3 space-y-2">
-                          <div className="flex items-center space-x-4">
-                            <Badge variant={getVerificationBadgeVariant(profile.intelligenceAssessment.verificationStatus)}>
-                              {profile.intelligenceAssessment.verificationStatus}
-                            </Badge>
-                            <span className={`text-sm font-medium ${getExpertiseColor(profile.unifiedScores.overallExpertise)}`}>
-                              {profile.unifiedScores.overallExpertise}/100 Overall Expertise
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {profile.intelligenceAssessment.confidenceLevel}% confidence
-                            </span>
-                          </div>
-                          
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-                            <span>Talent Mgmt: <strong>{profile.unifiedScores.talentManagement}</strong></span>
-                            <span>People Dev: <strong>{profile.unifiedScores.peopleDevelopment}</strong></span>
-                            <span>HR Tech: <strong>{profile.unifiedScores.hrTechnology}</strong></span>
-                            <span>Leadership: <strong>{profile.unifiedScores.thoughtLeadership}</strong></span>
-                          </div>
-
-                          {profile.intelligenceAssessment.strengths.length > 0 && (
-                            <div className="text-xs">
-                              <strong>Key Strengths:</strong> {profile.intelligenceAssessment.strengths.slice(0, 2).join(', ')}
-                              {profile.intelligenceAssessment.strengths.length > 2 && '...'}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex flex-col items-end space-y-2">
-                      {profile ? (
-                        <Button variant="outline" size="sm">
-                          <Eye className="mr-2 h-4 w-4" />
-                          View Details
-                        </Button>
-                      ) : (
-                        <Button 
-                          size="sm" 
-                          onClick={() => researchSingleConnection(connection.id)}
-                          disabled={isLoading}
-                        >
-                          <Brain className="mr-2 h-4 w-4" />
-                          Research
-                        </Button>
-                      )}
-                      
-                      {profile && (
-                        <div className="text-right text-xs text-muted-foreground">
-                          <div>Researched {new Date(profile.researched_at).toLocaleDateString()}</div>
-                          <div>{profile.researchDuration}s duration</div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                  connection={connection}
+                  profile={profile}
+                  isSelected={isSelected}
+                  onToggleSelection={toggleConnectionSelection}
+                  onResearch={researchSingleConnection}
+                  isLoading={isLoading}
+                />
               )
             })}
 

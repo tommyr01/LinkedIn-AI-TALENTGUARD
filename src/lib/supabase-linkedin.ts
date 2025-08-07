@@ -1065,6 +1065,14 @@ export class SupabaseLinkedInService {
           authority_assessment: profile.linkedInAnalysis.authorityAssessment,
           analysed_at: profile.linkedInAnalysis.analysedAt
         }
+        
+        // Add contentThemes to activity_patterns or as separate field
+        if (profile.linkedInAnalysis.contentThemes) {
+          linkedInAnalysisData.activity_patterns = {
+            ...linkedInAnalysisData.activity_patterns,
+            contentThemes: profile.linkedInAnalysis.contentThemes
+          }
+        }
 
         let linkedInResult
         if (existingLinkedInAnalysis) {
@@ -1211,8 +1219,19 @@ export class SupabaseLinkedInService {
         .select('*')
         .eq('connection_id', connectionId)
         .single()
+      
+      // Extract contentThemes from activity_patterns if it exists
+      let contentThemes = null
+      if (linkedInAnalysis?.activity_patterns?.contentThemes) {
+        contentThemes = linkedInAnalysis.activity_patterns.contentThemes
+      }
 
-      // Reconstruct the intelligence profile object
+      // Reconstruct the intelligence profile object with contentThemes
+      const fullLinkedInAnalysis = linkedInAnalysis ? {
+        ...linkedInAnalysis,
+        contentThemes: contentThemes
+      } : null
+      
       return {
         connectionId: profile.connection_id,
         connectionName: profile.connection_name,
@@ -1220,7 +1239,7 @@ export class SupabaseLinkedInService {
         title: profile.title,
         profileUrl: profile.profile_url,
         webResearch,
-        linkedInAnalysis,
+        linkedInAnalysis: fullLinkedInAnalysis,
         unifiedScores: profile.unified_scores,
         intelligenceAssessment: {
           dataQuality: profile.data_quality,
