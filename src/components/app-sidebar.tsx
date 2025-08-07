@@ -13,6 +13,7 @@ import {
   IconBrandLinkedin,
   IconChartDots3,
   IconNetwork,
+  IconBrain,
 } from "@tabler/icons-react"
 
 import Link from "next/link"
@@ -71,6 +72,12 @@ const data = {
       title: "LinkedIn Prospects",
       url: "/dashboard/linkedin/prospects",
       icon: IconChartDots3,
+      visible: true,
+    },
+    {
+      title: "Connection Intelligence",
+      url: "/dashboard/intelligence",
+      icon: IconBrain,
       visible: true,
     },
     {
