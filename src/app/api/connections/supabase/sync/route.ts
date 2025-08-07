@@ -316,18 +316,29 @@ async function fetchAndSaveConnectionPosts(username: string, connectionId: strin
     // Save posts to Supabase
     console.log(`💾 Saving ${posts.length} posts to Supabase...`)
     let savedCount = 0
+    let failedCount = 0
     
     for (const post of posts) {
       try {
         await supabaseLinkedIn.upsertConnectionPost(connectionId, post)
         savedCount++
+        console.log(`✅ Saved post ${savedCount}/${posts.length}: ${post.urn}`)
       } catch (postError: any) {
-        console.error(`Failed to save post ${post.urn}:`, postError.message)
+        failedCount++
+        console.error(`❌ Failed to save post ${post.urn}:`, {
+          error: postError.message,
+          post_urn: post.urn,
+          post_text_preview: post.text?.substring(0, 50)
+        })
         // Continue with other posts
       }
     }
     
-    console.log(`✅ Successfully saved ${savedCount}/${posts.length} connection posts`)
+    console.log(`✅ Posts save summary: ${savedCount} saved, ${failedCount} failed out of ${posts.length} total`)
+    
+    if (failedCount > 0) {
+      console.log(`⚠️ ${failedCount} posts failed to save - check individual error messages above`)
+    }
 
   } catch (postsError: any) {
     console.error(`💥 Failed to fetch/save posts for ${username}:`, {

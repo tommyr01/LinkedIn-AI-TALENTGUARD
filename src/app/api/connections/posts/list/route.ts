@@ -19,20 +19,14 @@ export async function GET(request: NextRequest) {
     
     const supabase = createClient(supabaseUrl, supabaseKey)
     
-    // Fetch connection posts with connection details
+    // First, let's try to fetch connection posts without the join to diagnose the issue
     const { data: posts, error } = await supabase
       .from('connection_posts')
-      .select(`
-        *,
-        linkedin_connections:connection_id (
-          full_name,
-          current_company,
-          profile_picture_url,
-          username
-        )
-      `)
+      .select('*')
       .order('posted_date', { ascending: false })
       .range(offset, offset + limit - 1)
+    
+    console.log(`🔍 Direct query result: ${posts?.length || 0} posts found`)
 
     if (error) {
       console.error('❌ Supabase error fetching posts:', error)
@@ -73,11 +67,11 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    // Transform to match expected format
+    // Transform to match expected format without join data for now
     const transformedPosts = posts.map((post: any) => ({
       id: post.id,
-      connectionName: post.linkedin_connections?.full_name || `${post.author_first_name} ${post.author_last_name}`,
-      connectionCompany: post.linkedin_connections?.current_company,
+      connectionName: `${post.author_first_name} ${post.author_last_name}`.trim() || 'Unknown',
+      connectionCompany: 'Unknown', // Will need separate lookup
       content: post.post_text || '',
       postedAt: post.posted_date,
       postUrn: post.post_urn,
@@ -90,7 +84,7 @@ export async function GET(request: NextRequest) {
       authorLastName: post.author_last_name,
       authorHeadline: post.author_headline,
       authorLinkedInUrl: post.author_linkedin_url,
-      authorProfilePicture: post.author_profile_picture || post.linkedin_connections?.profile_picture_url,
+      authorProfilePicture: post.author_profile_picture,
       postType: post.post_type || 'regular',
       mediaType: post.media_type,
       mediaUrl: post.media_url,
@@ -102,6 +96,13 @@ export async function GET(request: NextRequest) {
       insight: post.insight || 0,
       celebrate: post.celebrate || 0
     }))
+    
+    console.log('📋 Sample post data:', transformedPosts[0] ? {
+      id: transformedPosts[0].id,
+      connectionName: transformedPosts[0].connectionName,
+      content: transformedPosts[0].content?.substring(0, 50),
+      postedAt: transformedPosts[0].postedAt
+    } : 'No posts to sample')
 
     // Calculate stats
     const stats = calculatePostStats(transformedPosts)

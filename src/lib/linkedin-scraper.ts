@@ -249,7 +249,9 @@ export class LinkedInScraperService {
     try {
       const url = `${this.baseUrl}/profile/posts?username=${encodeURIComponent(username)}&page_number=${pageNumber}`;
       
-      console.log(`Fetching LinkedIn posts for username: ${username}, page: ${pageNumber}`);
+      console.log(`📡 Fetching LinkedIn posts for username: ${username}, page: ${pageNumber}`);
+      console.log(`🔗 Posts API URL: ${url}`);
+      console.log(`🔑 Using API key: ${this.apiKey.substring(0, 10)}...`);
       
       const response = await fetch(url, {
         method: 'GET',
@@ -263,6 +265,13 @@ export class LinkedInScraperService {
       }
 
       const data: LinkedInPost = await response.json();
+      
+      console.log(`✅ Posts API response:`, {
+        success: data.success,
+        posts_count: data.data?.posts?.length || 0,
+        has_more: data.data?.has_more,
+        total_posts: data.data?.total_posts
+      });
       
       if (!data.success) {
         throw new Error(data.message || 'Failed to fetch LinkedIn posts');
