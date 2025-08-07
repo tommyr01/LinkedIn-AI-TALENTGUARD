@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { randomUUID } from 'crypto'
 import { linkedInScraper, extractUsernameFromLinkedInUrl } from '../../../../../lib/linkedin-scraper'
 import { supabaseLinkedIn } from '../../../../../lib/supabase-linkedin'
 
@@ -217,6 +218,7 @@ function mapLinkedInProfileToSupabase(profileData: any) {
   }
   
   const mappedData = {
+    id: randomUUID(), // Generate UUID to prevent null constraint violation
     full_name: profile.fullname || 'Unknown',
     first_name: profile.first_name || '',
     last_name: profile.last_name || '',
@@ -245,6 +247,7 @@ function mapLinkedInProfileToSupabase(profileData: any) {
   }
   
   console.log(`✅ Final mapped connection data:`, {
+    id: mappedData.id,
     full_name: mappedData.full_name,
     username: mappedData.username,
     headline: mappedData.headline,
