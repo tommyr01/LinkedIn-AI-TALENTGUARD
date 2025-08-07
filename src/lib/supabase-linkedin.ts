@@ -950,83 +950,141 @@ export class SupabaseLinkedInService {
     try {
       console.log(`💾 Storing intelligence profile for ${profile.connectionName}`)
 
-      // Store the main intelligence profile
-      const { data: profileData, error: profileError } = await supabase
+      // Check if profile already exists for this connection
+      const { data: existingProfile } = await supabase
         .from('connection_intelligence_profiles')
-        .upsert({
-          connection_id: profile.connectionId,
-          connection_name: profile.connectionName,
-          company: profile.company,
-          title: profile.title,
-          profile_url: profile.profileUrl,
-          unified_scores: profile.unifiedScores,
-          data_quality: profile.intelligenceAssessment.dataQuality,
-          confidence_level: profile.intelligenceAssessment.confidenceLevel,
-          verification_status: profile.intelligenceAssessment.verificationStatus,
-          expertise_verification: profile.intelligenceAssessment.expertiseVerification,
-          red_flags: profile.intelligenceAssessment.redFlags,
-          strengths: profile.intelligenceAssessment.strengths,
-          recommendations: profile.intelligenceAssessment.recommendations,
-          research_duration: profile.researchDuration,
-          researched_at: profile.researchedAt,
-          last_updated_at: profile.lastUpdatedAt
-        }, {
-          onConflict: 'connection_id'
-        })
-        .select()
+        .select('id')
+        .eq('connection_id', profile.connectionId)
         .single()
 
-      if (profileError) {
-        console.error('❌ Error storing intelligence profile:', profileError)
-        throw profileError
+      const profileData = {
+        connection_id: profile.connectionId,
+        connection_name: profile.connectionName,
+        company: profile.company,
+        title: profile.title,
+        profile_url: profile.profileUrl,
+        unified_scores: profile.unifiedScores,
+        data_quality: profile.intelligenceAssessment.dataQuality,
+        confidence_level: profile.intelligenceAssessment.confidenceLevel,
+        verification_status: profile.intelligenceAssessment.verificationStatus,
+        expertise_verification: profile.intelligenceAssessment.expertiseVerification,
+        red_flags: profile.intelligenceAssessment.redFlags,
+        strengths: profile.intelligenceAssessment.strengths,
+        recommendations: profile.intelligenceAssessment.recommendations,
+        research_duration: profile.researchDuration,
+        researched_at: profile.researchedAt,
+        last_updated_at: profile.lastUpdatedAt
+      }
+
+      let result
+      if (existingProfile) {
+        // Update existing profile
+        const { data, error } = await supabase
+          .from('connection_intelligence_profiles')
+          .update(profileData)
+          .eq('connection_id', profile.connectionId)
+          .select()
+          .single()
+        result = { data, error }
+      } else {
+        // Insert new profile
+        const { data, error } = await supabase
+          .from('connection_intelligence_profiles')
+          .insert(profileData)
+          .select()
+          .single()
+        result = { data, error }
+      }
+
+      if (result.error) {
+        console.error('❌ Error storing intelligence profile:', result.error)
+        throw result.error
       }
 
       // Store web research results if available
       if (profile.webResearch) {
-        const { error: webError } = await supabase
+        // Check if web research already exists for this connection
+        const { data: existingWebResearch } = await supabase
           .from('web_research_results')
-          .upsert({
-            connection_id: profile.connectionId,
-            search_query: profile.webResearch.searchQuery,
-            articles_found: profile.webResearch.articlesFound,
-            expertise_signals: profile.webResearch.expertiseSignals,
-            talent_management_score: profile.webResearch.talentManagementScore,
-            people_development_score: profile.webResearch.peopleDevelopmentScore,
-            hr_technology_score: profile.webResearch.hrTechnologyScore,
-            leadership_score: profile.webResearch.leadershipScore,
-            overall_relevance_score: profile.webResearch.overallRelevanceScore,
-            research_quality: profile.webResearch.researchQuality,
-            researched_at: profile.webResearch.researched_at
-          }, {
-            onConflict: 'connection_id'
-          })
+          .select('id')
+          .eq('connection_id', profile.connectionId)
+          .single()
 
-        if (webError) {
-          console.error('❌ Error storing web research:', webError)
-          throw webError
+        const webResearchData = {
+          connection_id: profile.connectionId,
+          search_query: profile.webResearch.searchQuery,
+          articles_found: profile.webResearch.articlesFound,
+          expertise_signals: profile.webResearch.expertiseSignals,
+          talent_management_score: profile.webResearch.talentManagementScore,
+          people_development_score: profile.webResearch.peopleDevelopmentScore,
+          hr_technology_score: profile.webResearch.hrTechnologyScore,
+          leadership_score: profile.webResearch.leadershipScore,
+          overall_relevance_score: profile.webResearch.overallRelevanceScore,
+          research_quality: profile.webResearch.researchQuality,
+          researched_at: profile.webResearch.researched_at
+        }
+
+        let webResult
+        if (existingWebResearch) {
+          // Update existing web research
+          const { error } = await supabase
+            .from('web_research_results')
+            .update(webResearchData)
+            .eq('connection_id', profile.connectionId)
+          webResult = { error }
+        } else {
+          // Insert new web research
+          const { error } = await supabase
+            .from('web_research_results')
+            .insert(webResearchData)
+          webResult = { error }
+        }
+
+        if (webResult.error) {
+          console.error('❌ Error storing web research:', webResult.error)
+          throw webResult.error
         }
       }
 
       // Store LinkedIn deep analysis if available
       if (profile.linkedInAnalysis) {
-        const { error: linkedInError } = await supabase
+        // Check if LinkedIn analysis already exists for this connection
+        const { data: existingLinkedInAnalysis } = await supabase
           .from('linkedin_deep_analysis')
-          .upsert({
-            connection_id: profile.connectionId,
-            articles_analysis: profile.linkedInAnalysis.articles,
-            posts_analysis: profile.linkedInAnalysis.postsAnalysis,
-            activity_patterns: profile.linkedInAnalysis.activityPatterns,
-            profile_analysis: profile.linkedInAnalysis.profileAnalysis,
-            expertise_scores: profile.linkedInAnalysis.expertiseScores,
-            authority_assessment: profile.linkedInAnalysis.authorityAssessment,
-            analysed_at: profile.linkedInAnalysis.analysedAt
-          }, {
-            onConflict: 'connection_id'
-          })
+          .select('id')
+          .eq('connection_id', profile.connectionId)
+          .single()
 
-        if (linkedInError) {
-          console.error('❌ Error storing LinkedIn analysis:', linkedInError)
-          throw linkedInError
+        const linkedInAnalysisData = {
+          connection_id: profile.connectionId,
+          articles_analysis: profile.linkedInAnalysis.articles,
+          posts_analysis: profile.linkedInAnalysis.postsAnalysis,
+          activity_patterns: profile.linkedInAnalysis.activityPatterns,
+          profile_analysis: profile.linkedInAnalysis.profileAnalysis,
+          expertise_scores: profile.linkedInAnalysis.expertiseScores,
+          authority_assessment: profile.linkedInAnalysis.authorityAssessment,
+          analysed_at: profile.linkedInAnalysis.analysedAt
+        }
+
+        let linkedInResult
+        if (existingLinkedInAnalysis) {
+          // Update existing LinkedIn analysis
+          const { error } = await supabase
+            .from('linkedin_deep_analysis')
+            .update(linkedInAnalysisData)
+            .eq('connection_id', profile.connectionId)
+          linkedInResult = { error }
+        } else {
+          // Insert new LinkedIn analysis
+          const { error } = await supabase
+            .from('linkedin_deep_analysis')
+            .insert(linkedInAnalysisData)
+          linkedInResult = { error }
+        }
+
+        if (linkedInResult.error) {
+          console.error('❌ Error storing LinkedIn analysis:', linkedInResult.error)
+          throw linkedInResult.error
         }
       }
 
