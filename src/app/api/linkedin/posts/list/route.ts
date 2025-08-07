@@ -88,55 +88,55 @@ export async function GET(request: NextRequest) {
       }, { status: 500 })
     }
 
-    // Fetch TalentGuard company posts from Supabase (all posts in the database)
-    const dbPosts = await supabaseLinkedIn.getPostsWithStats()
+    // Fetch connection posts from Supabase (these are the posts that were successfully saved)
+    const dbPosts = await supabaseLinkedIn.getAllConnectionPosts()
     
-    console.log(`✅ Successfully fetched ${dbPosts.length} posts from Supabase`)
+    console.log(`✅ Successfully fetched ${dbPosts.length} connection posts from Supabase`)
 
     // Transform Supabase data to match the TalentGuard ConnectionPost interface
     const posts: TalentGuardConnectionPost[] = dbPosts.map((post) => ({
-      id: post.id,
-      connectionName: `${post.author_first_name} ${post.author_last_name}`.trim(),
-      connectionCompany: extractCompanyFromHeadline(post.author_headline),
-      content: post.text || '',
-      postedAt: post.posted_at,
-      postUrn: post.urn,
-      postUrl: post.url,
-      likesCount: post.like_count || 0,
+      id: post.id || '',
+      connectionName: `${post.author_first_name || ''} ${post.author_last_name || ''}`.trim() || 'Unknown Author',
+      connectionCompany: extractCompanyFromHeadline(post.author_headline || ''),
+      content: post.post_text || '',
+      postedAt: post.posted_date || post.created_at || '',
+      postUrn: post.post_urn || '',
+      postUrl: post.post_url || '',
+      likesCount: post.likes || 0,
       commentsCount: post.comments_count || 0,
       totalReactions: post.total_reactions || 0,
-      reposts: post.reposts_count || 0,
-      authorFirstName: post.author_first_name,
-      authorLastName: post.author_last_name,
-      authorHeadline: post.author_headline,
-      authorLinkedInUrl: post.author_profile_url,
-      authorProfilePicture: post.author_profile_picture,
+      reposts: post.reposts || 0,
+      authorFirstName: post.author_first_name || '',
+      authorLastName: post.author_last_name || '',
+      authorHeadline: post.author_headline || '',
+      authorLinkedInUrl: post.author_linkedin_url || '',
+      authorProfilePicture: post.author_profile_picture || '',
       postType: post.post_type || 'regular',
-      mediaType: post.document_title ? 
-        (post.document_title.toLowerCase().includes('.pdf') ? 'document' : 
-         post.document_thumbnail ? 'image' : 'document') : '',
-      mediaUrl: post.document_url || '',
-      mediaThumbnail: post.document_thumbnail || '',
-      createdTime: post.created_at,
-      hasMedia: !!(post.document_url || post.document_thumbnail),
+      mediaType: post.media_type || '',
+      mediaUrl: post.media_url || '',
+      mediaThumbnail: post.media_thumbnail || '',
+      createdTime: post.created_at || '',
+      hasMedia: !!(post.media_url || post.media_type),
       
       // Extended LinkedIn-specific data
-      support: post.support_count || 0,
-      love: post.love_count || 0,
-      insight: post.insight_count || 0,
-      celebrate: post.celebrate_count || 0,
-      documentTitle: post.document_title,
-      documentPageCount: post.document_page_count,
-      lastSyncedAt: post.last_synced_at
+      support: post.support || 0,
+      love: post.love || 0,
+      insight: post.insight || 0,
+      celebrate: post.celebrate || 0,
+      documentTitle: undefined,
+      documentPageCount: undefined,
+      lastSyncedAt: post.created_at
     }))
 
     // Calculate summary stats
+    const uniqueAuthors = new Set(posts.map(post => `${post.authorFirstName} ${post.authorLastName}`.trim())).size
+    
     const stats: PostStats = {
       totalPosts: posts.length,
       totalLikes: posts.reduce((sum, post) => sum + (post.likesCount || 0), 0),
       totalComments: posts.reduce((sum, post) => sum + (post.commentsCount || 0), 0),
       totalReactions: posts.reduce((sum, post) => sum + (post.totalReactions || 0), 0),
-      uniqueConnections: 1, // Since these are all from one user
+      uniqueConnections: uniqueAuthors, // Count unique post authors
       averageEngagement: posts.length > 0 
         ? Math.round(posts.reduce((sum, post) => sum + (post.totalReactions || 0), 0) / posts.length)
         : 0,

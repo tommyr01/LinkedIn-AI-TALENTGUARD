@@ -656,6 +656,25 @@ export class SupabaseLinkedInService {
     return data || []
   }
 
+  async getAllConnectionPosts(): Promise<DBConnectionPost[]> {
+    this.checkSupabaseConnection()
+    
+    console.log('📡 Fetching all connection posts from Supabase...')
+    
+    const { data, error } = await supabase!
+      .from('connection_posts')
+      .select('*')
+      .order('posted_date', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching connection posts:', error)
+      throw new Error(`Failed to fetch connection posts: ${error.message}`)
+    }
+
+    console.log(`✅ Retrieved ${data?.length || 0} connection posts from database`)
+    return data || []
+  }
+
   // Transform functions
   private transformPostToDB(post: LinkedInPost): Partial<DBLinkedInPost> {
     // Handle different timestamp formats from LinkedIn API
