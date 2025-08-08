@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseLinkedIn } from '@/lib/supabase-linkedin'
 import { isSupabaseConfigured, validateSupabaseConfig } from '@/lib/supabase'
+import { withUserAuth, type AuthenticatedRequest } from '@/lib/auth-middleware'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -9,7 +10,7 @@ export const runtime = 'nodejs'
  * GET /api/intelligence/connections
  * Get available LinkedIn connections for intelligence research
  */
-export async function GET(request: NextRequest) {
+async function getHandler(request: AuthenticatedRequest) {
   try {
     // Validate Supabase configuration
     if (!isSupabaseConfigured()) {
@@ -95,7 +96,7 @@ export async function GET(request: NextRequest) {
  * POST /api/intelligence/connections/sync
  * Sync LinkedIn connections from external source for intelligence research
  */
-export async function POST(request: NextRequest) {
+async function postHandler(request: AuthenticatedRequest) {
   try {
     // Validate Supabase configuration
     if (!isSupabaseConfigured()) {
@@ -136,3 +137,7 @@ export async function POST(request: NextRequest) {
     }, { status: 500 })
   }
 }
+
+// Apply authentication middleware
+export const GET = withUserAuth(getHandler)
+export const POST = withUserAuth(postHandler)

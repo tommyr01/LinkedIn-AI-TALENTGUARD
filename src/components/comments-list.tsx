@@ -112,23 +112,45 @@ export function CommentsList({ postUrl, initialCommentsCount = 0 }: CommentsList
   }
 
   const handleAddToConnections = async (prospect: ProspectProfile) => {
-    // TODO: Integrate with existing connections management
-    // For now, just show success message
-    toast.success(`${prospect.name} would be added to connections`)
-    
-    // This would typically call an API to add to Airtable connections table
-    // await fetch('/api/connections/add', {
-    //   method: 'POST',
-    //   body: JSON.stringify({
-    //     name: prospect.name,
-    //     role: prospect.role,
-    //     company: prospect.company,
-    //     linkedinUrl: prospect.profileUrl,
-    //     icpScore: prospect.icpScore.totalScore,
-    //     category: prospect.icpScore.category,
-    //     tags: prospect.icpScore.tags
-    //   })
-    // })
+    try {
+      console.log('🔗 Adding prospect to connections:', prospect.name)
+      
+      const response = await fetch('/api/connections/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: prospect.name,
+          role: prospect.role,
+          company: prospect.company,
+          linkedinUrl: prospect.profileUrl,
+          headline: prospect.headline,
+          icpScore: prospect.icpScore.totalScore,
+          icpCategory: prospect.icpScore.category,
+          tags: prospect.icpScore.tags,
+          source: 'linkedin-comment'
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || `HTTP ${response.status}`)
+      }
+
+      const data = await response.json()
+      
+      if (data.success) {
+        const actionText = data.isNew ? 'added to' : 'updated in'
+        toast.success(`✅ ${prospect.name} ${actionText} connections successfully`)
+        console.log(`✅ Connection ${actionText}:`, data.connection.id)
+      } else {
+        throw new Error(data.error || 'Unknown error occurred')
+      }
+    } catch (error: any) {
+      console.error('Error adding to connections:', error)
+      toast.error(`Failed to add ${prospect.name} to connections: ${error.message}`)
+    }
   }
 
   const getTotalReplies = (comments: LinkedInComment[]): number => {

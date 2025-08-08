@@ -1,6 +1,68 @@
 version: '3.8'
 
 services:
+  # Next.js Application - Development Mode
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    container_name: talentguard-app
+    ports:
+      - "3000:3000"
+    volumes:
+      # Hot reloading support - mount source code
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NODE_ENV=development
+      - NEXT_TELEMETRY_DISABLED=1
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/talentguard}
+    env_file:
+      - .env.local
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - talentguard-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/auth/me"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  # Background Workers Service
+  workers:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    container_name: talentguard-workers
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/talentguard}
+    env_file:
+      - .env.local
+    command: ["npm", "run", "workers"]
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - talentguard-network
+
   # Redis for BullMQ job queues
   redis:
     image: redis:7-alpine
@@ -11,6 +73,8 @@ services:
       - redis_data:/data
     command: redis-server --appendonly yes
     restart: unless-stopped
+    networks:
+      - talentguard-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 30s
@@ -27,29 +91,64 @@ services:
     environment:
       - REDIS_HOSTS=local:redis:6379
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     restart: unless-stopped
+    networks:
+      - talentguard-network
 
-  # PostgreSQL (optional - for local Supabase development)
-  # postgres:
-  #   image: postgres:15-alpine
-  #   container_name: talentguard-postgres
-  #   ports:
-  #     - "5432:5432"
-  #   environment:
-  #     POSTGRES_DB: talentguard
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: postgres
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   restart: unless-stopped
+  # PostgreSQL for local Supabase development
+  postgres:
+    image: postgres:15-alpine
+    container_name: talentguard-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: talentguard
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/linkedin-schema.sql:/docker-entrypoint-initdb.d/01-linkedin-schema.sql:ro
+    restart: unless-stopped
+    networks:
+      - talentguard-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d talentguard"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # pgAdmin - PostgreSQL web UI (optional)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: talentguard-pgadmin
+    ports:
+      - "8080:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@talentguard.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - talentguard-network
+    profiles:
+      - tools
 
 volumes:
   redis_data:
     driver: local
-  # postgres_data:
-  #   driver: local
+  postgres_data:
+    driver: local
+  pgadmin_data:
+    driver: local
 
 networks:
-  default:
-    name: talentguard-network
+  talentguard-network:
+    driver: bridge

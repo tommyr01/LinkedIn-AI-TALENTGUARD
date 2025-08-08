@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { AuthProvider } from '@/lib/auth-context'
 
 export const metadata: Metadata = {
   title: 'TalentGuard Buyer Intelligence',
@@ -14,9 +15,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="min-h-screen bg-background">
-          {children}
-        </div>
+        <AuthProvider>
+          <div className="min-h-screen bg-background">
+            {children}
+          </div>
+        </AuthProvider>
       </body>
     </html>
   )

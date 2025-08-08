@@ -1,0 +1,99 @@
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+__tests__
+*.test.js
+*.test.ts
+*.test.tsx
+*.spec.js
+*.spec.ts
+*.spec.tsx
+coverage
+.nyc_output
+playwright-report
+test-results
+
+# Development files
+.next
+out
+.env*.local
+.env.development
+.env.production
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# IDE and editor files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs
+
+# Documentation
+*.md
+docs/
+project-documentation/
+
+# Build artifacts
+.next
+out
+build
+dist
+
+# Temporary files
+.tmp
+tmp
+temp
+*.temp
+*.tmp
+
+# Cache directories
+.cache
+.parcel-cache
+.eslintcache
+
+# Misc
+.dockerignore
+Dockerfile
+docker-compose*.yml
+.docker
+
+# Scripts (keep essential ones, exclude test scripts)
+scripts/test*
+scripts/check*
+scripts/examine*
+scripts/generate*
+
+# Environment files (will be handled separately)
+.env
+.env.local
+.env.*.local
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Vercel
+.vercel
+
+# Supabase
+.supabase
