@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { validateInput, linkedinReplySchema } from '../../../lib/validation'
-import { researchedProspectsOperations } from '../../../lib/airtable'
+import { validateInput, linkedinReplySchema } from '@/lib/validation'
+import { researchedProspectsOperations } from '@/lib/airtable'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'

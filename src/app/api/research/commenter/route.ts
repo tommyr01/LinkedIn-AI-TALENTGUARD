@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { linkedInScraper, extractUsernameFromLinkedInUrl } from '../../../../lib/linkedin-scraper'
-import { icpScorer, ProspectProfile } from '../../../../lib/icp-scorer'
-import { researchedProspectsOperations } from '../../../../lib/airtable'
-import { validateInput, commenterResearchSchema } from '../../../../lib/validation'
+import { linkedInScraper, extractUsernameFromLinkedInUrl } from '@/lib/linkedin-scraper'
+import { icpScorer, ProspectProfile } from '@/lib/icp-scorer'
+import { researchedProspectsOperations } from '@/lib/airtable'
+import { validateInput, commenterResearchSchema } from '@/lib/validation'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -48,24 +48,29 @@ export async function POST(request: NextRequest) {
       
       if (cachedResult.success && cachedResult.data) {
         // Check if cache is not too old (e.g., less than 7 days)
-        const cacheAge = new Date().getTime() - new Date(cachedResult.data['Updated At']).getTime()
+        const cacheAge = new Date().getTime() - new Date((cachedResult.data as any)['Updated At']).getTime()
         const maxCacheAge = 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
         
         if (cacheAge < maxCacheAge) {
           console.log('✅ Found cached research result')
           
           // Convert cached data back to ProspectProfile format
+          const data = cachedResult.data as any
           const cachedProspectProfile: ProspectProfile = {
-            name: cachedResult.data['Name'] as string,
-            role: cachedResult.data['Role'] as string || '',
-            company: cachedResult.data['Company'] as string || '',
-            location: cachedResult.data['Location'] as string || '',
-            headline: cachedResult.data['Headline'] as string || '',
-            profileUrl: cachedResult.data['Profile URL'] as string,
+            name: data['Name'] as string,
+            role: data['Role'] as string || '',
+            company: data['Company'] as string || '',
+            location: data['Location'] as string || '',
+            headline: data['Headline'] as string || '',
+            profileUrl: data['Profile URL'] as string,
+            followerCount: data.followerCount || 0,
+            connectionCount: data.connectionCount || 0,
             icpScore: {
-              totalScore: cachedResult.data['ICP Score'] as number,
-              category: cachedResult.data['ICP Category'] as string,
-              tags: cachedResult.data.icpTags || []
+              totalScore: data['ICP Score'] as number,
+              category: (data['ICP Category'] || 'Not ICP') as 'Hot Lead' | 'Warm Lead' | 'Cold Lead' | 'Not ICP',
+              tags: data.icpTags || [],
+              breakdown: data.breakdown || {},
+              reasoning: data.reasoning || 'Cached result'
             }
           }
           
@@ -73,8 +78,8 @@ export async function POST(request: NextRequest) {
             success: true,
             prospect: cachedProspectProfile,
             meta: {
-              researchedAt: cachedResult.data['Updated At'],
-              source: cachedResult.data['Research Source'] || 'linkedin-comment',
+              researchedAt: data['Updated At'],
+              source: data['Research Source'] || 'linkedin-comment',
               cached: true,
               cacheAge: Math.round(cacheAge / (1000 * 60 * 60)) // hours
             }
@@ -186,7 +191,8 @@ export async function GET(request: NextRequest) {
     
     if (cachedResult.success && cachedResult.data) {
       // Check if cache is still valid (less than 7 days old)
-      const cacheAge = new Date().getTime() - new Date(cachedResult.data['Updated At']).getTime()
+      const data = cachedResult.data as any
+      const cacheAge = new Date().getTime() - new Date(data['Updated At']).getTime()
       const maxCacheAge = 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
       
       if (cacheAge < maxCacheAge) {
@@ -194,16 +200,20 @@ export async function GET(request: NextRequest) {
         
         // Convert cached data back to ProspectProfile format
         const cachedProspectProfile: ProspectProfile = {
-          name: cachedResult.data['Name'] as string,
-          role: cachedResult.data['Role'] as string || '',
-          company: cachedResult.data['Company'] as string || '',
-          location: cachedResult.data['Location'] as string || '',
-          headline: cachedResult.data['Headline'] as string || '',
-          profileUrl: cachedResult.data['Profile URL'] as string,
+          name: data['Name'] as string,
+          role: data['Role'] as string || '',
+          company: data['Company'] as string || '',
+          location: data['Location'] as string || '',
+          headline: data['Headline'] as string || '',
+          profileUrl: data['Profile URL'] as string,
+          followerCount: data.followerCount || 0,
+          connectionCount: data.connectionCount || 0,
           icpScore: {
-            totalScore: cachedResult.data['ICP Score'] as number,
-            category: cachedResult.data['ICP Category'] as string,
-            tags: cachedResult.data.icpTags || []
+            totalScore: data['ICP Score'] as number,
+            category: (data['ICP Category'] || 'Not ICP') as 'Hot Lead' | 'Warm Lead' | 'Cold Lead' | 'Not ICP',
+            tags: data.icpTags || [],
+            breakdown: data.breakdown || {},
+            reasoning: data.reasoning || 'Cached result'
           }
         }
         
@@ -211,8 +221,8 @@ export async function GET(request: NextRequest) {
           success: true,
           prospect: cachedProspectProfile,
           meta: {
-            researchedAt: cachedResult.data['Updated At'],
-            source: cachedResult.data['Research Source'] || 'linkedin-comment',
+            researchedAt: data['Updated At'],
+            source: data['Research Source'] || 'linkedin-comment',
             cached: true,
             cacheAge: Math.round(cacheAge / (1000 * 60 * 60)) // hours
           }

@@ -19,7 +19,7 @@ export const LazyOptimizedLinkedInPostsTable = dynamic(
 )
 
 export const LazyIntelligenceCard = dynamic(
-  () => import('./intelligence/intelligence-card'),
+  () => import('./intelligence/intelligence-card').then(mod => ({ default: mod.IntelligenceCard })),
   {
     loading: () => <CardLoadingSkeleton />,
     ssr: false
@@ -27,7 +27,7 @@ export const LazyIntelligenceCard = dynamic(
 )
 
 export const LazyCompanySearch = dynamic(
-  () => import('./company-search'),
+  () => import('./company-search').then(mod => ({ default: mod.CompanySearch })),
   {
     loading: () => (
       <div className="flex items-center justify-center p-8">
@@ -39,7 +39,7 @@ export const LazyCompanySearch = dynamic(
 )
 
 export const LazyProspectResearchCard = dynamic(
-  () => import('./prospect-research-card'),
+  () => import('./prospect-research-card').then(mod => ({ default: mod.ProspectResearchCard })),
   {
     loading: () => <CardLoadingSkeleton />,
     ssr: false
@@ -48,7 +48,7 @@ export const LazyProspectResearchCard = dynamic(
 
 // Charts and heavy visualizations
 export const LazyLinkedInStatsCards = dynamic(
-  () => import('./linkedin-stats-cards'),
+  () => import('./linkedin-stats-cards').then(mod => ({ default: mod.LinkedInStatsCards })),
   {
     loading: () => (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

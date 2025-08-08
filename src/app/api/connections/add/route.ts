@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { validateInput } from '../../../../lib/validation'
-import { extractUsernameFromLinkedInUrl } from '../../../../lib/linkedin-scraper'
+import { validateInput } from '@/lib/validation'
+import { extractUsernameFromLinkedInUrl } from '@/lib/linkedin-scraper'
 import { z } from 'zod'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    const { name, role, company, linkedinUrl, headline, icpScore, icpCategory, tags, location, source } = validationResult.data!
+    const { name, role, company, linkedinUrl, headline, icpScore, icpCategory, tags = [], location, source = 'linkedin-comment' } = validationResult.data!
 
     // Extract username from LinkedIn URL
     const username = extractUsernameFromLinkedInUrl(linkedinUrl)
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     // Check if connection already exists
     const { data: existingConnection } = await supabase
       .from('linkedin_connections')
-      .select('id, full_name, username')
+      .select('id, full_name, username, title, current_company, headline')
       .eq('username', username)
       .single()
 

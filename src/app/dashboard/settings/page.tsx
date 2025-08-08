@@ -20,7 +20,7 @@ import {
   IconCheck,
   IconX,
   IconRefresh,
-  IconVoice,
+  IconVolume,
   IconSettings
 } from '@tabler/icons-react'
 
@@ -50,7 +50,7 @@ export default function SettingsPage() {
             Profile
           </TabsTrigger>
           <TabsTrigger value="tone" className="flex items-center gap-2">
-            <IconVoice className="h-4 w-4" />
+            <IconVolume className="h-4 w-4" />
             Tone of Voice
           </TabsTrigger>
           <TabsTrigger value="integrations" className="flex items-center gap-2">

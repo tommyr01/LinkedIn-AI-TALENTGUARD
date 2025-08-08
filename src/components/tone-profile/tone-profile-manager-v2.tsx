@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { IconVoice, IconPlus, IconTemplate, IconRefresh } from '@tabler/icons-react'
+import { IconVolume, IconPlus, IconTemplate, IconRefresh } from '@tabler/icons-react'
 
 import { ToneProfileCard } from './tone-profile-card'
 import { ToneProfileForm, type ToneProfileFormData } from './tone-profile-form'
@@ -100,7 +100,7 @@ export function ToneProfileManagerV2() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
-            <IconVoice className="h-6 w-6" />
+            <IconVolume className="h-6 w-6" />
             Tone of Voice Settings
           </h2>
           <p className="text-muted-foreground">
@@ -155,7 +155,7 @@ export function ToneProfileManagerV2() {
               profile={profile}
               onSetDefault={actions.setDefaultProfile}
               onDuplicate={actions.duplicateProfile}
-              onEdit={handleEditProfile}
+              onEdit={(profile) => handleEditProfile(profile as any)}
               onDelete={actions.deleteProfile}
             />
           ))}
@@ -163,7 +163,7 @@ export function ToneProfileManagerV2() {
       ) : (
         <Card>
           <CardContent className="p-6 text-center">
-            <IconVoice className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <IconVolume className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">No Tone Profiles Yet</h3>
             <p className="text-muted-foreground mb-4">
               Create your first tone profile to get started with AI-generated content that matches your communication style.

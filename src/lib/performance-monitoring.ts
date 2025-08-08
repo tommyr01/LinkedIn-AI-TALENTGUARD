@@ -1,4 +1,5 @@
 // Performance monitoring utilities for React components
+import React from 'react'
 
 interface PerformanceEntry {
   name: string
@@ -144,7 +145,7 @@ export function withPerformanceMonitoring<T extends Record<string, any>>(
     })
 
     MonitoredComponent.displayName = `WithPerformanceMonitoring(${componentName})`
-    return MonitoredComponent
+    return MonitoredComponent as unknown as React.ComponentType<T>
   }
 }
 

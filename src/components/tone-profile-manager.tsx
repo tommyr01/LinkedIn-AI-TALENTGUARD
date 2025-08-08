@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
 import { 
-  IconVoice,
+  IconVolume,
   IconPlus,
   IconEdit,
   IconTrash,
@@ -390,7 +390,7 @@ export function ToneProfileManager() {
       ai_max_tokens: profile.ai_max_tokens,
       ai_model: profile.ai_model,
       is_default: profile.is_default
-    })
+    } as any)
   }
 
   const addArrayItem = (field: keyof typeof formData, value: string = '') => {
@@ -433,7 +433,7 @@ export function ToneProfileManager() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
-            <IconVoice className="h-6 w-6" />
+            <IconVolume className="h-6 w-6" />
             Tone of Voice Settings
           </h2>
           <p className="text-muted-foreground">
@@ -620,7 +620,7 @@ export function ToneProfileManager() {
       {profiles.length === 0 && (
         <Card>
           <CardContent className="p-6 text-center">
-            <IconVoice className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <IconVolume className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <CardTitle className="mb-2">No Tone Profiles Yet</CardTitle>
             <CardDescription className="mb-4">
               Create your first tone profile to get started with AI-generated content that matches your communication style.

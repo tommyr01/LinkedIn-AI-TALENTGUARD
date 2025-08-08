@@ -1,5 +1,7 @@
 // Analytics tracking utilities for TalentGuard Buyer Intelligence
 
+import React, { useEffect } from 'react'
+
 export interface AnalyticsEvent {
   event_name: string
   user_id?: string
@@ -231,7 +233,6 @@ class AnalyticsService {
 export const analytics = new AnalyticsService()
 
 // React Hook for analytics
-import { useEffect } from 'react'
 
 export function useAnalytics() {
   useEffect(() => {
@@ -246,7 +247,7 @@ export function useAnalytics() {
 export function withAnalytics<T extends object>(WrappedComponent: React.ComponentType<T>) {
   return function AnalyticsWrapper(props: T) {
     useAnalytics()
-    return <WrappedComponent {...props} />
+    return React.createElement(WrappedComponent, props)
   }
 }
 

@@ -446,7 +446,7 @@ export const OptimizedLinkedInPostsTable = memo(function OptimizedLinkedInPostsT
         searchTerm={searchTerm}
         timeFilter={timeFilter}
         onSearchChange={setSearchTerm}
-        onTimeFilterChange={setTimeFilter}
+        onTimeFilterChange={(value) => setTimeFilter(value as 'all' | '1day' | '3day' | '7day' | '1month')}
       />
 
       {/* Posts Grid/List */}

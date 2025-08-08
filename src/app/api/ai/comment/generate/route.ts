@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { validateInput, commentGenerationSchema } from '../../../../lib/validation'
-import { validateSession } from '../../../../lib/auth'
+import { validateInput, commentGenerationSchema } from '@/lib/validation'
+import { validateSession } from '@/lib/auth'
 import { OpenAI } from 'openai'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -140,11 +140,11 @@ export async function POST(request: NextRequest) {
 
     const {
       post_content,
-      target_audience,
-      comment_style,
+      target_audience = 'hr_professionals',
+      comment_style = 'supportive',
       tone_profile_id,
-      max_length,
-      include_question
+      max_length = 200,
+      include_question = false
     } = validationResult.data!
 
     console.log('🤖 Generating AI comment with tone profile for user:', user.id)

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { validateSession } from '../../../../lib/auth'
-import { validateInput, supportTicketSchema } from '../../../../lib/validation'
+import { validateSession } from '@/lib/auth'
+import { validateInput, supportTicketSchema } from '@/lib/validation'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'

@@ -152,7 +152,7 @@ export function createValidationErrorResponse(
 
 // Sanitize object with string values
 export function sanitizeObject<T extends Record<string, any>>(obj: T): T {
-  const sanitized = { ...obj }
+  const sanitized = { ...obj } as any
   
   for (const [key, value] of Object.entries(sanitized)) {
     if (typeof value === 'string') {

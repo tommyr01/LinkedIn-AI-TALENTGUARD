@@ -76,7 +76,6 @@ export async function GET(request: NextRequest) {
     const { data: categories } = await supabase
       .from('tone_profile_templates')
       .select('category')
-      .group('category')
 
     const uniqueCategories = Array.from(new Set(categories?.map(c => c.category) || []))
 
