@@ -22,7 +22,9 @@ import {
   Globe,
   LinkedinIcon,
   Eye,
-  Star
+  Star,
+  BookOpen,
+  FileText
 } from 'lucide-react'
 import { toast } from "sonner"
 import { IntelligenceCard } from "@/components/intelligence/intelligence-card"
@@ -65,7 +67,7 @@ export default function IntelligenceDashboard() {
   const [intelligenceProfiles, setIntelligenceProfiles] = useState<IntelligenceProfile[]>([])
   const [selectedConnections, setSelectedConnections] = useState<string[]>([])
   const [searchTerm, setSearchTerm] = useState('')
-  const [filterBy, setFilterBy] = useState<'all' | 'high_value' | 'verified' | 'unresearched'>('all')
+  const [filterBy, setFilterBy] = useState<'all' | 'with_articles' | 'linkedin_articles' | 'unresearched'>('all')
   const [isLoading, setIsLoading] = useState(false)
   const [isBatchProcessing, setBatchProcessing] = useState(false)
   const [batchProgress, setBatchProgress] = useState({ completed: 0, total: 0 })
@@ -317,10 +319,13 @@ export default function IntelligenceDashboard() {
         const profile = intelligenceProfiles.find(p => p.connectionId === connection.id)
         
         switch (filterBy) {
-          case 'high_value':
-            return (profile?.unifiedScores?.overallExpertise ?? 0) > 70
-          case 'verified':
-            return profile?.intelligenceAssessment?.verificationStatus === 'verified'
+          case 'with_articles':
+            if (!profile) return false
+            const linkedInArticles = profile.linkedInAnalysis?.articles_analysis?.length || 0
+            const webArticles = profile.webResearch?.articles_found?.length || 0
+            return (linkedInArticles + webArticles) > 0
+          case 'linkedin_articles':
+            return (profile?.linkedInAnalysis?.articles_analysis?.length || 0) > 0
           case 'unresearched':
             return !profile
           default:
@@ -339,17 +344,25 @@ export default function IntelligenceDashboard() {
   const stats = {
     totalConnections: connections.length,
     researchedConnections: intelligenceProfiles.length,
-    highValueProspects: intelligenceProfiles.filter(p => p.unifiedScores.overallExpertise > 70).length,
-    verifiedExperts: intelligenceProfiles.filter(p => p.intelligenceAssessment.verificationStatus === 'verified').length
+    withArticles: intelligenceProfiles.filter(p => {
+      const linkedInArticles = p.linkedInAnalysis?.articles_analysis?.length || 0
+      const webArticles = p.webResearch?.articles_found?.length || 0
+      return (linkedInArticles + webArticles) > 0
+    }).length,
+    totalArticles: intelligenceProfiles.reduce((total, p) => {
+      const linkedInArticles = p.linkedInAnalysis?.articles_analysis?.length || 0
+      const webArticles = p.webResearch?.articles_found?.length || 0
+      return total + linkedInArticles + webArticles
+    }, 0)
   }
 
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Connection Intelligence</h2>
+          <h2 className="text-3xl font-bold tracking-tight">Published Articles & Content</h2>
           <p className="text-muted-foreground">
-            Research LinkedIn connections for talent management expertise using AI-powered analysis
+            Discover published articles and content from your LinkedIn connections to understand their expertise
           </p>
         </div>
         <div className="flex items-center space-x-2">
@@ -424,22 +437,22 @@ export default function IntelligenceDashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">High-Value Prospects</CardTitle>
-            <Star className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">With Published Articles</CardTitle>
+            <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.highValueProspects}</div>
-            <p className="text-xs text-muted-foreground">Expertise score 70+</p>
+            <div className="text-2xl font-bold text-green-600">{stats.withArticles}</div>
+            <p className="text-xs text-muted-foreground">Have published content</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Verified Experts</CardTitle>
-            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Total Articles</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{stats.verifiedExperts}</div>
-            <p className="text-xs text-muted-foreground">External validation confirmed</p>
+            <div className="text-2xl font-bold text-blue-600">{stats.totalArticles}</div>
+            <p className="text-xs text-muted-foreground">Articles discovered</p>
           </CardContent>
         </Card>
       </div>
@@ -464,8 +477,8 @@ export default function IntelligenceDashboard() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Connections</SelectItem>
-            <SelectItem value="high_value">High-Value Prospects</SelectItem>
-            <SelectItem value="verified">Verified Experts</SelectItem>
+            <SelectItem value="with_articles">With Published Articles</SelectItem>
+            <SelectItem value="linkedin_articles">LinkedIn Articles Only</SelectItem>
             <SelectItem value="unresearched">Unresearched</SelectItem>
           </SelectContent>
         </Select>
@@ -519,7 +532,7 @@ export default function IntelligenceDashboard() {
             <div>
               <CardTitle>LinkedIn Connections</CardTitle>
               <CardDescription>
-                Select connections to research for talent management expertise
+                Click "View Articles" to see published content and articles from each connection
               </CardDescription>
             </div>
             <div className="flex items-center space-x-2">

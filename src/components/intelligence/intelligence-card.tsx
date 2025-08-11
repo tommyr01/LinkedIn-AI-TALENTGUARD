@@ -16,7 +16,7 @@ import {
   AlertTriangle,
   CheckCircle
 } from 'lucide-react'
-import { IntelligenceReportDisplay } from './intelligence-report-display'
+import { ArticlesView } from './articles-view'
 import { format } from 'date-fns'
 
 interface Connection {
@@ -202,31 +202,51 @@ export function IntelligenceCard({
             {profile && !isExpanded && (
               <div className="mt-3 space-y-2">
                 <div className="flex items-center space-x-3 flex-wrap gap-2">
-                  <Badge variant={getVerificationBadgeVariant(profile.intelligenceAssessment.verificationStatus)}>
-                    {getVerificationIcon(profile.intelligenceAssessment.verificationStatus)}
-                    <span className="ml-1">{profile.intelligenceAssessment.verificationStatus}</span>
+                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                    <CheckCircle className="h-3 w-3 mr-1" />
+                    Researched
                   </Badge>
-                  <span className={`text-sm font-medium ${getExpertiseColor(profile.unifiedScores.overallExpertise)}`}>
-                    {profile.unifiedScores.overallExpertise}/100 Overall
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {profile.intelligenceAssessment.confidenceLevel}% confidence
-                  </span>
+                  
+                  {/* Show article count if available */}
+                  {(() => {
+                    const linkedInArticles = profile.linkedInAnalysis?.articles_analysis?.length || 0
+                    const webArticles = profile.webResearch?.articles_found?.length || 0
+                    const totalArticles = linkedInArticles + webArticles
+                    
+                    if (totalArticles > 0) {
+                      return (
+                        <Badge variant="secondary">
+                          {totalArticles} article{totalArticles !== 1 ? 's' : ''} found
+                        </Badge>
+                      )
+                    }
+                    return null
+                  })()}
                 </div>
                 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-                  <span>Talent Mgmt: <strong className={getExpertiseColor(profile.unifiedScores.talentManagement)}>{profile.unifiedScores.talentManagement}</strong></span>
-                  <span>People Dev: <strong className={getExpertiseColor(profile.unifiedScores.peopleDevelopment)}>{profile.unifiedScores.peopleDevelopment}</strong></span>
-                  <span>HR Tech: <strong className={getExpertiseColor(profile.unifiedScores.hrTechnology)}>{profile.unifiedScores.hrTechnology}</strong></span>
-                  <span>Leadership: <strong className={getExpertiseColor(profile.unifiedScores.thoughtLeadership || 0)}>{profile.unifiedScores.thoughtLeadership || 0}</strong></span>
-                </div>
-
-                {profile.intelligenceAssessment.strengths.length > 0 && (
-                  <div className="text-xs text-muted-foreground">
-                    <strong>Key Strengths:</strong> {profile.intelligenceAssessment.strengths.slice(0, 2).join(', ')}
-                    {profile.intelligenceAssessment.strengths.length > 2 && '...'}
-                  </div>
-                )}
+                {/* Show topics they write about */}
+                {(() => {
+                  const allContent = [
+                    ...(profile.linkedInAnalysis?.articles_analysis || []).map(a => a.content),
+                    ...(profile.webResearch?.articles_found || []).map(a => a.content)
+                  ].join(' ').toLowerCase()
+                  
+                  const topics = []
+                  if (allContent.includes('talent management')) topics.push('Talent Management')
+                  if (allContent.includes('people development')) topics.push('People Development')
+                  if (allContent.includes('leadership')) topics.push('Leadership')
+                  if (allContent.includes('hr') || allContent.includes('human resources')) topics.push('HR')
+                  
+                  if (topics.length > 0) {
+                    return (
+                      <div className="text-xs text-muted-foreground">
+                        <strong>Writes about:</strong> {topics.slice(0, 3).join(', ')}
+                        {topics.length > 3 && '...'}
+                      </div>
+                    )
+                  }
+                  return null
+                })()}
               </div>
             )}
           </div>
@@ -250,12 +270,12 @@ export function IntelligenceCard({
                       {isExpanded ? (
                         <>
                           <ChevronUp className="mr-2 h-4 w-4" />
-                          Collapse
+                          Hide Articles
                         </>
                       ) : (
                         <>
                           <Eye className="mr-2 h-4 w-4" />
-                          View Details
+                          View Articles
                         </>
                       )}
                     </>
@@ -294,7 +314,7 @@ export function IntelligenceCard({
 
       {isExpanded && displayProfile && (
         <CardContent className="pt-0">
-          <IntelligenceReportDisplay 
+          <ArticlesView 
             profile={displayProfile}
             connection={connection}
           />
