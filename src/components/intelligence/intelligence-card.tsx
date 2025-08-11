@@ -34,8 +34,29 @@ interface IntelligenceProfile {
   company: string
   title: string
   profileUrl?: string
-  webResearch?: any
-  linkedInAnalysis?: any
+  linkedInAnalysis?: {
+    articles_analysis?: Array<{
+      title: string
+      url?: string
+      content: string
+      publishedDate: string
+      engagement: {
+        likes: number
+        comments: number
+        shares: number
+      }
+    }>
+  }
+  webResearch?: {
+    articles_found?: Array<{
+      title: string
+      url?: string
+      content: string
+      publishedDate: string
+      source: string
+      relevanceScore?: number
+    }>
+  }
   unifiedScores: {
     overallExpertise: number
     talentManagement: number
