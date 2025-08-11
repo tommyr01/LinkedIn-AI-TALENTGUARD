@@ -86,26 +86,38 @@ export default function IntelligenceDashboard() {
         headers: { 'Content-Type': 'application/json' }
       })
 
+      console.log('📡 API Response Status:', response.status, response.statusText)
+      console.log('📡 API Response Headers:', Object.fromEntries(response.headers.entries()))
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error || `HTTP ${response.status}`)
+        console.error('❌ API Error Response:', errorData)
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`)
       }
 
       const data = await response.json()
+      console.log('📡 API Response Data:', data)
       
       if (data.success) {
+        console.log('✅ Setting connections:', data.data.connections)
         setConnections(data.data.connections)
-        console.log(`✅ Loaded ${data.data.connections.length} connections`)
-        toast.success(`Loaded ${data.data.connections.length} LinkedIn connections`)
+        console.log(`✅ Successfully loaded ${data.data.connections.length} connections`)
+        if (data.data.connections.length > 0) {
+          toast.success(`Loaded ${data.data.connections.length} LinkedIn connections`)
+        } else {
+          toast.info('No LinkedIn connections found - check if connections are synced')
+        }
       } else {
+        console.error('❌ API returned success: false:', data.error)
         throw new Error(data.error || 'Failed to load connections')
       }
       
     } catch (error: any) {
-      console.error('Error loading connections:', error)
+      console.error('❌ Error loading connections:', error)
       toast.error(`Failed to load connections: ${error.message}`)
       
       // Fallback to empty array on error
+      console.log('🔄 Setting connections to empty array due to error')
       setConnections([])
     } finally {
       setIsLoading(false)
@@ -352,27 +364,35 @@ export default function IntelligenceDashboard() {
             <Users className="mr-2 h-4 w-4" />
             {isLoading ? 'Loading...' : 'Refresh Data'}
           </Button>
-          {connections.length > 0 && (
-            <Button 
-              variant="outline"
-              onClick={async () => {
-                const connectionId = connections[0].id
-                console.log('🧪 Testing API with connectionId:', connectionId)
-                try {
-                  const response = await fetch(`/api/intelligence/profiles?connectionId=${connectionId}`)
-                  console.log('🧪 API Status:', response.status)
-                  const data = await response.json()
-                  console.log('🧪 API Response:', data)
-                } catch (error) {
-                  console.error('🧪 API Error:', error)
+          <Button 
+            variant="outline"
+            onClick={async () => {
+              console.log('🧪 Testing connections API endpoint...')
+              try {
+                const response = await fetch('/api/intelligence/connections?limit=200')
+                console.log('🧪 Connections API Status:', response.status, response.statusText)
+                console.log('🧪 Connections API Headers:', Object.fromEntries(response.headers.entries()))
+                const data = await response.json()
+                console.log('🧪 Connections API Response:', data)
+                
+                // Also test profiles API if we have connections
+                if (data.success && data.data.connections.length > 0) {
+                  const connectionId = data.data.connections[0].id
+                  console.log('🧪 Testing profiles API with connectionId:', connectionId)
+                  const profileResponse = await fetch(`/api/intelligence/profiles?connectionId=${connectionId}`)
+                  console.log('🧪 Profiles API Status:', profileResponse.status)
+                  const profileData = await profileResponse.json()
+                  console.log('🧪 Profiles API Response:', profileData)
                 }
-              }}
-              disabled={isLoading}
-            >
-              <Brain className="mr-2 h-4 w-4" />
-              Test API
-            </Button>
-          )}
+              } catch (error) {
+                console.error('🧪 API Test Error:', error)
+              }
+            }}
+            disabled={isLoading}
+          >
+            <Brain className="mr-2 h-4 w-4" />
+            Test APIs
+          </Button>
         </div>
       </div>
 

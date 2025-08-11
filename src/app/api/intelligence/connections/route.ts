@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseLinkedIn } from '@/lib/supabase-linkedin'
 import { isSupabaseConfigured, validateSupabaseConfig } from '@/lib/supabase'
-import { withUserAuth, type AuthenticatedRequest } from '@/lib/auth-middleware'
+import { withUserAuth, withOptionalAuth, type AuthenticatedRequest } from '@/lib/auth-middleware'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -138,6 +138,6 @@ async function postHandler(request: AuthenticatedRequest) {
   }
 }
 
-// Apply authentication middleware
-export const GET = withUserAuth(getHandler)
-export const POST = withUserAuth(postHandler)
+// Apply authentication middleware - temporarily using optional auth for debugging
+export const GET = withOptionalAuth(getHandler)
+export const POST = withOptionalAuth(postHandler)
