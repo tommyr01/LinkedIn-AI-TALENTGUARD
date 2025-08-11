@@ -161,6 +161,14 @@ export function IntelligenceCard({
     hasProfile: !!profile
   })
 
+  // Additional logging for expanded content
+  if (isExpanded && displayProfile) {
+    console.log('🔍 Rendering expanded content for:', connection.full_name)
+  }
+  if (isExpanded && !displayProfile) {
+    console.log('⚠️ Expanded but no displayProfile for:', connection.full_name)
+  }
+
   return (
     <Card className={`transition-all duration-200 ${
       isSelected ? 'border-blue-300 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
@@ -286,7 +294,6 @@ export function IntelligenceCard({
 
       {isExpanded && displayProfile && (
         <CardContent className="pt-0">
-          {console.log('🔍 Rendering expanded content for:', connection.full_name)}
           <IntelligenceReportDisplay 
             profile={displayProfile}
             connection={connection}
@@ -295,7 +302,6 @@ export function IntelligenceCard({
       )}
       {isExpanded && !displayProfile && (
         <CardContent className="pt-0">
-          {console.log('⚠️ Expanded but no displayProfile for:', connection.full_name)}
           <div className="text-center py-4">No profile data available</div>
         </CardContent>
       )}
