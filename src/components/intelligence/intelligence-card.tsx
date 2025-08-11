@@ -161,23 +161,37 @@ export function IntelligenceCard({
         // Clear current full profile and reload
         setFullProfile(null)
         
-        // Use a proper async delay instead of setTimeout with async callback
-        await new Promise(resolve => setTimeout(resolve, 200))
-        
         try {
+          // Use a proper async delay instead of setTimeout with async callback
+          await new Promise(resolve => setTimeout(resolve, 200))
+          
           // Manually trigger profile reload by fetching fresh data
           console.log(`📡 Fetching updated profile for connection: ${connection.id}`)
-          const response = await fetch(`/api/intelligence/profiles?connectionId=${connection.id}`)
+          
+          // Validate connectionId before making API call
+          if (!connection.id || typeof connection.id !== 'string') {
+            console.error('❌ Invalid connection ID:', connection.id)
+            return
+          }
+          
+          const response = await fetch(`/api/intelligence/profiles?connectionId=${encodeURIComponent(connection.id)}`)
           
           if (response.ok) {
             const data = await response.json()
             console.log('📡 Updated profile response:', data)
             
-            if (data.success && data.data?.profile) {
-              setFullProfile(data.data.profile)
-              console.log('✅ Updated profile loaded successfully')
+            // Defensive check for response structure
+            if (data && typeof data === 'object' && data.success && data.data?.profile) {
+              // Validate profile structure before setting
+              const profile = data.data.profile
+              if (profile && typeof profile === 'object' && profile.connectionId) {
+                setFullProfile(profile)
+                console.log('✅ Updated profile loaded successfully')
+              } else {
+                console.log('⚠️ Invalid profile structure received:', profile)
+              }
             } else {
-              console.log('❌ No updated profile data available:', data.error || 'No profile found')
+              console.log('❌ No updated profile data available:', data?.error || 'No profile found')
               // Keep expanded but with no full profile - will show basic data
             }
           } else {
@@ -227,18 +241,37 @@ export function IntelligenceCard({
 
   // Safely compute display profile with validation
   const displayProfile = (() => {
-    const candidate = fullProfile || profile
-    
-    // Validate the profile has required structure
-    if (!candidate) return null
-    
-    // Ensure critical fields exist to prevent render errors
     try {
-      if (typeof candidate.connectionId !== 'string' || 
-          typeof candidate.connectionName !== 'string') {
-        console.warn('⚠️ Invalid profile structure detected:', candidate)
+      const candidate = fullProfile || profile
+      
+      // Validate the profile has required structure
+      if (!candidate || typeof candidate !== 'object') {
         return null
       }
+      
+      // Ensure critical fields exist to prevent render errors
+      if (typeof candidate.connectionId !== 'string' || 
+          typeof candidate.connectionName !== 'string') {
+        console.warn('⚠️ Invalid profile structure detected:', {
+          hasConnectionId: !!candidate.connectionId,
+          connectionIdType: typeof candidate.connectionId,
+          hasConnectionName: !!candidate.connectionName,
+          connectionNameType: typeof candidate.connectionName
+        })
+        return null
+      }
+      
+      // Additional validation for nested objects that are accessed in render
+      if (candidate.unifiedScores && typeof candidate.unifiedScores !== 'object') {
+        console.warn('⚠️ Invalid unifiedScores structure')
+        return null
+      }
+      
+      if (candidate.intelligenceAssessment && typeof candidate.intelligenceAssessment !== 'object') {
+        console.warn('⚠️ Invalid intelligenceAssessment structure')
+        return null
+      }
+      
       return candidate
     } catch (error) {
       console.error('❌ Error validating profile structure:', error)
@@ -303,11 +336,19 @@ export function IntelligenceCard({
                   {/* Show article count if available */}
                   {(() => {
                     try {
-                      const linkedInArticles = profile?.linkedInAnalysis?.articles_analysis?.length || 0
-                      const webArticles = profile?.webResearch?.articles_found?.length || 0
+                      if (!profile || typeof profile !== 'object') {
+                        return null
+                      }
+                      
+                      const linkedInArticles = Array.isArray(profile.linkedInAnalysis?.articles_analysis) 
+                        ? profile.linkedInAnalysis.articles_analysis.length 
+                        : 0
+                      const webArticles = Array.isArray(profile.webResearch?.articles_found)
+                        ? profile.webResearch.articles_found.length
+                        : 0
                       const totalArticles = linkedInArticles + webArticles
                       
-                      if (totalArticles > 0) {
+                      if (totalArticles > 0 && Number.isInteger(totalArticles)) {
                         return (
                           <Badge variant="secondary">
                             {totalArticles} article{totalArticles !== 1 ? 's' : ''} found
@@ -324,12 +365,37 @@ export function IntelligenceCard({
                 {/* Show topics they write about */}
                 {(() => {
                   try {
-                    const allContent = [
-                      ...(profile?.linkedInAnalysis?.articles_analysis || []).map(a => a?.content || ''),
-                      ...(profile?.webResearch?.articles_found || []).map(a => a?.content || '')
-                    ].join(' ').toLowerCase()
+                    if (!profile || typeof profile !== 'object') {
+                      return null
+                    }
                     
-                    const topics = []
+                    const contentParts: string[] = []
+                    
+                    // Safely extract LinkedIn article content
+                    if (Array.isArray(profile.linkedInAnalysis?.articles_analysis)) {
+                      profile.linkedInAnalysis.articles_analysis.forEach((article: any) => {
+                        if (article && typeof article === 'object' && typeof article.content === 'string') {
+                          contentParts.push(article.content)
+                        }
+                      })
+                    }
+                    
+                    // Safely extract web research content
+                    if (Array.isArray(profile.webResearch?.articles_found)) {
+                      profile.webResearch.articles_found.forEach((article: any) => {
+                        if (article && typeof article === 'object' && typeof article.content === 'string') {
+                          contentParts.push(article.content)
+                        }
+                      })
+                    }
+                    
+                    if (contentParts.length === 0) {
+                      return null
+                    }
+                    
+                    const allContent = contentParts.join(' ').toLowerCase()
+                    const topics: string[] = []
+                    
                     if (allContent.includes('talent management')) topics.push('Talent Management')
                     if (allContent.includes('people development')) topics.push('People Development')
                     if (allContent.includes('leadership')) topics.push('Leadership')
