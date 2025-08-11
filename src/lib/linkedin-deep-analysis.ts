@@ -250,16 +250,140 @@ export class LinkedInDeepAnalysisService {
    * Analyze LinkedIn articles for expertise and authority
    */
   private async analyzeLinkedInArticles(connection: DBLinkedInConnection): Promise<LinkedInArticle[]> {
-    // Note: This would require LinkedIn API integration for articles
-    // For now, I'll structure this for future implementation
-    
     console.log(`📰 Analyzing LinkedIn articles for ${connection.full_name}`)
     
-    // This would fetch articles from LinkedIn API:
-    // const articles = await linkedInAPI.getPersonArticles(connection.profile_url)
+    try {
+      // Use RapidAPI LinkedIn scraper to get posts and articles
+      const response = await fetch(`https://linkedin-scraper-api-real-time-fast-affordable.p.rapidapi.com/profile/posts?username=${connection.username}&page_number=1`, {
+        method: 'GET',
+        headers: {
+          'x-rapidapi-host': 'linkedin-scraper-api-real-time-fast-affordable.p.rapidapi.com',
+          'x-rapidapi-key': '05dfd3892bmsh240571b650016b1p11c9ffjsnf258ff227896'
+        }
+      })
+      
+      if (!response.ok) {
+        console.log(`❌ LinkedIn API failed for ${connection.full_name}: ${response.status}`)
+        return []
+      }
+      
+      const data = await response.json()
+      console.log(`📱 LinkedIn API response for ${connection.full_name}:`, {
+        success: data.success,
+        postsFound: data.data?.posts?.length || 0
+      })
+      
+      if (!data.success || !data.data?.posts) {
+        console.log(`❌ No LinkedIn posts data for ${connection.full_name}`)
+        return []
+      }
+      
+      const articles: LinkedInArticle[] = []
+      
+      // Extract articles from posts
+      for (const post of data.data.posts) {
+        // Look for posts with article links
+        if (post.article && post.article.url && post.article.title) {
+          articles.push({
+            title: post.article.title,
+            url: post.article.url,
+            content: post.text || '',
+            publishedDate: post.posted_at?.date || new Date().toISOString(),
+            engagement: {
+              likes: post.stats?.like || 0,
+              comments: post.stats?.comments || 0,
+              shares: post.stats?.reposts || 0
+            },
+            expertise_analysis: this.analyzeArticleExpertise(post.text || post.article.title)
+          })
+        }
+        
+        // Also check for long-form posts that are essentially articles
+        if (post.text && post.text.length > 500 && post.post_type === 'regular') {
+          articles.push({
+            title: this.extractTitleFromPost(post.text),
+            url: post.url,
+            content: post.text,
+            publishedDate: post.posted_at?.date || new Date().toISOString(),
+            engagement: {
+              likes: post.stats?.like || 0,
+              comments: post.stats?.comments || 0,
+              shares: post.stats?.reposts || 0
+            },
+            expertise_analysis: this.analyzeArticleExpertise(post.text)
+          })
+        }
+      }
+      
+      console.log(`📰 Found ${articles.length} LinkedIn articles for ${connection.full_name}`)
+      articles.forEach((article, i) => {
+        console.log(`  ${i+1}. ${article.title}`)
+        console.log(`     Engagement: ${article.engagement.likes} likes, ${article.engagement.comments} comments`)
+      })
+      
+      return articles
+      
+    } catch (error) {
+      console.error(`❌ Error fetching LinkedIn articles for ${connection.full_name}:`, error)
+      return []
+    }
+  }
+  
+  private extractTitleFromPost(text: string): string {
+    // Extract first line or first meaningful phrase as title
+    const lines = text.split('\n').filter(line => line.trim().length > 0)
+    if (lines.length > 0) {
+      const firstLine = lines[0].trim()
+      // If first line is too long, truncate it
+      return firstLine.length > 100 ? firstLine.substring(0, 97) + '...' : firstLine
+    }
+    return 'LinkedIn Post'
+  }
+  
+  private analyzeArticleExpertise(content: string): ExpertiseAnalysis {
+    const lowerContent = content.toLowerCase()
     
-    // Mock structure for now - in real implementation this would fetch and analyze actual articles
-    const mockArticles: LinkedInArticle[] = [
+    // Calculate topic relevance
+    const talentKeywords = ['talent', 'hr', 'human resources', 'workforce', 'skills', 'career', 'development', 'leadership', 'people']
+    const keywordMatches = talentKeywords.filter(keyword => lowerContent.includes(keyword)).length
+    const topicRelevance = Math.min(95, (keywordMatches / talentKeywords.length) * 100)
+    
+    // Identify authority signals
+    const authoritySignals: AuthoritySignal[] = []
+    
+    if (lowerContent.includes('in my experience') || lowerContent.includes('i\'ve seen')) {
+      authoritySignals.push({
+        type: 'experience',
+        signal: 'Personal experience mentioned',
+        confidence: 85,
+        context: 'Direct experience indicators'
+      })
+    }
+    
+    if (lowerContent.includes('case study') || lowerContent.includes('results') || lowerContent.includes('%')) {
+      authoritySignals.push({
+        type: 'results',
+        signal: 'Quantified results or case studies',
+        confidence: 90,
+        context: 'Evidence-based content'
+      })
+    }
+    
+    return {
+      topicRelevance,
+      authoritySignals,
+      expertiseLevel: topicRelevance > 70 ? 'expert' : topicRelevance > 40 ? 'intermediate' : 'beginner',
+      originalInsight: content.length > 300 && authoritySignals.length > 0,
+      realExamples: [],
+      specificMetrics: [],
+      frameworksMentioned: [],
+      toolsMentioned: []
+    }
+  }
+  
+  // Keep the old mock structure as fallback for testing
+  private getMockArticles(): LinkedInArticle[] {
+    return [
       {
         title: "The Future of Talent Management in 2024",
         url: `https://linkedin.com/pulse/article-by-${connection.username}`,
