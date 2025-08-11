@@ -85,22 +85,40 @@ export class WebResearchService {
 
     try {
       // Generate comprehensive search queries
+      console.log(`📋 Step 1: Generating search queries for ${connection.full_name}`)
       const searchQueries = this.generateSearchQueries(connection)
+      console.log(`📋 Generated ${searchQueries.length} search queries:`, searchQueries)
       
       // Execute Perplexity searches for each area
+      console.log(`🔍 Step 2: Executing Perplexity searches...`)
       const searchResults = await this.executePerplexitySearches(searchQueries)
+      console.log(`🔍 Perplexity search completed, got ${searchResults.length} results`)
+      searchResults.forEach((result, i) => {
+        console.log(`  Query ${i + 1}: "${result.query}" -> ${result.sources?.length || 0} sources`)
+      })
       
       // Extract article URLs from search results
+      console.log(`🔗 Step 3: Extracting article URLs...`)
       const articleUrls = this.extractArticleUrls(searchResults)
+      console.log(`🔗 Extracted ${articleUrls.length} unique article URLs:`, articleUrls)
       
       // Use Firecrawl to extract full content from articles
+      console.log(`📄 Step 4: Extracting article content using Firecrawl...`)
       const articles = await this.extractArticleContent(articleUrls)
+      console.log(`📄 Successfully extracted ${articles.length} articles with content`)
+      articles.forEach((article, i) => {
+        console.log(`  Article ${i + 1}: "${article.title}" (${article.content.length} chars)`)
+      })
       
       // Analyze articles for expertise signals
+      console.log(`🧠 Step 5: Analyzing expertise signals...`)
       const expertiseSignals = this.analyzeExpertiseSignals(articles)
+      console.log(`🧠 Found ${expertiseSignals.length} expertise signals`)
       
       // Calculate expertise scores
+      console.log(`📊 Step 6: Calculating expertise scores...`)
       const scores = this.calculateExpertiseScores(expertiseSignals, articles)
+      console.log(`📊 Final scores:`, scores)
       
       return {
         connectionId: connection.id,

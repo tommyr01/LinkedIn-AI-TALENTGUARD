@@ -186,25 +186,39 @@ export class LinkedInDeepAnalysisService {
 
     try {
       // Analyze LinkedIn articles (if available)
+      console.log(`📚 Step 1: Analyzing LinkedIn articles for ${connection.full_name}`)
       const articles = await this.analyzeLinkedInArticles(connection)
+      console.log(`📚 Found ${articles.length} LinkedIn articles to analyze`)
       
       // Analyze LinkedIn posts
+      console.log(`📱 Step 2: Analyzing LinkedIn posts...`)
       const postsAnalysis = await this.analyzeLinkedInPosts(connection)
+      console.log(`📱 Analyzed ${postsAnalysis.length} LinkedIn posts`)
       
       // Analyze content themes from posts
+      console.log(`🎯 Step 3: Analyzing content themes...`)
       const contentThemes = this.analyzeContentThemes(postsAnalysis)
+      console.log(`🎯 Identified ${contentThemes.mainTopics.length} main content themes`)
       
       // Analyze activity patterns
+      console.log(`📊 Step 4: Analyzing activity patterns...`)
       const activityPatterns = await this.analyzeActivityPatterns(connection)
+      console.log(`📊 Activity patterns analyzed`)
       
       // Analyze profile
+      console.log(`👤 Step 5: Analyzing profile information...`)
       const profileAnalysis = await this.analyzeProfile(connection)
+      console.log(`👤 Profile analysis completed`)
       
       // Calculate expertise scores
+      console.log(`🎯 Step 6: Calculating expertise scores...`)
       const expertiseScores = this.calculateExpertiseScores(articles, postsAnalysis)
+      console.log(`🎯 Expertise scores calculated`)
       
       // Assess authority
+      console.log(`⭐ Step 7: Assessing authority signals...`)
       const authorityAssessment = this.assessAuthority(articles, postsAnalysis, activityPatterns)
+      console.log(`⭐ Authority assessment completed`)
 
       console.log(`📋 Content analysis summary for ${connection.full_name}:`)
       console.log(`   - ${postsAnalysis.length} posts analyzed`)
