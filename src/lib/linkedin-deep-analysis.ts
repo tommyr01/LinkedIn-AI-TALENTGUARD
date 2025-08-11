@@ -383,10 +383,10 @@ export class LinkedInDeepAnalysisService {
   
   // Keep the old mock structure as fallback for testing
   private getMockArticles(): LinkedInArticle[] {
-    return [
+    const mockArticles = [
       {
         title: "The Future of Talent Management in 2024",
-        url: `https://linkedin.com/pulse/article-by-${connection.username}`,
+        url: `https://linkedin.com/pulse/article-by-example-user`,
         content: "In my 10+ years of experience in talent management, I've seen organizations struggle with retention...",
         publishedDate: "2024-01-15",
         engagement: { likes: 150, comments: 25, shares: 30 },
