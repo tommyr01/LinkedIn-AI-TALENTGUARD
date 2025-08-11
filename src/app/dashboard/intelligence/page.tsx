@@ -28,6 +28,7 @@ import {
 } from 'lucide-react'
 import { toast } from "sonner"
 import { IntelligenceCard } from "@/components/intelligence/intelligence-card"
+import { IntelligenceErrorBoundary } from "@/components/intelligence/error-boundary"
 
 interface Connection {
   id: string
@@ -576,15 +577,17 @@ export default function IntelligenceDashboard() {
               const isSelected = selectedConnections.includes(connection.id)
               
               return (
-                <IntelligenceCard
-                  key={connection.id}
-                  connection={connection}
-                  profile={profile}
-                  isSelected={isSelected}
-                  onToggleSelection={toggleConnectionSelection}
-                  onResearch={researchSingleConnection}
-                  isLoading={isLoading}
-                />
+                <IntelligenceErrorBoundary key={`boundary-${connection.id}`}>
+                  <IntelligenceCard
+                    key={connection.id}
+                    connection={connection}
+                    profile={profile}
+                    isSelected={isSelected}
+                    onToggleSelection={toggleConnectionSelection}
+                    onResearch={researchSingleConnection}
+                    isLoading={isLoading}
+                  />
+                </IntelligenceErrorBoundary>
               )
             })}
 

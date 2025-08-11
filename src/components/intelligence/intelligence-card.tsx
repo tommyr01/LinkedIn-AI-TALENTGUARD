@@ -154,18 +154,41 @@ export function IntelligenceCard({
       console.log(`🔄 Starting re-research for ${connection.full_name}`)
       await onResearch(connection.id)
       
-      // Clear and refresh full profile if expanded
+      // If expanded, refresh the full profile data
       if (isExpanded) {
         console.log('🔄 Refreshing expanded profile after re-research')
+        
+        // Clear current full profile and reload
         setFullProfile(null)
-        // Wait a moment for state to settle before expanding
-        setTimeout(async () => {
-          try {
-            await handleExpandToggle()
-          } catch (error) {
-            console.error('Error refreshing expanded profile:', error)
+        
+        // Use a proper async delay instead of setTimeout with async callback
+        await new Promise(resolve => setTimeout(resolve, 200))
+        
+        try {
+          // Manually trigger profile reload by fetching fresh data
+          console.log(`📡 Fetching updated profile for connection: ${connection.id}`)
+          const response = await fetch(`/api/intelligence/profiles?connectionId=${connection.id}`)
+          
+          if (response.ok) {
+            const data = await response.json()
+            console.log('📡 Updated profile response:', data)
+            
+            if (data.success && data.data?.profile) {
+              setFullProfile(data.data.profile)
+              console.log('✅ Updated profile loaded successfully')
+            } else {
+              console.log('❌ No updated profile data available:', data.error || 'No profile found')
+              // Keep expanded but with no full profile - will show basic data
+            }
+          } else {
+            const errorText = await response.text().catch(() => 'Unknown error')
+            console.error('❌ Failed to fetch updated profile:', response.status, errorText)
+            // Keep expanded but with no full profile
           }
-        }, 100)
+        } catch (profileError) {
+          console.error('❌ Error fetching updated profile:', profileError)
+          // Don't collapse on profile fetch error - user can still see basic info
+        }
       }
       
       console.log(`✅ Re-research completed successfully for ${connection.full_name}`)
@@ -202,7 +225,26 @@ export function IntelligenceCard({
     return 'text-gray-500'
   }
 
-  const displayProfile = fullProfile || profile
+  // Safely compute display profile with validation
+  const displayProfile = (() => {
+    const candidate = fullProfile || profile
+    
+    // Validate the profile has required structure
+    if (!candidate) return null
+    
+    // Ensure critical fields exist to prevent render errors
+    try {
+      if (typeof candidate.connectionId !== 'string' || 
+          typeof candidate.connectionName !== 'string') {
+        console.warn('⚠️ Invalid profile structure detected:', candidate)
+        return null
+      }
+      return candidate
+    } catch (error) {
+      console.error('❌ Error validating profile structure:', error)
+      return null
+    }
+  })()
 
   console.log('🎨 IntelligenceCard render:', {
     connectionName: connection.full_name,
@@ -260,16 +302,20 @@ export function IntelligenceCard({
                   
                   {/* Show article count if available */}
                   {(() => {
-                    const linkedInArticles = profile.linkedInAnalysis?.articles_analysis?.length || 0
-                    const webArticles = profile.webResearch?.articles_found?.length || 0
-                    const totalArticles = linkedInArticles + webArticles
-                    
-                    if (totalArticles > 0) {
-                      return (
-                        <Badge variant="secondary">
-                          {totalArticles} article{totalArticles !== 1 ? 's' : ''} found
-                        </Badge>
-                      )
+                    try {
+                      const linkedInArticles = profile?.linkedInAnalysis?.articles_analysis?.length || 0
+                      const webArticles = profile?.webResearch?.articles_found?.length || 0
+                      const totalArticles = linkedInArticles + webArticles
+                      
+                      if (totalArticles > 0) {
+                        return (
+                          <Badge variant="secondary">
+                            {totalArticles} article{totalArticles !== 1 ? 's' : ''} found
+                          </Badge>
+                        )
+                      }
+                    } catch (error) {
+                      console.error('❌ Error computing article count:', error)
                     }
                     return null
                   })()}
@@ -277,24 +323,28 @@ export function IntelligenceCard({
                 
                 {/* Show topics they write about */}
                 {(() => {
-                  const allContent = [
-                    ...(profile.linkedInAnalysis?.articles_analysis || []).map(a => a.content),
-                    ...(profile.webResearch?.articles_found || []).map(a => a.content)
-                  ].join(' ').toLowerCase()
-                  
-                  const topics = []
-                  if (allContent.includes('talent management')) topics.push('Talent Management')
-                  if (allContent.includes('people development')) topics.push('People Development')
-                  if (allContent.includes('leadership')) topics.push('Leadership')
-                  if (allContent.includes('hr') || allContent.includes('human resources')) topics.push('HR')
-                  
-                  if (topics.length > 0) {
-                    return (
-                      <div className="text-xs text-muted-foreground">
-                        <strong>Writes about:</strong> {topics.slice(0, 3).join(', ')}
-                        {topics.length > 3 && '...'}
-                      </div>
-                    )
+                  try {
+                    const allContent = [
+                      ...(profile?.linkedInAnalysis?.articles_analysis || []).map(a => a?.content || ''),
+                      ...(profile?.webResearch?.articles_found || []).map(a => a?.content || '')
+                    ].join(' ').toLowerCase()
+                    
+                    const topics = []
+                    if (allContent.includes('talent management')) topics.push('Talent Management')
+                    if (allContent.includes('people development')) topics.push('People Development')
+                    if (allContent.includes('leadership')) topics.push('Leadership')
+                    if (allContent.includes('hr') || allContent.includes('human resources')) topics.push('HR')
+                    
+                    if (topics.length > 0) {
+                      return (
+                        <div className="text-xs text-muted-foreground">
+                          <strong>Writes about:</strong> {topics.slice(0, 3).join(', ')}
+                          {topics.length > 3 && '...'}
+                        </div>
+                      )
+                    }
+                  } catch (error) {
+                    console.error('❌ Error computing content topics:', error)
                   }
                   return null
                 })()}
