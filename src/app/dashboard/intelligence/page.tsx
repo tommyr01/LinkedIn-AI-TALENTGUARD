@@ -352,6 +352,27 @@ export default function IntelligenceDashboard() {
             <Users className="mr-2 h-4 w-4" />
             {isLoading ? 'Loading...' : 'Refresh Data'}
           </Button>
+          {connections.length > 0 && (
+            <Button 
+              variant="outline"
+              onClick={async () => {
+                const connectionId = connections[0].id
+                console.log('🧪 Testing API with connectionId:', connectionId)
+                try {
+                  const response = await fetch(`/api/intelligence/profiles?connectionId=${connectionId}`)
+                  console.log('🧪 API Status:', response.status)
+                  const data = await response.json()
+                  console.log('🧪 API Response:', data)
+                } catch (error) {
+                  console.error('🧪 API Error:', error)
+                }
+              }}
+              disabled={isLoading}
+            >
+              <Brain className="mr-2 h-4 w-4" />
+              Test API
+            </Button>
+          )}
         </div>
       </div>
 

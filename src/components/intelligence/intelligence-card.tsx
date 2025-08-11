@@ -77,24 +77,44 @@ export function IntelligenceCard({
   const [fullProfile, setFullProfile] = useState<IntelligenceProfile | null>(null)
 
   const handleExpandToggle = async () => {
+    console.log('🔍 handleExpandToggle called:', { 
+      isExpanded, 
+      hasProfile: !!profile, 
+      hasFullProfile: !!fullProfile,
+      connectionId: connection.id 
+    })
+    
     if (!isExpanded && profile && !fullProfile) {
       // Fetch full profile data when expanding for the first time
       setIsLoadingFullProfile(true)
       try {
+        console.log(`📡 Fetching full profile for connection: ${connection.id}`)
         const response = await fetch(`/api/intelligence/profiles?connectionId=${connection.id}`)
+        console.log('📡 API Response status:', response.status)
+        
         if (response.ok) {
           const data = await response.json()
+          console.log('📡 API Response data:', data)
+          
           if (data.success && data.data.profile) {
             setFullProfile(data.data.profile)
+            console.log('✅ Full profile loaded successfully')
+          } else {
+            console.log('❌ No profile data in response')
           }
+        } else {
+          console.log('❌ API response not OK:', response.status)
         }
       } catch (error) {
-        console.error('Error loading full profile:', error)
+        console.error('❌ Error loading full profile:', error)
       } finally {
         setIsLoadingFullProfile(false)
       }
     }
-    setIsExpanded(!isExpanded)
+    
+    const newExpandedState = !isExpanded
+    console.log('🔄 Setting isExpanded to:', newExpandedState)
+    setIsExpanded(newExpandedState)
   }
 
   const handleReResearch = async () => {
@@ -132,6 +152,14 @@ export function IntelligenceCard({
   }
 
   const displayProfile = fullProfile || profile
+
+  console.log('🎨 IntelligenceCard render:', {
+    connectionName: connection.full_name,
+    isExpanded,
+    hasDisplayProfile: !!displayProfile,
+    hasFullProfile: !!fullProfile,
+    hasProfile: !!profile
+  })
 
   return (
     <Card className={`transition-all duration-200 ${
@@ -258,10 +286,17 @@ export function IntelligenceCard({
 
       {isExpanded && displayProfile && (
         <CardContent className="pt-0">
+          {console.log('🔍 Rendering expanded content for:', connection.full_name)}
           <IntelligenceReportDisplay 
             profile={displayProfile}
             connection={connection}
           />
+        </CardContent>
+      )}
+      {isExpanded && !displayProfile && (
+        <CardContent className="pt-0">
+          {console.log('⚠️ Expanded but no displayProfile for:', connection.full_name)}
+          <div className="text-center py-4">No profile data available</div>
         </CardContent>
       )}
     </Card>
