@@ -96,6 +96,7 @@ export function IntelligenceCard({
   const [isExpanded, setIsExpanded] = useState(false)
   const [isLoadingFullProfile, setIsLoadingFullProfile] = useState(false)
   const [fullProfile, setFullProfile] = useState<IntelligenceProfile | null>(null)
+  const [isReResearching, setIsReResearching] = useState(false)
 
   const handleExpandToggle = async () => {
     console.log('🔍 handleExpandToggle called:', { 
@@ -117,17 +118,19 @@ export function IntelligenceCard({
           const data = await response.json()
           console.log('📡 API Response data:', data)
           
-          if (data.success && data.data.profile) {
+          if (data.success && data.data?.profile) {
             setFullProfile(data.data.profile)
             console.log('✅ Full profile loaded successfully')
           } else {
-            console.log('❌ No profile data in response')
+            console.log('❌ No profile data in response:', data.error || 'Unknown error')
           }
         } else {
-          console.log('❌ API response not OK:', response.status)
+          const errorText = await response.text().catch(() => 'Unknown error')
+          console.error('❌ API response not OK:', response.status, errorText)
         }
       } catch (error) {
         console.error('❌ Error loading full profile:', error)
+        // Don't prevent expansion if profile loading fails - user can still see basic info
       } finally {
         setIsLoadingFullProfile(false)
       }
@@ -139,11 +142,38 @@ export function IntelligenceCard({
   }
 
   const handleReResearch = async () => {
-    await onResearch(connection.id)
-    // Refresh full profile after re-research
-    if (isExpanded) {
-      setFullProfile(null)
-      handleExpandToggle()
+    // Prevent multiple simultaneous re-research operations
+    if (isReResearching || isLoading) {
+      console.log('⚠️ Re-research already in progress, ignoring request')
+      return
+    }
+
+    setIsReResearching(true)
+    
+    try {
+      console.log(`🔄 Starting re-research for ${connection.full_name}`)
+      await onResearch(connection.id)
+      
+      // Clear and refresh full profile if expanded
+      if (isExpanded) {
+        console.log('🔄 Refreshing expanded profile after re-research')
+        setFullProfile(null)
+        // Wait a moment for state to settle before expanding
+        setTimeout(async () => {
+          try {
+            await handleExpandToggle()
+          } catch (error) {
+            console.error('Error refreshing expanded profile:', error)
+          }
+        }, 100)
+      }
+      
+      console.log(`✅ Re-research completed successfully for ${connection.full_name}`)
+    } catch (error) {
+      console.error(`❌ Error during re-research for ${connection.full_name}:`, error)
+      // The onResearch function already shows error toasts, so we don't need to show another one
+    } finally {
+      setIsReResearching(false)
     }
   }
 
@@ -306,10 +336,10 @@ export function IntelligenceCard({
                   variant="ghost"
                   size="sm"
                   onClick={handleReResearch}
-                  disabled={isLoading}
+                  disabled={isLoading || isReResearching}
                   title="Re-run research"
                 >
-                  <RefreshCw className="h-4 w-4" />
+                  <RefreshCw className={`h-4 w-4 ${isReResearching ? 'animate-spin' : ''}`} />
                 </Button>
               </div>
             ) : (

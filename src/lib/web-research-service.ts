@@ -496,8 +496,13 @@ export class WebResearchService {
       'gallup.com': 85, 'pewresearch.org': 90
     }
 
-    const domain = new URL(url).hostname.replace('www.', '')
-    score += domainScores[domain] || 0
+    try {
+      const domain = new URL(url).hostname.replace('www.', '')
+      score += domainScores[domain] || 0
+    } catch (error) {
+      // Invalid URL, skip domain scoring
+      console.warn(`Invalid URL in scoreArticleUrl: ${url}`)
+    }
 
     // Content quality indicators
     const qualityKeywords = [
@@ -608,12 +613,24 @@ export class WebResearchService {
         return null
       }
 
+      let source = 'unknown'
+      try {
+        source = new URL(url).hostname
+      } catch (error) {
+        console.warn(`Invalid URL in scrapeArticleContent: ${url}`)
+        // Extract domain from URL string as fallback
+        const match = url.match(/https?:\/\/([^\/]+)/)
+        if (match) {
+          source = match[1]
+        }
+      }
+
       const article: WebArticle = {
         title: scrapedData.title,
         url: url,
         content: scrapedData.content,
         publishedDate: scrapedData.publishedDate,
-        source: new URL(url).hostname,
+        source,
         relevanceScore: this.calculateContentRelevance(scrapedData.content)
       }
 
