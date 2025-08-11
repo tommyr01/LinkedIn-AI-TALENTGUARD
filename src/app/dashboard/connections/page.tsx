@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { User, UserPlus, Search, Building, Calendar, MessageSquare, TrendingUp, Star, RefreshCw, MapPin, Users, ExternalLink, FileText } from 'lucide-react'
+import { User, UserPlus, Search, Building, Calendar, MessageSquare, TrendingUp, Star, RefreshCw, MapPin, Users, ExternalLink, FileText, Trash2 } from 'lucide-react'
 import { toast } from "sonner"
 import { AddConnectionModal } from '@/components/add-connection-modal'
 import { ConnectionPostsTable, type ConnectionPost, type PostStats } from '@/components/connection-posts-table'
@@ -36,6 +36,7 @@ export default function ConnectionsPage() {
   const [addOpen, setAddOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
+  const [deletingConnection, setDeletingConnection] = useState<string | null>(null)
   
   // Connection posts state
   const [connectionPosts, setConnectionPosts] = useState<ConnectionPost[]>([])
@@ -146,6 +147,56 @@ export default function ConnectionsPage() {
       await loadConnectionPosts(true)
     }
     toast.success('Data refreshed!')
+  }
+
+  const handleDeleteConnection = async (connection: Connection) => {
+    // Show confirmation dialog
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete "${connection.name}"?\n\n` +
+      `This will permanently remove:\n` +
+      `• The connection from your database\n` +
+      `• All associated posts and activity\n` +
+      `• Any intelligence profiles and research data\n\n` +
+      `This action cannot be undone.`
+    )
+
+    if (!confirmDelete) return
+
+    setDeletingConnection(connection.id)
+
+    try {
+      console.log(`🗑️ Deleting connection: ${connection.name}`)
+      toast.info(`Deleting ${connection.name}...`)
+
+      const response = await fetch(`/api/connections/delete?id=${encodeURIComponent(connection.id)}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || `HTTP ${response.status}`)
+      }
+
+      const result = await response.json()
+
+      if (result.success) {
+        // Remove the connection from local state
+        setConnections(prev => prev.filter(c => c.id !== connection.id))
+        toast.success(`${connection.name} has been deleted successfully`)
+        console.log(`✅ Successfully deleted connection: ${connection.name}`)
+      } else {
+        throw new Error(result.error || 'Delete operation failed')
+      }
+
+    } catch (error: any) {
+      console.error(`❌ Error deleting connection ${connection.name}:`, error)
+      toast.error(`Failed to delete ${connection.name}: ${error.message}`)
+    } finally {
+      setDeletingConnection(null)
+    }
   }
 
   useEffect(() => {
@@ -462,6 +513,16 @@ export default function ConnectionsPage() {
                               </a>
                             </Button>
                           )}
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={() => handleDeleteConnection(connection)}
+                            disabled={deletingConnection === connection.id}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            {deletingConnection === connection.id ? 'Deleting...' : 'Delete'}
+                          </Button>
                         </div>
                       </div>
                     </div>
