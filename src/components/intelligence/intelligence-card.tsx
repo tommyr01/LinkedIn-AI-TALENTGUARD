@@ -396,10 +396,25 @@ export function IntelligenceCard({
                     const allContent = contentParts.join(' ').toLowerCase()
                     const topics: string[] = []
                     
-                    if (allContent.includes('talent management')) topics.push('Talent Management')
-                    if (allContent.includes('people development')) topics.push('People Development')
-                    if (allContent.includes('leadership')) topics.push('Leadership')
-                    if (allContent.includes('hr') || allContent.includes('human resources')) topics.push('HR')
+                    // TalentGuard-specific topic detection (consistent with ArticlesView)
+                    const talentManagementTerms = ['talent management', 'skills management', 'workforce intelligence', 'succession planning']
+                    const peopleDevTerms = ['people development', 'employee development', 'upskilling', 'reskilling', 'learning and development']
+                    const hrTechTerms = ['hr technology', 'people analytics', 'competency mapping']
+                    
+                    if (talentManagementTerms.some(term => allContent.includes(term))) {
+                      topics.push('Talent Management')
+                    }
+                    if (peopleDevTerms.some(term => allContent.includes(term))) {
+                      topics.push('People Development')
+                    }
+                    if (hrTechTerms.some(term => allContent.includes(term))) {
+                      topics.push('HR Technology')
+                    }
+                    // Only show HR if we have specific HR context
+                    if (allContent.includes('human resources') || 
+                        (allContent.includes('hr') && topics.length > 0)) {
+                      topics.push('HR')
+                    }
                     
                     if (topics.length > 0) {
                       return (

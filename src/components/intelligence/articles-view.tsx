@@ -99,28 +99,63 @@ export function ArticlesView({ connection, profile }: ArticlesViewProps) {
       return acc
     }, {} as Record<string, number>)
     
-    // Topic analysis (enhanced)
+    // Topic analysis (TalentGuard-focused)
     const allContent = allArticles.map(a => a.content || '').join(' ').toLowerCase()
-    const topicCounts: Record<string, number> = {}
+    const topicScores: Record<string, number> = {}
     
-    const topics = [
-      'talent management', 'talent acquisition', 'people development', 'employee development',
-      'leadership', 'management', 'hr', 'human resources', 'culture', 'workplace culture',
-      'recruitment', 'hiring', 'performance', 'training', 'coaching', 'mentoring',
-      'diversity', 'inclusion', 'employee engagement', 'retention', 'onboarding'
+    // TalentGuard-specific high-value terms with weights
+    const highValueTopics = [
+      { term: 'talent management', weight: 3 },
+      { term: 'skills management', weight: 3 },
+      { term: 'workforce intelligence', weight: 3 },
+      { term: 'succession planning', weight: 3 },
+      { term: 'competency mapping', weight: 3 },
+      { term: 'people analytics', weight: 3 }
     ]
     
-    topics.forEach(topic => {
-      const count = (allContent.match(new RegExp(topic, 'g')) || []).length
-      if (count > 0) {
-        topicCounts[topic] = count
+    // Medium-value HR-specific terms
+    const mediumValueTopics = [
+      { term: 'people development', weight: 2 },
+      { term: 'employee development', weight: 2 },
+      { term: 'talent acquisition', weight: 2 },
+      { term: 'upskilling', weight: 2 },
+      { term: 'reskilling', weight: 2 },
+      { term: 'learning and development', weight: 2 },
+      { term: 'career development', weight: 2 },
+      { term: 'performance management', weight: 2 }
+    ]
+    
+    // Lower-value but relevant terms
+    const lowValueTopics = [
+      { term: 'talent strategy', weight: 1 },
+      { term: 'human capital', weight: 1 },
+      { term: 'workforce planning', weight: 1 },
+      { term: 'employee engagement', weight: 1 },
+      { term: 'talent retention', weight: 1 },
+      { term: 'hr technology', weight: 1 },
+      { term: 'people operations', weight: 1 }
+    ]
+    
+    const allTopics = [...highValueTopics, ...mediumValueTopics, ...lowValueTopics]
+    
+    // Calculate weighted scores for each topic
+    allTopics.forEach(({ term, weight }) => {
+      const matches = (allContent.match(new RegExp(term.replace(/\s+/g, '\\s+'), 'gi')) || []).length
+      if (matches > 0) {
+        topicScores[term] = matches * weight
       }
     })
     
-    const topTopics = Object.entries(topicCounts)
-      .sort(([,a], [,b]) => b - a)
-      .slice(0, 5)
-      .map(([topic, count]) => ({ topic, count }))
+    // Only include topics if we have a minimum threshold of talent management relevance
+    const totalScore = Object.values(topicScores).reduce((sum, score) => sum + score, 0)
+    const hasRelevantContent = totalScore >= 3 // Minimum threshold to avoid false positives
+    
+    const topTopics = hasRelevantContent 
+      ? Object.entries(topicScores)
+          .sort(([,a], [,b]) => b - a)
+          .slice(0, 5)
+          .map(([topic, score]) => ({ topic, count: score }))
+      : []
     
     // Engagement analysis for LinkedIn posts
     const linkedInEngagement = linkedInArticles.reduce((acc, article) => {
@@ -156,20 +191,30 @@ export function ArticlesView({ connection, profile }: ArticlesViewProps) {
     const topics = []
     const contentLower = content.toLowerCase()
     
-    if (contentLower.includes('talent management') || contentLower.includes('talent acquisition')) {
+    // TalentGuard-specific topic detection with minimum context requirements
+    const talentManagementTerms = ['talent management', 'skills management', 'workforce intelligence', 'succession planning']
+    const peopleDevTerms = ['people development', 'employee development', 'upskilling', 'reskilling', 'learning and development']
+    const hrTechTerms = ['hr technology', 'people analytics', 'competency mapping', 'workforce planning']
+    const talentAcqTerms = ['talent acquisition', 'talent retention', 'talent strategy']
+    
+    // Only tag if we find specific talent management terminology (not generic business terms)
+    if (talentManagementTerms.some(term => contentLower.includes(term))) {
       topics.push('Talent Management')
     }
-    if (contentLower.includes('people development') || contentLower.includes('employee development')) {
+    if (peopleDevTerms.some(term => contentLower.includes(term))) {
       topics.push('People Development')
     }
-    if (contentLower.includes('leadership') || contentLower.includes('management')) {
-      topics.push('Leadership')
+    if (hrTechTerms.some(term => contentLower.includes(term))) {
+      topics.push('HR Technology')
     }
-    if (contentLower.includes('hr') || contentLower.includes('human resources')) {
+    if (talentAcqTerms.some(term => contentLower.includes(term))) {
+      topics.push('Talent Acquisition')
+    }
+    
+    // Only include 'HR' if we have specific HR context (not just generic mentions)
+    if (contentLower.includes('human resources') || 
+        (contentLower.includes('hr') && topics.length > 0)) { // HR only if other HR topics detected
       topics.push('HR')
-    }
-    if (contentLower.includes('culture') || contentLower.includes('workplace culture')) {
-      topics.push('Culture')
     }
     
     return topics
