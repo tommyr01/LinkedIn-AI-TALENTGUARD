@@ -224,18 +224,29 @@ export class WebResearchService {
     // Check if we should use MCP or direct API
     const useMcp = process.env.NODE_ENV === 'production' || process.env.USE_PERPLEXITY_MCP === 'true'
     
+    console.log(`🔧 API Configuration Check:`, {
+      NODE_ENV: process.env.NODE_ENV,
+      USE_PERPLEXITY_MCP: process.env.USE_PERPLEXITY_MCP,
+      useMcp: useMcp,
+      hasPerplexityKey: !!process.env.PERPLEXITY_API_KEY
+    })
+    
     if (useMcp) {
-      console.log('🔌 Using Perplexity MCP for research')
+      console.log('🔌 Using Perplexity MCP for research (this will fall back to basic search)')
       return this.executePerplexityMCPSearches(queries)
     }
     
-    // Fallback to direct API (with improved error handling)
+    // Direct API approach
     const perplexityApiKey = process.env.PERPLEXITY_API_KEY
     
     if (!perplexityApiKey) {
-      console.warn('⚠️ PERPLEXITY_API_KEY not found, falling back to basic web search')
+      console.error('❌ CRITICAL: PERPLEXITY_API_KEY not found in environment variables')
+      console.error('This is why no Perplexity research data is being collected!')
+      console.warn('⚠️ Falling back to basic web search (mock data)')
       return this.executeBasicWebSearches(queries)
     }
+    
+    console.log(`🔑 Using direct Perplexity API with key: ${perplexityApiKey.substring(0, 8)}...`)
     
     for (const query of queries) {
       try {
@@ -271,13 +282,27 @@ export class WebResearchService {
 
         if (!response.ok) {
           const errorText = await response.text().catch(() => 'Unknown error')
-          console.error(`❌ Perplexity API error details:`, {
+          const errorDetails = {
             status: response.status,
             statusText: response.statusText,
             headers: Object.fromEntries(response.headers.entries()),
-            body: errorText.substring(0, 500)
-          })
-          throw new Error(`Perplexity API error: ${response.status} ${response.statusText}`)
+            body: errorText.substring(0, 500),
+            query: query,
+            url: 'https://api.perplexity.ai/chat/completions'
+          }
+          
+          console.error(`❌ PERPLEXITY API FAILED - This is likely why no research data is showing:`, errorDetails)
+          
+          // Log specific error types for debugging
+          if (response.status === 401) {
+            console.error(`🔑 AUTHENTICATION ERROR: Check PERPLEXITY_API_KEY in .env.local`)
+          } else if (response.status === 429) {
+            console.error(`⏰ RATE LIMIT ERROR: Too many requests to Perplexity API`)
+          } else if (response.status === 500) {
+            console.error(`🔥 SERVER ERROR: Perplexity API is experiencing issues`)
+          }
+          
+          throw new Error(`Perplexity API error: ${response.status} ${response.statusText} - ${errorText.substring(0, 200)}`)
         }
 
         const data = await response.json()
@@ -677,22 +702,44 @@ export class WebResearchService {
   }
 
   /**
-   * Extract full content from articles using real web scraping
+   * Extract full content from articles using Firecrawl API with fallback to basic scraping
    */
   private async extractArticleContent(urls: string[]): Promise<WebArticle[]> {
     const articles: WebArticle[] = []
     const maxConcurrent = 3 // Limit concurrent requests
     const chunks = this.chunkArray(urls, maxConcurrent)
     
+    // Check if Firecrawl API key is available
+    const firecrawlApiKey = process.env.FIRECRAWL_API_KEY
+    const useFirecrawl = !!firecrawlApiKey
+    
+    if (useFirecrawl) {
+      console.log(`🔥 Using Firecrawl API for content extraction (${urls.length} URLs)`)
+    } else {
+      console.log(`⚠️  FIRECRAWL_API_KEY not found, using basic web scraping (${urls.length} URLs)`)
+    }
+    
     for (const chunk of chunks) {
-      const promises = chunk.map(url => this.scrapeArticleContent(url))
+      const promises = chunk.map(url => 
+        useFirecrawl 
+          ? this.scrapeWithFirecrawl(url, firecrawlApiKey!)
+          : this.scrapeArticleContent(url)
+      )
       const results = await Promise.allSettled(promises)
       
       results.forEach((result, index) => {
         if (result.status === 'fulfilled' && result.value) {
           articles.push(result.value)
         } else {
-          console.error(`Failed to scrape ${chunk[index]}:`, result.status === 'rejected' ? result.reason : 'Unknown error')
+          const url = chunk[index]
+          const error = result.status === 'rejected' ? result.reason : 'Unknown error'
+          console.error(`❌ Failed to scrape ${url}:`, error)
+          
+          // If Firecrawl failed, try fallback basic scraping
+          if (useFirecrawl && result.status === 'rejected') {
+            console.log(`⚠️  Firecrawl failed for ${url}, trying basic scraping...`)
+            // We'll handle this in the next step - for now just log
+          }
         }
       })
       
@@ -772,6 +819,108 @@ export class WebResearchService {
       console.error(`❌ Error scraping ${url}:`, error)
       return null
     }
+  }
+
+  /**
+   * Scrape article content using Firecrawl API
+   */
+  private async scrapeWithFirecrawl(url: string, apiKey: string): Promise<WebArticle | null> {
+    try {
+      console.log(`🔥 Firecrawl scraping: ${url}`)
+
+      const response = await fetch('https://api.firecrawl.dev/v0/scrape', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          url: url,
+          formats: ['markdown', 'html'],
+          includeTags: ['article', 'main', 'div.content', 'div.post'],
+          excludeTags: ['nav', 'header', 'footer', 'aside', 'script', 'style'],
+          onlyMainContent: true,
+          waitFor: 3000 // Wait 3 seconds for dynamic content
+        })
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => 'Unknown error')
+        console.error(`❌ Firecrawl API error for ${url}:`, {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorText.substring(0, 500)
+        })
+        throw new Error(`Firecrawl API error: ${response.status} ${response.statusText}`)
+      }
+
+      const data = await response.json()
+      
+      if (!data.success) {
+        throw new Error(`Firecrawl failed: ${data.error || 'Unknown error'}`)
+      }
+
+      const markdown = data.data?.markdown || ''
+      const metadata = data.data?.metadata || {}
+      
+      if (!markdown || markdown.length < 200) {
+        console.warn(`⚠️  Insufficient content from Firecrawl for ${url} (${markdown.length} chars)`)
+        throw new Error('Insufficient content')
+      }
+
+      let source = 'unknown'
+      try {
+        source = new URL(url).hostname
+      } catch (error) {
+        const match = url.match(/https?:\/\/([^\/]+)/)
+        if (match) {
+          source = match[1]
+        }
+      }
+
+      const article: WebArticle = {
+        title: metadata.title || this.extractTitleFromMarkdown(markdown) || 'Article',
+        url: url,
+        content: this.convertMarkdownToText(markdown),
+        publishedDate: metadata.publishedTime,
+        source,
+        relevanceScore: this.calculateContentRelevance(markdown)
+      }
+
+      console.log(`✅ Firecrawl scraped: "${article.title}" (${article.content.length} chars, score: ${article.relevanceScore})`)
+      return article
+
+    } catch (error) {
+      console.error(`❌ Error in Firecrawl scraping ${url}:`, error)
+      
+      // Fallback to basic scraping
+      console.log(`⚠️  Falling back to basic scraping for ${url}`)
+      return this.scrapeArticleContent(url)
+    }
+  }
+
+  /**
+   * Extract title from markdown content
+   */
+  private extractTitleFromMarkdown(markdown: string): string | null {
+    const titleMatch = markdown.match(/^#\s+(.+)$/m)
+    return titleMatch ? titleMatch[1].trim() : null
+  }
+
+  /**
+   * Convert markdown to plain text for analysis
+   */
+  private convertMarkdownToText(markdown: string): string {
+    return markdown
+      // Remove markdown links but keep text
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      // Remove markdown formatting
+      .replace(/[*_`~#]/g, '')
+      // Remove image syntax
+      .replace(/!\[([^\]]*)\]\([^)]+\)/g, '')
+      // Clean up extra whitespace
+      .replace(/\n\s*\n/g, '\n\n')
+      .trim()
   }
 
   /**
