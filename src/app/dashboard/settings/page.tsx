@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ToneProfileManager } from '@/components/tone-profile-manager'
+import { ToneProfileManagerV2 } from '@/components/tone-profile/tone-profile-manager-v2'
 import { 
   IconUser,
   IconMail,
@@ -151,7 +151,7 @@ export default function SettingsPage() {
 
         {/* Tone of Voice Tab */}
         <TabsContent value="tone">
-          <ToneProfileManager />
+          <ToneProfileManagerV2 />
         </TabsContent>
 
         {/* Integrations Tab */}
