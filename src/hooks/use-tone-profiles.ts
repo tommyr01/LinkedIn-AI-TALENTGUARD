@@ -45,15 +45,7 @@ export interface ToneProfileTemplate {
 export interface ToneProfileFormData {
   name: string
   description: string
-  formality_level: 'professional' | 'conversational' | 'casual'
-  communication_style: 'direct' | 'collaborative' | 'consultative'
-  personality_traits: string[]
-  industry_language: string
-  custom_elements: string
-  sample_phrases: string[]
-  avoid_words: string[]
-  preferred_greetings: string[]
-  preferred_closings: string[]
+  context_guidelines: string
   ai_temperature: number
   ai_max_tokens: number
   ai_model: string
@@ -63,15 +55,7 @@ export interface ToneProfileFormData {
 const defaultFormData: ToneProfileFormData = {
   name: '',
   description: '',
-  formality_level: 'professional',
-  communication_style: 'collaborative',
-  personality_traits: [],
-  industry_language: 'general',
-  custom_elements: '',
-  sample_phrases: [''],
-  avoid_words: [''],
-  preferred_greetings: [''],
-  preferred_closings: [''],
+  context_guidelines: '',
   ai_temperature: 0.7,
   ai_max_tokens: 1000,
   ai_model: 'gpt-4',
@@ -132,10 +116,7 @@ export function useToneProfiles() {
       const token = localStorage.getItem('auth_token')
       const payload = {
         ...formData,
-        sample_phrases: formData.sample_phrases.filter(p => p.trim()),
-        avoid_words: formData.avoid_words.filter(w => w.trim()),
-        preferred_greetings: formData.preferred_greetings.filter(g => g.trim()),
-        preferred_closings: formData.preferred_closings.filter(c => c.trim())
+        custom_elements: formData.context_guidelines
       }
 
       const response = await fetch('/api/user/tone-profiles', {
@@ -175,10 +156,7 @@ export function useToneProfiles() {
       const token = localStorage.getItem('auth_token')
       const payload = {
         ...formData,
-        sample_phrases: formData.sample_phrases.filter(p => p.trim()),
-        avoid_words: formData.avoid_words.filter(w => w.trim()),
-        preferred_greetings: formData.preferred_greetings.filter(g => g.trim()),
-        preferred_closings: formData.preferred_closings.filter(c => c.trim())
+        custom_elements: formData.context_guidelines
       }
 
       const response = await fetch(`/api/user/tone-profiles/${profileId}`, {

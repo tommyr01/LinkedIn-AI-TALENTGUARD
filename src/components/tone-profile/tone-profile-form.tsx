@@ -6,23 +6,14 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Separator } from '@/components/ui/separator'
+import { Checkbox } from '@/components/ui/checkbox'
 import { IconCheck, IconX, IconSettings } from '@tabler/icons-react'
 
 export interface ToneProfileFormData {
   name: string
   description: string
-  formality_level: 'professional' | 'conversational' | 'casual'
-  communication_style: 'direct' | 'collaborative' | 'consultative'
-  personality_traits: string[]
-  industry_language: string
-  custom_elements: string
-  sample_phrases: string[]
-  avoid_words: string[]
-  preferred_greetings: string[]
-  preferred_closings: string[]
+  context_guidelines: string
   ai_temperature: number
   ai_max_tokens: number
   ai_model: string
@@ -38,29 +29,6 @@ interface ToneProfileFormProps {
   isSubmitting?: boolean
 }
 
-const personalityTraitOptions = [
-  'enthusiastic', 'analytical', 'supportive', 'authoritative', 'empathetic', 'innovative'
-]
-
-const industryLanguageOptions = [
-  { value: 'hr_tech', label: 'HR Technology' },
-  { value: 'leadership_development', label: 'Leadership Development' },
-  { value: 'sales', label: 'Sales' },
-  { value: 'consulting', label: 'Consulting' },
-  { value: 'general', label: 'General Business' }
-]
-
-const formalityLevels = [
-  { value: 'professional', label: 'Professional', description: 'Formal, business-appropriate tone' },
-  { value: 'conversational', label: 'Conversational', description: 'Friendly yet professional' },
-  { value: 'casual', label: 'Casual', description: 'Relaxed and approachable' }
-]
-
-const communicationStyles = [
-  { value: 'direct', label: 'Direct', description: 'Straight-forward and to the point' },
-  { value: 'collaborative', label: 'Collaborative', description: 'Partnership-focused approach' },
-  { value: 'consultative', label: 'Consultative', description: 'Advisory and questioning style' }
-]
 
 export const ToneProfileForm = memo(function ToneProfileForm({
   formData,
@@ -74,13 +42,6 @@ export const ToneProfileForm = memo(function ToneProfileForm({
     onFormDataChange({ [field]: value })
   }, [onFormDataChange])
 
-  const handlePersonalityTraitToggle = useCallback((trait: string, checked: boolean) => {
-    const newTraits = checked
-      ? [...formData.personality_traits, trait]
-      : formData.personality_traits.filter(t => t !== trait)
-    
-    handleFieldChange('personality_traits', newTraits)
-  }, [formData.personality_traits, handleFieldChange])
 
   const isFormValid = formData.name.trim().length > 0
 
@@ -97,7 +58,7 @@ export const ToneProfileForm = memo(function ToneProfileForm({
       
       <CardContent className="space-y-6">
         {/* Basic Information */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="profile-name" className="required">Profile Name</Label>
             <Input
@@ -109,113 +70,33 @@ export const ToneProfileForm = memo(function ToneProfileForm({
               aria-invalid={!formData.name.trim()}
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="industry-language">Industry Language</Label>
-            <Select 
-              value={formData.industry_language} 
-              onValueChange={(value) => handleFieldChange('industry_language', value)}
-            >
-              <SelectTrigger id="industry-language">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {industryLanguageOptions.map(option => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="description">Description (Optional)</Label>
-          <Textarea
-            id="description"
-            value={formData.description}
-            onChange={(e) => handleFieldChange('description', e.target.value)}
-            placeholder="Brief description of when to use this tone profile..."
-            rows={2}
-          />
-        </div>
-
-        {/* Communication Settings */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="formality-level">Formality Level</Label>
-            <Select 
-              value={formData.formality_level} 
-              onValueChange={(value: any) => handleFieldChange('formality_level', value)}
-            >
-              <SelectTrigger id="formality-level">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {formalityLevels.map(level => (
-                  <SelectItem key={level.value} value={level.value}>
-                    <div>
-                      <div className="font-medium">{level.label}</div>
-                      <div className="text-xs text-muted-foreground">{level.description}</div>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
 
           <div className="space-y-2">
-            <Label htmlFor="communication-style">Communication Style</Label>
-            <Select 
-              value={formData.communication_style} 
-              onValueChange={(value: any) => handleFieldChange('communication_style', value)}
-            >
-              <SelectTrigger id="communication-style">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {communicationStyles.map(style => (
-                  <SelectItem key={style.value} value={style.value}>
-                    <div>
-                      <div className="font-medium">{style.label}</div>
-                      <div className="text-xs text-muted-foreground">{style.description}</div>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="description">Description (Optional)</Label>
+            <Textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) => handleFieldChange('description', e.target.value)}
+              placeholder="Brief description of when to use this tone profile..."
+              rows={2}
+            />
           </div>
-        </div>
 
-        {/* Personality Traits */}
-        <div className="space-y-3">
-          <Label>Personality Traits</Label>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2" role="group" aria-labelledby="personality-traits-label">
-            {personalityTraitOptions.map(trait => (
-              <div key={trait} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`trait-${trait}`}
-                  checked={formData.personality_traits.includes(trait)}
-                  onCheckedChange={(checked) => handlePersonalityTraitToggle(trait, !!checked)}
-                />
-                <Label htmlFor={`trait-${trait}`} className="text-sm capitalize">
-                  {trait}
-                </Label>
-              </div>
-            ))}
+          {/* Context Guidelines */}
+          <div className="space-y-2">
+            <Label htmlFor="context-guidelines">Context Guidelines</Label>
+            <Textarea
+              id="context-guidelines"
+              value={formData.context_guidelines}
+              onChange={(e) => handleFieldChange('context_guidelines', e.target.value)}
+              placeholder="Enter your tone of voice guidelines here. For example: Use a professional yet approachable tone. Focus on collaboration and partnership. Emphasize data-driven insights while maintaining warmth..."
+              rows={8}
+              className="min-h-[200px]"
+            />
+            <div className="text-xs text-muted-foreground">
+              Provide detailed guidelines for how AI should communicate on your behalf, including tone, style, personality traits, and any specific language preferences.
+            </div>
           </div>
-        </div>
-
-        {/* Custom Instructions */}
-        <div className="space-y-2">
-          <Label htmlFor="custom-instructions">Custom Instructions</Label>
-          <Textarea
-            id="custom-instructions"
-            value={formData.custom_elements}
-            onChange={(e) => handleFieldChange('custom_elements', e.target.value)}
-            placeholder="Additional instructions for AI behavior..."
-            rows={3}
-          />
         </div>
 
         {/* AI Settings */}
@@ -259,18 +140,13 @@ export const ToneProfileForm = memo(function ToneProfileForm({
 
             <div className="space-y-2">
               <Label htmlFor="ai-model">AI Model</Label>
-              <Select 
-                value={formData.ai_model} 
-                onValueChange={(value) => handleFieldChange('ai_model', value)}
-              >
-                <SelectTrigger id="ai-model">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="gpt-4">GPT-4 (Recommended)</SelectItem>
-                  <SelectItem value="gpt-3.5-turbo">GPT-3.5 Turbo</SelectItem>
-                </SelectContent>
-              </Select>
+              <Input
+                id="ai-model"
+                type="text"
+                value={formData.ai_model}
+                onChange={(e) => handleFieldChange('ai_model', e.target.value)}
+                placeholder="e.g., gpt-4"
+              />
             </div>
           </div>
         </div>
