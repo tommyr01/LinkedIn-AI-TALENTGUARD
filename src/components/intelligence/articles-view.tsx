@@ -80,8 +80,16 @@ export function ArticlesView({ connection, profile }: ArticlesViewProps) {
     // Posting frequency analysis
     const sortedByDate = allArticles
       .filter(article => article.publishedDate && typeof article.publishedDate === 'string')
-      .map(article => ({ ...article, parsedDate: parseISO(article.publishedDate) }))
-      .filter(article => !isNaN(article.parsedDate.getTime()))
+      .map(article => {
+        try {
+          const parsedDate = parseISO(article.publishedDate)
+          return { ...article, parsedDate }
+        } catch (error) {
+          console.warn('❌ Failed to parse date:', article.publishedDate)
+          return null
+        }
+      })
+      .filter((article): article is NonNullable<typeof article> => article !== null && !isNaN(article.parsedDate.getTime()))
       .sort((a, b) => b.parsedDate.getTime() - a.parsedDate.getTime())
     
     const mostRecentPost = sortedByDate.length > 0 ? sortedByDate[0] : null
@@ -229,7 +237,17 @@ export function ArticlesView({ connection, profile }: ArticlesViewProps) {
             <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
               <div className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
-                {article.publishedDate ? format(new Date(article.publishedDate), 'MMM d, yyyy') : 'Date unavailable'}
+                {(() => {
+                  try {
+                    if (!article.publishedDate) return 'Date unavailable'
+                    const date = new Date(article.publishedDate)
+                    if (isNaN(date.getTime())) return 'Date unavailable'
+                    return format(date, 'MMM d, yyyy')
+                  } catch (error) {
+                    console.warn('❌ Invalid date in article.publishedDate:', article.publishedDate)
+                    return 'Date unavailable'
+                  }
+                })()}
               </div>
               {type === 'linkedin' ? (
                 <div className="flex items-center gap-3">
@@ -381,7 +399,14 @@ export function ArticlesView({ connection, profile }: ArticlesViewProps) {
                   <div className="pt-2">
                     <span className="text-sm font-medium">Most Recent:</span>
                     <p className="text-xs text-muted-foreground">
-                      {formatDistanceToNow(insights.mostRecentPost.parsedDate, { addSuffix: true })}
+                      {(() => {
+                        try {
+                          return formatDistanceToNow(insights.mostRecentPost.parsedDate, { addSuffix: true })
+                        } catch (error) {
+                          console.warn('❌ Error formatting recent post date:', error)
+                          return 'Recently'
+                        }
+                      })()}
                     </p>
                   </div>
                 )}
@@ -472,12 +497,26 @@ export function ArticlesView({ connection, profile }: ArticlesViewProps) {
                 <CardContent>
                   <div className="space-y-2">
                     <div className="text-sm text-muted-foreground">
-                      Content published over {insights.oldestPost ? formatDistanceToNow(insights.oldestPost.parsedDate) : 'unknown period'}
+                      Content published over {(() => {
+                        try {
+                          return insights.oldestPost ? formatDistanceToNow(insights.oldestPost.parsedDate) : 'unknown period'
+                        } catch (error) {
+                          console.warn('❌ Error formatting oldest post date:', error)
+                          return 'unknown period'
+                        }
+                      })()}
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {insights.sortedByDate.slice(0, 10).map((article, index) => (
                         <Badge key={index} variant="outline" className="text-xs" title={article.title}>
-                          {format(article.parsedDate, 'MMM yy')}
+                          {(() => {
+                            try {
+                              return format(article.parsedDate, 'MMM yy')
+                            } catch (error) {
+                              console.warn('❌ Error formatting timeline date:', article.parsedDate)
+                              return 'Unknown'
+                            }
+                          })()}
                         </Badge>
                       ))}
                       {insights.sortedByDate.length > 10 && (

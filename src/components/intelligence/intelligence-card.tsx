@@ -486,8 +486,20 @@ export function IntelligenceCard({
             
             {profile && (
               <div className="text-right text-xs text-muted-foreground">
-                <div>Researched {format(new Date(profile.researched_at), 'MMM d, yyyy')}</div>
-                <div>{profile.researchDuration}s duration</div>
+                <div>
+                  Researched {(() => {
+                    try {
+                      if (!profile.researched_at) return 'Recently'
+                      const date = new Date(profile.researched_at)
+                      if (isNaN(date.getTime())) return 'Recently'
+                      return format(date, 'MMM d, yyyy')
+                    } catch (error) {
+                      console.warn('❌ Invalid date in profile.researched_at:', profile.researched_at)
+                      return 'Recently'
+                    }
+                  })()}
+                </div>
+                <div>{profile.researchDuration ? `${profile.researchDuration}s` : 'Unknown'} duration</div>
               </div>
             )}
           </div>
