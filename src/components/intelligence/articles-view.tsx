@@ -79,6 +79,7 @@ export function ArticlesView({ connection, profile }: ArticlesViewProps) {
     
     // Posting frequency analysis
     const sortedByDate = allArticles
+      .filter(article => article.publishedDate && typeof article.publishedDate === 'string')
       .map(article => ({ ...article, parsedDate: parseISO(article.publishedDate) }))
       .filter(article => !isNaN(article.parsedDate.getTime()))
       .sort((a, b) => b.parsedDate.getTime() - a.parsedDate.getTime())
@@ -99,7 +100,7 @@ export function ArticlesView({ connection, profile }: ArticlesViewProps) {
     }, {} as Record<string, number>)
     
     // Topic analysis (enhanced)
-    const allContent = allArticles.map(a => a.content).join(' ').toLowerCase()
+    const allContent = allArticles.map(a => a.content || '').join(' ').toLowerCase()
     const topicCounts: Record<string, number> = {}
     
     const topics = [
@@ -123,9 +124,11 @@ export function ArticlesView({ connection, profile }: ArticlesViewProps) {
     
     // Engagement analysis for LinkedIn posts
     const linkedInEngagement = linkedInArticles.reduce((acc, article) => {
-      acc.totalLikes += article.engagement.likes
-      acc.totalComments += article.engagement.comments
-      acc.totalShares += article.engagement.shares
+      if (article.engagement) {
+        acc.totalLikes += article.engagement.likes || 0
+        acc.totalComments += article.engagement.comments || 0
+        acc.totalShares += article.engagement.shares || 0
+      }
       return acc
     }, { totalLikes: 0, totalComments: 0, totalShares: 0 })
     
@@ -177,17 +180,17 @@ export function ArticlesView({ connection, profile }: ArticlesViewProps) {
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <CardTitle className="text-lg mb-2">{article.title}</CardTitle>
+            <CardTitle className="text-lg mb-2">{article.title || 'Untitled Article'}</CardTitle>
             <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
               <div className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
-                {format(new Date(article.publishedDate), 'MMM d, yyyy')}
+                {article.publishedDate ? format(new Date(article.publishedDate), 'MMM d, yyyy') : 'Date unavailable'}
               </div>
               {type === 'linkedin' ? (
                 <div className="flex items-center gap-3">
-                  <span>{article.engagement.likes} likes</span>
-                  <span>{article.engagement.comments} comments</span>
-                  <span>{article.engagement.shares} shares</span>
+                  <span>{article.engagement?.likes || 0} likes</span>
+                  <span>{article.engagement?.comments || 0} comments</span>
+                  <span>{article.engagement?.shares || 0} shares</span>
                 </div>
               ) : (
                 <>
@@ -213,12 +216,12 @@ export function ArticlesView({ connection, profile }: ArticlesViewProps) {
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted-foreground mb-3 line-clamp-3">
-          {article.content}
+          {article.content || 'No content available'}
         </p>
         
-        {getTopicTags(article.content).length > 0 && (
+        {getTopicTags(article.content || '').length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {getTopicTags(article.content).map((topic, topicIndex) => (
+            {getTopicTags(article.content || '').map((topic, topicIndex) => (
               <Badge key={topicIndex} variant="outline" className="text-xs">
                 {topic}
               </Badge>
