@@ -118,7 +118,8 @@ export class WebResearchService {
       if (searchResults.length > 0) {
         try {
           console.log(`🔗 Step 3: Extracting article URLs...`)
-          const articleUrls = this.extractArticleUrls(searchResults)
+          const companyDomains = this.extractCompanyDomains(connection.current_company || '')
+          const articleUrls = this.extractArticleUrls(searchResults, companyDomains)
           console.log(`🔗 Extracted ${articleUrls.length} unique article URLs`)
           
           if (articleUrls.length > 0) {
@@ -190,29 +191,87 @@ export class WebResearchService {
   }
 
   /**
-   * Generate targeted search queries for different expertise areas
+   * Generate company-focused search queries prioritizing company website blogs
    */
   private generateSearchQueries(connection: DBLinkedInConnection): string[] {
     const name = connection.full_name
     const company = connection.current_company || ''
     const title = connection.title || connection.headline || ''
+    
+    // Extract potential company domains
+    const companyDomains = this.extractCompanyDomains(company)
+    
+    const queries: string[] = []
+    
+    // Primary: Company-specific blog and content searches
+    if (companyDomains.length > 0) {
+      companyDomains.forEach(domain => {
+        // Company blog posts and articles
+        queries.push(`site:${domain} "${name}" (blog OR insights OR news OR articles OR thought OR leadership)`)
+        
+        // Company career/team pages and announcements
+        queries.push(`site:${domain} "${name}" (team OR careers OR about OR executive OR management OR featured)`)
+        
+        // Company press releases and company news
+        queries.push(`site:${domain} "${name}" (press OR announcement OR hire OR promotion OR leadership)`)
+      })
+    }
+    
+    // Secondary: Company-specific industry content (if we have company name but no clear domain)
+    if (company && queries.length === 0) {
+      queries.push(`"${name}" "${company}" (blog OR insights OR thought leadership OR articles OR featured)`)
+      queries.push(`"${name}" "${company}" (interview OR speaking OR conference OR webinar OR podcast)`)
+    }
+    
+    // Fallback: LinkedIn and professional content (always include as backup)
+    queries.push(`"${name}" site:linkedin.com/pulse (talent OR people OR HR OR leadership OR management)`)
+    queries.push(`"${name}" (medium.com OR substack.com) (talent management OR people development OR HR)`)
+    
+    // Industry-specific thought leadership (last resort)
+    if (queries.length < 3) {
+      queries.push(`"${name}" ${title} (SHRM OR HR Executive OR People Management OR Talent Management)`)
+    }
+    
+    console.log(`🔍 Generated ${queries.length} company-focused search queries for ${name}:`)
+    queries.forEach((query, i) => console.log(`  ${i + 1}: ${query}`))
+    
+    return queries.slice(0, 6) // Limit to 6 queries max for performance
+  }
 
-    return [
-      // Talent management focus
-      `"${name}" ${company} talent management OR talent acquisition OR succession planning`,
+  /**
+   * Extract potential company domains from company name
+   */
+  private extractCompanyDomains(companyName: string): string[] {
+    if (!companyName || companyName.trim().length === 0) {
+      return []
+    }
+    
+    const domains: string[] = []
+    const cleanCompany = companyName.toLowerCase()
+      .replace(/\s+/g, '')  // Remove spaces
+      .replace(/[^\w]/g, '') // Remove special characters
+      .replace(/inc|llc|corp|corporation|company|ltd|limited|group|international|solutions|technologies|systems|services|consulting/g, '') // Remove common suffixes
+      .trim()
+    
+    if (cleanCompany.length > 2) {
+      // Common domain patterns
+      const commonTlds = ['com', 'co', 'org', 'io', 'net']
       
-      // People development focus  
-      `"${name}" ${company} people development OR leadership development OR employee development`,
+      commonTlds.forEach(tld => {
+        domains.push(`${cleanCompany}.${tld}`)
+      })
       
-      // HR technology focus
-      `"${name}" ${company} HR technology OR HRIS OR people analytics OR workforce analytics`,
-      
-      // General thought leadership
-      `"${name}" ${company} articles OR blog posts OR conference OR speaking`,
-      
-      // Industry-specific
-      `"${name}" ${title} human resources OR talent OR people operations`
-    ]
+      // Handle multi-word companies (take first part)
+      if (cleanCompany.length > 8) {
+        const shortName = cleanCompany.substring(0, Math.min(8, cleanCompany.length))
+        commonTlds.forEach(tld => {
+          domains.push(`${shortName}.${tld}`)
+        })
+      }
+    }
+    
+    console.log(`🌐 Extracted ${domains.length} potential domains for "${companyName}":`, domains)
+    return domains.slice(0, 4) // Limit to 4 domains to avoid too many queries
   }
 
   /**
@@ -538,7 +597,7 @@ export class WebResearchService {
   /**
    * Check if URL is likely to contain a high-quality article
    */
-  private isArticleUrl(url: string): boolean {
+  private isArticleUrl(url: string, companyDomains: string[] = []): boolean {
     // Skip unwanted URLs first
     const excludePatterns = [
       /\.(pdf|doc|docx|ppt|pptx|xls|xlsx|jpg|jpeg|png|gif|svg|mp4|mp3|zip|rar)$/i,
@@ -546,40 +605,63 @@ export class WebResearchService {
       /facebook\.com/i, /twitter\.com/i, /instagram\.com/i, /youtube\.com/i,
       /tiktok\.com/i, /pinterest\.com/i, /snapchat\.com/i,
       /\/page\/\d+/i, /\/\d{4}\/\d{2}\/$/, // pagination and date archives without articles
-      /\/(login|register|signup|subscribe|contact|about|privacy|terms)/i
+      /\/(login|register|signup|subscribe|contact|about|privacy|terms|careers\/apply|jobs\/apply)/i
     ]
     
     if (excludePatterns.some(pattern => pattern.test(url))) {
       return false
     }
 
-    // High-quality business and HR publications
+    // Check if this is a company website URL (highest priority)
+    const isCompanyUrl = companyDomains.some(domain => {
+      try {
+        const urlHost = new URL(url).hostname.toLowerCase()
+        return urlHost === domain || urlHost === `www.${domain}` || urlHost.endsWith(`.${domain}`)
+      } catch {
+        return false
+      }
+    })
+
+    // Company website content patterns (more permissive for company URLs)
+    const companyContentPatterns = [
+      /\/blog\//i, /\/insights\//i, /\/news\//i, /\/articles\//i,
+      /\/thought-leadership/i, /\/resources\//i, /\/press\//i,
+      /\/team\//i, /\/about\//i, /\/careers\//i, /\/leadership\//i,
+      /\/executive\//i, /\/management\//i, /\/featured\//i,
+      /\/announcement\//i, /\/hire\//i, /\/promotion\//i,
+      /\/culture\//i, /\/company\//i, /\/our-team\//i
+    ]
+
+    if (isCompanyUrl) {
+      // For company URLs, be more permissive - allow if it has any content pattern or looks like an article
+      const hasCompanyContentPattern = companyContentPatterns.some(pattern => pattern.test(url))
+      const looksLikeArticle = /\/[a-z0-9-]{10,}\/?$/i.test(url) || /\/\d{4}\//.test(url)
+      
+      return hasCompanyContentPattern || looksLikeArticle
+    }
+
+    // High-quality business and HR publications (secondary priority)
     const highQualityDomains = [
-      // Major business publications
-      /hbr\.org/i, /harvard\.edu/i, /mit\.edu/i, /stanford\.edu/i,
-      /forbes\.com\/sites/i, /fortune\.com/i, /bloomberg\.com/i,
-      /wsj\.com/i, /economist\.com/i, /ft\.com/i,
+      // Professional platforms
+      /linkedin\.com\/pulse/i, /medium\.com/i, /substack\.com/i,
       
       // HR and talent management specific
       /shrm\.org/i, /hrexecutive\.com/i, /workforce\.com/i,
       /talentmgt\.com/i, /hrdive\.com/i, /peoplemanagementmagazine\.co\.uk/i,
       /cornerfm\.com/i, /hrreview\.co\.uk/i,
       
+      // Major business publications (lower priority now)
+      /hbr\.org/i, /harvard\.edu/i, /mit\.edu/i, /stanford\.edu/i,
+      /forbes\.com\/sites/i, /fortune\.com/i, /bloomberg\.com/i,
+      
       // Consulting firms
       /mckinsey\.com/i, /bcg\.com/i, /bain\.com/i, /deloitte\.com/i,
-      /pwc\.com/i, /ey\.com/i, /kpmg\.com/i, /accenture\.com/i,
-      
-      // Technology and business insights
-      /linkedin\.com\/pulse/i, /medium\.com/i, /substack\.com/i,
-      /techcrunch\.com/i, /venturebeat\.com/i,
-      
-      // Industry associations and research
-      /gallup\.com/i, /pewresearch\.org/i, /brookings\.edu/i
+      /pwc\.com/i, /ey\.com/i, /kpmg\.com/i, /accenture\.com/i
     ]
     
     const isHighQualityDomain = highQualityDomains.some(pattern => pattern.test(url))
     
-    // Content indicators for articles
+    // Content indicators for articles (strict for non-company URLs)
     const articlePatterns = [
       /\/blog\//i, /\/article\//i, /\/post\//i, /\/news\//i, 
       /\/insights\//i, /\/research\//i, /\/reports\//i, /\/analysis\//i,
@@ -590,32 +672,32 @@ export class WebResearchService {
       /\/\d{4}\/\d{2}\/\d{2}\//i, // date structure: /2024/03/15/
       /\/\d{4}-\d{2}-\d{2}-/i,    // date structure: /2024-03-15-
       /-\d{4,}$/i,                 // ends with year or ID
-      /\/[a-z0-9-]{20,}\/?$/i      // long descriptive slugs
+      /\/[a-z0-9-]{25,}\/?$/i      // long descriptive slugs (increased threshold)
     ]
     
     const hasArticlePattern = articlePatterns.some(pattern => pattern.test(url))
     
-    // Must be either high-quality domain OR have article patterns
-    return isHighQualityDomain || hasArticlePattern
+    // For non-company URLs, require high-quality domain AND article pattern
+    return isHighQualityDomain && hasArticlePattern
   }
 
   /**
-   * Enhanced article URL extraction with quality scoring
+   * Enhanced article URL extraction with company-focused quality scoring
    */
-  private extractArticleUrls(searchResults: PerplexitySearchResult[]): string[] {
+  private extractArticleUrls(searchResults: PerplexitySearchResult[], companyDomains: string[] = []): string[] {
     const urlScores = new Map<string, number>()
     
     searchResults.forEach(result => {
       result.sources.forEach(source => {
         // Validate URL before processing
-        if (this.isValidUrl(source.url) && this.isArticleUrl(source.url)) {
-          const score = this.scoreArticleUrl(source.url, source.title, source.snippet)
+        if (this.isValidUrl(source.url) && this.isArticleUrl(source.url, companyDomains)) {
+          const score = this.scoreArticleUrl(source.url, source.title, source.snippet, companyDomains)
           urlScores.set(source.url, score)
         }
       })
     })
     
-    // Sort by score and return top URLs
+    // Sort by score and return top URLs (prioritizing company URLs)
     return Array.from(urlScores.entries())
       .sort(([,a], [,b]) => b - a)
       .slice(0, 20) // Limit to top 20 articles
@@ -637,26 +719,49 @@ export class WebResearchService {
   }
 
   /**
-   * Score article URLs based on domain quality and content indicators
+   * Score article URLs with company website prioritization
    */
-  private scoreArticleUrl(url: string, title: string = '', snippet: string = ''): number {
+  private scoreArticleUrl(url: string, title: string = '', snippet: string = '', companyDomains: string[] = []): number {
     let score = 50 // Base score
 
-    // Domain quality scoring
-    const domainScores: Record<string, number> = {
-      'hbr.org': 95, 'harvard.edu': 95, 'mit.edu': 95, 'stanford.edu': 95,
-      'forbes.com': 85, 'fortune.com': 85, 'bloomberg.com': 85, 'wsj.com': 90,
-      'shrm.org': 90, 'hrexecutive.com': 85, 'workforce.com': 80,
-      'mckinsey.com': 95, 'bcg.com': 90, 'bain.com': 90, 'deloitte.com': 85,
-      'linkedin.com': 75, 'medium.com': 70,
-      'gallup.com': 85, 'pewresearch.org': 90
-    }
-
     try {
-      const domain = new URL(url).hostname.replace('www.', '')
-      score += domainScores[domain] || 0
+      const urlHost = new URL(url).hostname.toLowerCase()
+      
+      // HIGHEST PRIORITY: Company website URLs get massive bonus
+      const isCompanyUrl = companyDomains.some(domain => {
+        return urlHost === domain || urlHost === `www.${domain}` || urlHost.endsWith(`.${domain}`)
+      })
+      
+      if (isCompanyUrl) {
+        score += 200 // Huge bonus for company URLs to prioritize them
+        console.log(`🏢 Company URL bonus applied: ${url}`)
+        
+        // Extra bonus for company blog/insight pages
+        if (/\/(blog|insights|news|thought-leadership|resources|press)/i.test(url)) {
+          score += 50
+        }
+      } else {
+        // Traditional domain quality scoring for non-company URLs
+        const domainScores: Record<string, number> = {
+          // Professional platforms (medium priority)
+          'linkedin.com': 60, 'medium.com': 55, 'substack.com': 55,
+          
+          // HR and talent management specific (higher priority)
+          'shrm.org': 80, 'hrexecutive.com': 75, 'workforce.com': 70,
+          'talentmgt.com': 75, 'hrdive.com': 70,
+          
+          // Major business publications (lower priority than before)
+          'hbr.org': 70, 'harvard.edu': 70, 'mit.edu': 70, 'stanford.edu': 70,
+          'forbes.com': 60, 'fortune.com': 60, 'bloomberg.com': 60,
+          
+          // Consulting firms
+          'mckinsey.com': 75, 'bcg.com': 70, 'bain.com': 70, 'deloitte.com': 65
+        }
+        
+        const domain = urlHost.replace('www.', '')
+        score += domainScores[domain] || 0
+      }
     } catch (error) {
-      // Invalid URL, skip domain scoring
       console.warn(`Invalid URL in scoreArticleUrl: ${url}`)
     }
 
