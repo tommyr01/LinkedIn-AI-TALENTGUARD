@@ -23,6 +23,7 @@ export const tables = {
   research: 'tblM7imDwQjjh7F54',
   activities: process.env.AIRTABLE_ACTIVITIES_TABLE || '',
   tasks: 'tbl7QneKQyiqAcN8B',
+  researched_prospects: process.env.AIRTABLE_RESEARCHED_PROSPECTS_TABLE || 'tblResearchedProspects',
 };
 
 // Table names for backward compatibility
@@ -341,6 +342,113 @@ export const activityOperations = {
       return { success: true, data: record };
     } catch (error) {
       console.error('Error logging activity:', error);
+      return { success: false, error: error };
+    }
+  }
+};
+
+// Researched Prospects operations for caching LinkedIn research
+export const researchedProspectsOperations = {
+  // Create a new researched prospect record
+  async create(data: {
+    name: string
+    profileUrl: string
+    role?: string
+    company?: string
+    location?: string
+    headline?: string
+    icpScore: number
+    icpCategory: string
+    icpTags: string[]
+    researchData: any
+    researchSource: string
+  }) {
+    try {
+      const record = await base(tables.researched_prospects).create({
+        'Name': data.name,
+        'Profile URL': data.profileUrl,
+        'Role': data.role || '',
+        'Company': data.company || '',
+        'Location': data.location || '',
+        'Headline': data.headline || '',
+        'ICP Score': data.icpScore,
+        'ICP Category': data.icpCategory,
+        'ICP Tags': data.icpTags.join(', '),
+        'Research Data': JSON.stringify(data.researchData),
+        'Research Source': data.researchSource,
+        'Created At': new Date().toISOString(),
+        'Updated At': new Date().toISOString()
+      });
+      
+      return { success: true, data: record };
+    } catch (error) {
+      console.error('Error creating researched prospect:', error);
+      return { success: false, error: error };
+    }
+  },
+
+  // Find existing research by profile URL
+  async findByProfileUrl(profileUrl: string) {
+    try {
+      const records = await base(tables.researched_prospects).select({
+        filterByFormula: `{Profile URL} = "${profileUrl}"`,
+        maxRecords: 1,
+        sort: [{ field: 'Updated At', direction: 'desc' }]
+      }).all();
+      
+      return { 
+        success: true, 
+        data: records.length > 0 ? { 
+          id: records[0].id, 
+          ...records[0].fields,
+          researchData: records[0].fields['Research Data'] ? 
+            JSON.parse(records[0].fields['Research Data'] as string) : {},
+          icpTags: records[0].fields['ICP Tags'] ? 
+            (records[0].fields['ICP Tags'] as string).split(', ').filter(tag => tag.trim()) : []
+        } : null 
+      };
+    } catch (error) {
+      console.error('Error finding researched prospect by profile URL:', error);
+      return { success: false, error: error };
+    }
+  },
+
+  // Update existing research record
+  async update(recordId: string, data: Partial<any>) {
+    try {
+      const record = await base(tables.researched_prospects).update(recordId, {
+        ...data,
+        'Updated At': new Date().toISOString()
+      });
+      
+      return { success: true, data: record };
+    } catch (error) {
+      console.error('Error updating researched prospect:', error);
+      return { success: false, error: error };
+    }
+  },
+
+  // Get recent research results
+  async findRecent(limit: number = 50) {
+    try {
+      const records = await base(tables.researched_prospects).select({
+        maxRecords: limit,
+        sort: [{ field: 'Updated At', direction: 'desc' }]
+      }).all();
+      
+      return { 
+        success: true, 
+        data: records.map(record => ({
+          id: record.id,
+          ...record.fields,
+          researchData: record.fields['Research Data'] ? 
+            JSON.parse(record.fields['Research Data'] as string) : {},
+          icpTags: record.fields['ICP Tags'] ? 
+            (record.fields['ICP Tags'] as string).split(', ').filter(tag => tag.trim()) : []
+        }))
+      };
+    } catch (error) {
+      console.error('Error fetching recent researched prospects:', error);
       return { success: false, error: error };
     }
   }

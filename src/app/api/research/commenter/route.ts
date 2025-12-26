@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { linkedInScraper, extractUsernameFromLinkedInUrl } from '../../../../lib/linkedin-scraper'
-import { icpScorer, ProspectProfile } from '../../../../lib/icp-scorer'
+import { linkedInScraper, extractUsernameFromLinkedInUrl } from '@/lib/linkedin-scraper'
+import { icpScorer, ProspectProfile } from '@/lib/icp-scorer'
+import { researchedProspectsOperations } from '@/lib/airtable'
+import { validateInput, commenterResearchSchema } from '@/lib/validation'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -16,14 +18,18 @@ export async function POST(request: NextRequest) {
       }, { status: 500 })
     }
 
+    // Validate request body
     const body = await request.json()
-    const { profileUrl, name, headline } = body
-
-    if (!profileUrl) {
+    const validationResult = validateInput(commenterResearchSchema, body)
+    
+    if (!validationResult.success) {
       return NextResponse.json({ 
-        error: 'Missing required profileUrl parameter' 
+        error: 'Invalid request data',
+        details: validationResult.errors?.issues.map(issue => issue.message).join(', ')
       }, { status: 400 })
     }
+
+    const { profileUrl, name, headline, forceRefresh } = validationResult.data!
 
     console.log(`📡 Researching profile: ${profileUrl}`)
 
@@ -35,10 +41,57 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // Check cache first (optional - implement later)
-    // For now, fetch fresh data each time
+    // Check cache first unless force refresh is requested
+    if (!forceRefresh) {
+      console.log('🔍 Checking cache for existing research...')
+      const cachedResult = await researchedProspectsOperations.findByProfileUrl(profileUrl)
+      
+      if (cachedResult.success && cachedResult.data) {
+        // Check if cache is not too old (e.g., less than 7 days)
+        const cacheAge = new Date().getTime() - new Date((cachedResult.data as any)['Updated At']).getTime()
+        const maxCacheAge = 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
+        
+        if (cacheAge < maxCacheAge) {
+          console.log('✅ Found cached research result')
+          
+          // Convert cached data back to ProspectProfile format
+          const data = cachedResult.data as any
+          const cachedProspectProfile: ProspectProfile = {
+            name: data['Name'] as string,
+            role: data['Role'] as string || '',
+            company: data['Company'] as string || '',
+            location: data['Location'] as string || '',
+            headline: data['Headline'] as string || '',
+            profileUrl: data['Profile URL'] as string,
+            followerCount: data.followerCount || 0,
+            connectionCount: data.connectionCount || 0,
+            icpScore: {
+              totalScore: data['ICP Score'] as number,
+              category: (data['ICP Category'] || 'Not ICP') as 'Hot Lead' | 'Warm Lead' | 'Cold Lead' | 'Not ICP',
+              tags: data.icpTags || [],
+              breakdown: data.breakdown || {},
+              reasoning: data.reasoning || 'Cached result'
+            }
+          }
+          
+          return NextResponse.json({
+            success: true,
+            prospect: cachedProspectProfile,
+            meta: {
+              researchedAt: data['Updated At'],
+              source: data['Research Source'] || 'linkedin-comment',
+              cached: true,
+              cacheAge: Math.round(cacheAge / (1000 * 60 * 60)) // hours
+            }
+          })
+        } else {
+          console.log('⏰ Cached data is too old, fetching fresh data')
+        }
+      }
+    }
 
-    // Fetch LinkedIn profile data
+    // Fetch fresh LinkedIn profile data
+    console.log('🌐 Fetching fresh data from LinkedIn API...')
     const profileData = await linkedInScraper.getProfile(username)
     
     if (!profileData.success) {
@@ -51,8 +104,27 @@ export async function POST(request: NextRequest) {
     console.log(`✅ Research completed for ${prospectProfile.name}`)
     console.log(`📊 ICP Score: ${prospectProfile.icpScore.totalScore} (${prospectProfile.icpScore.category})`)
 
-    // TODO: Cache the result in Airtable "Researched Prospects" table
-    // This would help avoid duplicate API calls and provide research history
+    // Cache the result in Airtable "Researched Prospects" table
+    try {
+      console.log('💾 Caching research result...')
+      await researchedProspectsOperations.create({
+        name: prospectProfile.name,
+        profileUrl: prospectProfile.profileUrl,
+        role: prospectProfile.role,
+        company: prospectProfile.company,
+        location: prospectProfile.location,
+        headline: prospectProfile.headline,
+        icpScore: prospectProfile.icpScore.totalScore,
+        icpCategory: prospectProfile.icpScore.category,
+        icpTags: prospectProfile.icpScore.tags,
+        researchData: profileData.data,
+        researchSource: 'linkedin-comment'
+      })
+      console.log('✅ Research result cached successfully')
+    } catch (cacheError) {
+      console.warn('⚠️ Failed to cache research result:', cacheError)
+      // Don't fail the request if caching fails
+    }
 
     return NextResponse.json({
       success: true,
@@ -102,9 +174,72 @@ export async function GET(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // TODO: Check cache in Airtable for existing research
-    // For now, return not found to trigger fresh research
+    // Validate the profile URL
+    const validationResult = validateInput(commenterResearchSchema.pick({ profileUrl: true }), { profileUrl })
+    
+    if (!validationResult.success) {
+      return NextResponse.json({ 
+        error: 'Invalid LinkedIn profile URL format',
+        details: validationResult.errors?.issues.map(issue => issue.message).join(', ')
+      }, { status: 400 })
+    }
 
+    console.log(`🔍 Checking cache for profile: ${profileUrl}`)
+
+    // Check cache in Airtable for existing research
+    const cachedResult = await researchedProspectsOperations.findByProfileUrl(profileUrl)
+    
+    if (cachedResult.success && cachedResult.data) {
+      // Check if cache is still valid (less than 7 days old)
+      const data = cachedResult.data as any
+      const cacheAge = new Date().getTime() - new Date(data['Updated At']).getTime()
+      const maxCacheAge = 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
+      
+      if (cacheAge < maxCacheAge) {
+        console.log('✅ Found valid cached research result')
+        
+        // Convert cached data back to ProspectProfile format
+        const cachedProspectProfile: ProspectProfile = {
+          name: data['Name'] as string,
+          role: data['Role'] as string || '',
+          company: data['Company'] as string || '',
+          location: data['Location'] as string || '',
+          headline: data['Headline'] as string || '',
+          profileUrl: data['Profile URL'] as string,
+          followerCount: data.followerCount || 0,
+          connectionCount: data.connectionCount || 0,
+          icpScore: {
+            totalScore: data['ICP Score'] as number,
+            category: (data['ICP Category'] || 'Not ICP') as 'Hot Lead' | 'Warm Lead' | 'Cold Lead' | 'Not ICP',
+            tags: data.icpTags || [],
+            breakdown: data.breakdown || {},
+            reasoning: data.reasoning || 'Cached result'
+          }
+        }
+        
+        return NextResponse.json({
+          success: true,
+          prospect: cachedProspectProfile,
+          meta: {
+            researchedAt: data['Updated At'],
+            source: data['Research Source'] || 'linkedin-comment',
+            cached: true,
+            cacheAge: Math.round(cacheAge / (1000 * 60 * 60)) // hours
+          }
+        })
+      } else {
+        console.log('⏰ Cached data is too old')
+        return NextResponse.json({
+          success: false,
+          cached: false,
+          message: 'Cached research data is too old',
+          cacheAge: Math.round(cacheAge / (1000 * 60 * 60)) // hours
+        }, { status: 404 })
+      }
+    }
+
+    // No cached research found
+    console.log('❌ No cached research found')
     return NextResponse.json({
       success: false,
       cached: false,

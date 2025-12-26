@@ -117,10 +117,19 @@ export class ConnectionIntelligenceService {
       }
       
       // Run web research and LinkedIn analysis in parallel
+      console.log(`🚀 Running parallel research for ${connection.full_name}:`)
+      console.log(`  - Web research (Perplexity + Firecrawl)`)
+      console.log(`  - LinkedIn deep analysis`)
+      
       const [webResearch, linkedInAnalysis] = await Promise.all([
         webResearchService.researchConnection(connection),
         linkedInDeepAnalysisService.analyzeConnection(connection)
       ])
+      
+      console.log(`✅ Parallel research completed for ${connection.full_name}:`)
+      console.log(`  - Web articles found: ${webResearch.articlesFound.length}`)
+      console.log(`  - LinkedIn articles found: ${linkedInAnalysis.articles?.length || 0}`)
+      console.log(`  - LinkedIn posts analyzed: ${linkedInAnalysis.postsAnalysis?.length || 0}`)
       
       // Combine and score the results
       const unifiedScores = this.calculateUnifiedScores(webResearch, linkedInAnalysis)

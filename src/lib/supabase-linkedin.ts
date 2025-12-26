@@ -1232,14 +1232,23 @@ export class SupabaseLinkedInService {
         contentThemes: contentThemes
       } : null
       
+      // Structure data to match frontend expectations
+      const structuredLinkedInAnalysis = linkedInAnalysis ? {
+        articles_analysis: linkedInAnalysis.articles_analysis || []
+      } : null
+
+      const structuredWebResearch = webResearch ? {
+        articles_found: webResearch.articles_found || []
+      } : null
+
       return {
         connectionId: profile.connection_id,
         connectionName: profile.connection_name,
         company: profile.company,
         title: profile.title,
         profileUrl: profile.profile_url,
-        webResearch,
-        linkedInAnalysis: fullLinkedInAnalysis,
+        webResearch: structuredWebResearch,
+        linkedInAnalysis: structuredLinkedInAnalysis,
         unifiedScores: profile.unified_scores,
         intelligenceAssessment: {
           dataQuality: profile.data_quality,
@@ -1251,7 +1260,7 @@ export class SupabaseLinkedInService {
           recommendations: profile.recommendations
         },
         researchDuration: profile.research_duration,
-        researchedAt: profile.researched_at,
+        researched_at: profile.researched_at,
         lastUpdatedAt: profile.last_updated_at
       }
 
